@@ -39,7 +39,7 @@
 				<property name="generateDdl" value="true" />
 			</bean>
 		</property>
-	</bean>
+	</bean> 
 
 	<!-- On crée le transactionManager pour JPA avec entityManagerFactory -->
 	<bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
