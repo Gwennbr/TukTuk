@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
+		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.3.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd">
+
+	<!-- On active la délégation des requêtes vers les contrôleurs -->
+	<mvc:annotation-driven />
+
+	<mvc:resources mapping="/resources/**" location="/resources/" />
+	
+	<context:annotation-config />
+	<context:component-scan base-package="com.tuktukteam.tuktuk.controller" />
+	
+	<!-- On configure Tiles -->
+<!-- 	<bean id="viewResolver"	class="org.springframework.web.servlet.view.UrlBasedViewResolver"> -->
+<!-- 		<property name="viewClass" value="org.springframework.web.servlet.view.tiles3.TilesView" /> -->
+<!-- 	</bean> -->
+
+<!-- 	<bean id="tilesConfigurer" class="org.springframework.web.servlet.view.tiles3.TilesConfigurer"> -->
+<!-- 		<property name="definitions"> -->
+<!-- 			<list> -->
+<!-- 				<value>/WEB-INF/tiles-config/layout.xml</value> -->
+<!-- 				<value>/WEB-INF/tiles-config/home.xml</value> -->
+<!-- 				<value>/WEB-INF/tiles-config/account.xml</value> -->
+<!-- 				<value>/WEB-INF/tiles-config/tetrimino.xml</value> -->
+<!-- 				<value>/WEB-INF/tiles-config/game.xml</value> -->
+<!-- 			</list> -->
+<!-- 		</property> -->
+<!-- 	</bean> -->
+
+	<!-- Localisation des fichiers properties pour l'internationalisation -->
+	<bean id="messageSource"
+		class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+		<property name="basename" value="classpath:messages" />
+		<property name="defaultEncoding" value="UTF-8" />
+	</bean>
+
+
+	<!-- Intercepteur de changement de langue : mapping sur le paramètre URL 
+		"lang" (lang=fr, lang=en, ...) -->
+	<mvc:interceptors>
+		<mvc:interceptor>
+			<mvc:mapping path="/**" />
+			<bean id="localeChangeInterceptor"
+				class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor">
+				<property name="paramName" value="lang" />
+			</bean>
+		</mvc:interceptor>
+	</mvc:interceptors>
+
+
+	<!-- Configuration du Cookie pour le changement de la langue à la volée -->
+	<bean id="localeResolver"
+		class="org.springframework.web.servlet.i18n.CookieLocaleResolver">
+		<property name="cookieName" value="lang" />
+		<property name="defaultLocale" value="en" />
+	</bean>
+	
+</beans>
