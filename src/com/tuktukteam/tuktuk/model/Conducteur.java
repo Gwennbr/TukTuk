@@ -11,8 +11,9 @@ import javax.persistence.Table;
 @Entity
 @Table(name="conducteur")
 @PrimaryKeyJoinColumn(name="COND_ID", referencedColumnName="PER_ID")
-public class Conducteur {
-	
+public class Conducteur extends Personne {
+	private static final long serialVersionUID = 1L;
+
 	@Column(name="COND_IBAN")
 	private String iban;
 	
