@@ -62,22 +62,14 @@
   		<version>5.1.40</version>
   	</dependency>
   	<dependency>
-<<<<<<< HEAD
-  		<groupId>com.fasterxml.jackson.core</groupId>
-  		<artifactId>jackson-core</artifactId>
-  		<version>2.8.5</version>
-  		<type>bundle</type>
-  	</dependency>
-  	<dependency>
-  		<groupId>com.fasterxml.jackson.core</groupId>
-  		<artifactId>jackson-databind</artifactId>
-  		<version>2.8.5</version>
-  		<type>bundle</type>
-=======
   		<groupId>org.springframework.security</groupId>
   		<artifactId>spring-security-core</artifactId>
   		<version>4.2.1.RELEASE</version>
->>>>>>> branch 'feature/login' of https://github.com/Gwennbr/TukTuk.git
   	</dependency>
+  	<dependency>
+	    <groupId>com.fasterxml.jackson.core</groupId>
+	    <artifactId>jackson-databind</artifactId>
+ 	   <version>2.8.7</version>
+	</dependency>
   </dependencies>
 </project>
