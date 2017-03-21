@@ -29,7 +29,7 @@ public class LoginController
 			e.printStackTrace();
 		} 
 		
-		System.out.println(c.getNuméroCarteBancaire() + " " + c.getPictogramme());
+		System.out.println(c.getNumeroCarteBancaire() + " " + c.getPictogramme());
 		
 		return "login"; 
 	}
