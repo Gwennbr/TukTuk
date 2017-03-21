@@ -3,8 +3,10 @@ package com.tuktukteam.tuktuk.model;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.PrimaryKeyJoinColumn;
+import javax.persistence.Table;
 
 @Entity
+@Table(name="conducteur")
 @PrimaryKeyJoinColumn(name="COND_ID", referencedColumnName="PER_ID")
 public class Conducteur {
 	

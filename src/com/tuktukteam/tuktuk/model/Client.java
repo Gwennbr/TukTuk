@@ -5,8 +5,10 @@ import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.PrimaryKeyJoinColumn;
+import javax.persistence.Table;
 
 @Entity
+@Table(name="client")
 @PrimaryKeyJoinColumn(name="CLI_ID", referencedColumnName="PER_ID")
 public class Client {
 	
