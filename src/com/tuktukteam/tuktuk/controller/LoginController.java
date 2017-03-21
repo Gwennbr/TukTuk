@@ -21,13 +21,15 @@ public class LoginController
 		Client c = null;
 		try
 		{
-			Client c = mapper.readValue(new URL("http://localhost/api/toto"), Client.class);
+			c = mapper.readValue(new URL("http://localhost:8080/TukTuk/api/toto"), Client.class);
 		}
 		catch (IOException e)
 		{ 
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} 
+		
+		System.out.println(c.getNuméroCarteBancaire() + " " + c.getPictogramme());
 		
 		return "login"; 
 	}
