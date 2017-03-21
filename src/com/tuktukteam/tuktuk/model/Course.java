@@ -2,35 +2,57 @@ package com.tuktukteam.tuktuk.model;
 
 import java.util.Date;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
 @Table(name="course")
 public class Course {
 
+	@Id
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	@Column(name="COU_ID")
 	private int id;
 	
+	@ManyToOne
+	@JoinColumn(name="COU_ID_CLIENT")
 	private Client client;
 	
+	@ManyToOne
+	@JoinColumn(name="COU_ID_COND")
 	private Conducteur conducteur;
 	
+	@Column(name="COU_VALIDE")
 	private boolean valide;
 	
+	@Column(name="COU_DATE_DEBUT")
 	private Date dateDebutCourse;
 	
+	@Column(name="COU_DATE_FIN")
 	private Date dateFinCourse;
 	
+	@Column(name="COU_DISTANCE")
 	private double distance;
 	
+	@Column(name="COU_PRIX")
 	private float prix;
 	
+	@Column(name="COU_NOTE_CLIENT")
 	private float noteClient;
 	
+	@Column(name="COU_COM_CLIENT")
 	private String comClient;
 	
+	@Column(name="COU_NOTE_COND")
 	private float noteConducteur;
 	
+	@Column(name="COU_COM_COND")
 	private String comConducteur;
 
 	public int getId() {

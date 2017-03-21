@@ -1,9 +1,11 @@
 package com.tuktukteam.tuktuk.model;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.OneToMany;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 
@@ -20,6 +22,17 @@ public class Client {
 
 	@Column(name="CLI_DATE_VALIDITE_CB")
 	private Date dateValiditeCB;
+	
+	@OneToMany(mappedBy="client")
+	private List<Course> courses;
+
+	public List<Course> getCourses() {
+		return courses;
+	}
+
+	public void setCourses(List<Course> courses) {
+		this.courses = courses;
+	}
 
 	public int getNuméroCarteBancaire() {
 		return numéroCarteBancaire;
@@ -44,6 +57,8 @@ public class Client {
 	public void setDateValiditeCB(Date dateValiditeCB) {
 		this.dateValiditeCB = dateValiditeCB;
 	}
+	
+	
 	
 	
 }
