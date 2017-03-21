@@ -12,10 +12,11 @@ import javax.persistence.Table;
 @Entity
 @Table(name="client")
 @PrimaryKeyJoinColumn(name="CLI_ID", referencedColumnName="PER_ID")
-public class Client {
-	
+public class Client extends Personne {
+	private static final long serialVersionUID = 1L;
+
 	@Column(name="CLI_NUM_CB")
-	private int numéroCarteBancaire;
+	private String numéroCarteBancaire;
 	
 	@Column(name="CLI_PICTOGRAMME")
 	private int pictogramme;
@@ -34,11 +35,11 @@ public class Client {
 		this.courses = courses;
 	}
 
-	public int getNuméroCarteBancaire() {
+	public String getNuméroCarteBancaire() {
 		return numéroCarteBancaire;
 	}
 
-	public void setNuméroCarteBancaire(int numéroCarteBancaire) {
+	public void setNuméroCarteBancaire(String numéroCarteBancaire) {
 		this.numéroCarteBancaire = numéroCarteBancaire;
 	}
 

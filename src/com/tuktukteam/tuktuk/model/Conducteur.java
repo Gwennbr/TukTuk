@@ -11,13 +11,18 @@ import javax.persistence.Table;
 @Entity
 @Table(name="conducteur")
 @PrimaryKeyJoinColumn(name="COND_ID", referencedColumnName="PER_ID")
-public class Conducteur {
-	
+public class Conducteur extends Personne {
+	private static final long serialVersionUID = 1L;
+
 	@Column(name="COND_IBAN")
 	private String iban;
 	
 	@Column(name="COND_BIC")
 	private String bic;
+	
+	@Column(name="COND_NUM_IMMATRICULATION")
+	private String numImmat;
+
 
 	@Column(name="COND_LATITUDE")
 	private double latitude;
@@ -79,5 +84,13 @@ public class Conducteur {
 		this.courses = courses;
 	}
 	
+	public String getNumImmat() {
+		return numImmat;
+	}
+
+	public void setNumImmat(String numImmat) {
+		this.numImmat = numImmat;
+	}
+
 	
 }
