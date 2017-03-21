@@ -16,10 +16,10 @@ public class Client extends Personne {
 	private static final long serialVersionUID = 1L;
 
 	@Column(name="CLI_NUM_CB")
-	private String numéroCarteBancaire;
+	private String numeroCarteBancaire;
 	
 	@Column(name="CLI_PICTOGRAMME")
-	private int pictogramme;
+	private String pictogramme;
 
 	@Column(name="CLI_DATE_VALIDITE_CB")
 	private Date dateValiditeCB;
@@ -35,19 +35,19 @@ public class Client extends Personne {
 		this.courses = courses;
 	}
 
-	public String getNuméroCarteBancaire() {
-		return numéroCarteBancaire;
+	public String getNumeroCarteBancaire() {
+		return numeroCarteBancaire;
 	}
 
-	public void setNuméroCarteBancaire(String numéroCarteBancaire) {
-		this.numéroCarteBancaire = numéroCarteBancaire;
+	public void setNumeroCarteBancaire(String numeroCarteBancaire) {
+		this.numeroCarteBancaire = numeroCarteBancaire;
 	}
 
-	public int getPictogramme() {
+	public String getPictogramme() {
 		return pictogramme;
 	}
 
-	public void setPictogramme(int pictogramme) {
+	public void setPictogramme(String pictogramme) {
 		this.pictogramme = pictogramme;
 	}
 
