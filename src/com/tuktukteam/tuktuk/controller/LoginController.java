@@ -29,6 +29,6 @@ public class LoginController
 			e.printStackTrace();
 		}
 		
-		return "login";
+		return "login"; 
 	}
 }
