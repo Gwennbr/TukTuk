@@ -18,7 +18,7 @@ public class TestsREST
 	{
 		Client c = new Client();
 		c.setDateValiditeCB(new Date());
-		c.setNuméroCarteBancaire(65498765);
+		c.setNuméroCarteBancaire("1234 1234 1234 1234");
 		c.setPictogramme(123);
 		
 		return new ResponseEntity<>(c, HttpStatus.OK);

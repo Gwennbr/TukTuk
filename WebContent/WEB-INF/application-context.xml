@@ -16,39 +16,39 @@
 	<context:component-scan base-package="com.tuktukteam.tuktuk.dao" />
 
 	<!-- On crée le DataSource -->
-	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
-		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
-		<property name="url" value="jdbc:mysql://172.16.162.105:3306/tuktuk" />
-		<property name="username" value="root" />
-		<property name="password" value="" />
-		<property name="maxActive" value="10" />
-	</bean>
+<!-- 	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"> -->
+<!-- 		<property name="driverClassName" value="com.mysql.jdbc.Driver" /> -->
+<!-- 		<property name="url" value="jdbc:mysql://172.16.162.105:3306/tuktuk" /> -->
+<!-- 		<property name="username" value="root" /> -->
+<!-- 		<property name="password" value="" /> -->
+<!-- 		<property name="maxActive" value="10" /> -->
+<!-- 	</bean> -->
 
 	<!-- On crée un entityManagerFactory local à partir de la dataSource -->
-	<bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
-		<property name="dataSource" ref="dataSource" />
-		<property name="packagesToScan" value="com.tuktukteam.tuktuk.model" />
+<!-- 	<bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean"> -->
+<!-- 		<property name="dataSource" ref="dataSource" /> -->
+<!-- 		<property name="packagesToScan" value="com.tuktukteam.tuktuk.model" /> -->
 
 		<!-- On précise le provider ... -->
-		<property name="jpaVendorAdapter">
+<!-- 		<property name="jpaVendorAdapter"> -->
 			<!-- ... Hibernate ... -->
-			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+<!-- 			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"> -->
 				<!-- ... Et ses options -->
-				<property name="databasePlatform" value="org.hibernate.dialect.MySQL5InnoDBDialect" />
-				<property name="showSql" value="true" />
-				<property name="generateDdl" value="true" />
-			</bean>
-		</property>
-	</bean> 
+<!-- 				<property name="databasePlatform" value="org.hibernate.dialect.MySQL5InnoDBDialect" /> -->
+<!-- 				<property name="showSql" value="true" /> -->
+<!-- 				<property name="generateDdl" value="true" /> -->
+<!-- 			</bean> -->
+<!-- 		</property> -->
+<!-- 	</bean>  -->
 
 	<!-- On crée le transactionManager pour JPA avec entityManagerFactory -->
-	<bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
-		<property name="entityManagerFactory" ref="entityManagerFactory" />
-	</bean>
+<!-- 	<bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager"> -->
+<!-- 		<property name="entityManagerFactory" ref="entityManagerFactory" /> -->
+<!-- 	</bean> -->
 
 	<!-- On active les annotations @Transactionnal avec transactionManager -->
-	<tx:annotation-driven transaction-manager="transactionManager" />
+<!-- 	<tx:annotation-driven transaction-manager="transactionManager" /> -->
 
 	<!-- On active la translation d'exception -->
-	<bean class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor" />
+<!-- 	<bean class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor" /> -->
 </beans>
