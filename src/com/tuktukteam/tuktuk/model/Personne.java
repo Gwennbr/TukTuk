@@ -28,7 +28,7 @@ public class Personne implements Serializable {
 	@Column(name="PER_NOM")
 	private String nom;
 	
-	@Column(name="PER_PRENOM")
+	@Column(name="PER_PRENOM") 
 	private String prenom;
 	
 	@Column(name="PER_MAIL")
