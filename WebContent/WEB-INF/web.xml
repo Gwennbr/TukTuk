@@ -30,7 +30,7 @@
 	<!-- Mapping de api sur toutes les ressources /api/ -->
 	<servlet-mapping>
 		<servlet-name>api</servlet-name>
-		<url-pattern>/api/*</url-pattern>
+		<url-pattern>/api/*</url-pattern> 
 	</servlet-mapping>
 	
 	<context-param>
