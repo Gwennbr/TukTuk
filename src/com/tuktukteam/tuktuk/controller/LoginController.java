@@ -27,7 +27,7 @@ public class LoginController
 		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		} 
 		
 		return "login"; 
 	}
