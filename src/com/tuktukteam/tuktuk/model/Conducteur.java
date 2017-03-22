@@ -23,7 +23,6 @@ public class Conducteur extends Personne {
 	@Column(name="COND_NUM_IMMATRICULATION")
 	private String numImmat;
 
-
 	@Column(name="COND_LATITUDE")
 	private double latitude;
 	
