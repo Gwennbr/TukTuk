@@ -7,6 +7,10 @@
 <title>Insert title here</title>
 </head>
 <body>
-
+	<form id="personne" action="login" method="post">
+		<input name="username" value="${personne.username}" />
+		<input name="password" value="${personne.password}" />
+		<button type="submit">login</button>
+	</form>
 </body>
 </html>

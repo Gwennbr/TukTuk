@@ -18,7 +18,8 @@ public class WebFilter implements Filter
 		{
 				"^(resources/)",
 				"^(login)$",
-				"^(register)$"
+				"^(register)$",
+				"^(api/toto)$"
 				
 		};
 	
