@@ -1,0 +1,34 @@
+/* -----BALISES----- */
+
+input{
+	text-align: center;
+}
+
+header {
+	text-align: center;
+	margin-top: 100px;
+}
+
+section {
+	margin: 0 auto;
+	text-align: center;
+	max-width: 380px;
+}
+
+/* -----CLASSES----- */
+
+.cLogin  {
+	padding-left: 10px;
+	padding-right: 10px;
+	max-width: 400px;
+	width: 100%;
+}
+
+.form-group {
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.colorBlue {
+	color: #0d3e63;
+}
