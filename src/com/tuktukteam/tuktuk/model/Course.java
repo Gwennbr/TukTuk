@@ -18,7 +18,7 @@ public class Course {
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name="COU_ID")
-	private int id;
+	private int id;	
 	
 	@ManyToOne
 	@JoinColumn(name="COU_ID_CLIENT")
@@ -31,6 +31,9 @@ public class Course {
 	@Column(name="COU_VALIDE")
 	private boolean valide;
 	
+	@Column(name="COU_ADRESSE_DEPART")
+	private String adresseDepart;
+
 	@Column(name="COU_DATE_DEBUT")
 	private Date dateDebutCourse;
 	
@@ -61,6 +64,14 @@ public class Course {
 
 	public void setId(int id) {
 		this.id = id;
+	}
+	
+	public String getAdresseDepart() {
+		return adresseDepart;
+	}
+
+	public void setAdresseDepart(String adresseDepart) {
+		this.adresseDepart = adresseDepart;
 	}
 
 	public Client getClient() {
@@ -149,9 +160,5 @@ public class Course {
 
 	public void setComConducteur(String comConducteur) {
 		this.comConducteur = comConducteur;
-	}
-	
-	
-	
-	
+	}	
 }
