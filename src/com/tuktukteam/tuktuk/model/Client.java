@@ -27,6 +27,8 @@ public class Client extends Personne {
 	@OneToMany(mappedBy="client")
 	private List<Course> courses;
 
+	
+	
 	public List<Course> getCourses() {
 		return courses;
 	}
