@@ -11,3 +11,6 @@ body{
 .form-control {
 	border-radius: 0px;
 }
+.input-group-addon {
+	border-radius: 0px;
+}
