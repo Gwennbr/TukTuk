@@ -4,19 +4,6 @@
 
 <!DOCTYPE>
 <html>
-<<<<<<< HEAD
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<title>Insert title here</title>
-</head>
-<body>
-	<form id="personne" action="login" method="post">
-		<input name="username" value="${personne.username}" />
-		<input name="password" value="${personne.password}" />
-		<button type="submit">login</button>
-	</form>
-</body>
-=======
 
 	<head>
 
@@ -68,5 +55,4 @@
 	<link rel="stylesheet" type="text/css" href="${ pageContext.request.contextPath }/resources/css/global.css"/>
 	<link rel="stylesheet" type="text/css" href="${ pageContext.request.contextPath }/resources/css/login.css"/>
 	<link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
->>>>>>> branch 'feature/login' of https://github.com/Gwennbr/TukTuk.git
 </html>
