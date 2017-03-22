@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.URL;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -14,7 +15,7 @@ public class LoginController
 {
 
 	@RequestMapping("/login")
-	public String login()
+	public String login(Model model)
 	{
 		ObjectMapper mapper = new ObjectMapper();
 		
@@ -31,6 +32,7 @@ public class LoginController
 		
 		System.out.println(c.getNumeroCarteBancaire() + " " + c.getPictogramme());
 		
+		model.addAttribute("personne", c);
 		return "login"; 
 	}
 }

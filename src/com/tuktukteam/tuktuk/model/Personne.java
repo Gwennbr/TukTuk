@@ -8,22 +8,26 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.Lob;
 import javax.persistence.Table;
 
-
+import org.hibernate.annotations.Type;
 
 import com.mysql.jdbc.Blob;
 import com.tuktukteam.genericdao.annotations.HashedValue;
 
 @Entity
 @Table(name="personne")
+@Inheritance(strategy=InheritanceType.JOINED)
 public class Personne implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	@Column(name="PER_ID")
-	private int id;
+	@Column(name="PER_ID") 
+	private int id; 
 	
 	@Column(name="PER_NOM")
 	private String nom;
@@ -38,6 +42,7 @@ public class Personne implements Serializable {
 	@Column(name="PER_PASSWORD")
 	private String password;
 	
+	@Lob @Type(type="org.hibernate.type.BlobType")
 	@Column(name="PER_IMAGE")
 	private Blob image;
 	
