@@ -19,8 +19,8 @@ public class WebFilter implements Filter
 				"^(resources/).*",
 				"^(login)$",
 				"^(register)$",
-				"^(api/toto)$"
-				
+				"^(api/toto)$",
+				"^(api/).*" //TODO changer pour ne laisser l'accès qu'à login & register
 		};
 	
 	@Override

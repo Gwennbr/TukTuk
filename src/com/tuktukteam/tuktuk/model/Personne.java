@@ -10,12 +10,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
-import javax.persistence.Lob;
 import javax.persistence.Table;
 
-import org.hibernate.annotations.Type;
 
-import com.mysql.jdbc.Blob;
 import com.tuktukteam.genericdao.annotations.HashedValue;
 
 @Entity
@@ -42,9 +39,11 @@ public class Personne implements Serializable {
 	@Column(name="PER_PASSWORD")
 	private String password;
 	
+	/*
 	@Lob @Type(type="org.hibernate.type.BlobType")
 	@Column(name="PER_IMAGE")
 	private Blob image;
+	*/
 	
 	@Column(name="PER_USERNAME")
 	private String username;
@@ -102,6 +101,7 @@ public class Personne implements Serializable {
 		this.password = password;
 	}
 
+	/*
 	public Blob getImage() {
 		return image;
 	}
@@ -109,7 +109,8 @@ public class Personne implements Serializable {
 	public void setImage(Blob image) {
 		this.image = image;
 	}
-
+	*/
+	
 	public String getUsername() {
 		return username;
 	}

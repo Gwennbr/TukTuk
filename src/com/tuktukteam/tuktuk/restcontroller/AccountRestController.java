@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.tuktukteam.genericdao.DAOException;
@@ -19,10 +20,13 @@ public class AccountRestController
 {
 	@Autowired
 	private PersonneDAO personneDAO;
+
 	
 	@RequestMapping(value = "/login", method = RequestMethod.GET)
+	@ResponseBody
 	public ResponseEntity<Personne> login(@RequestParam String username, @RequestParam String password, HttpSession session)
 	{
+
 		Personne personne = new Personne();
 		personne.setUsername(username);
 		personne.setPassword(password);
