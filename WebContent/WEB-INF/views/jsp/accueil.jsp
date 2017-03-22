@@ -17,7 +17,7 @@
 	<script src="https://rawgit.com/allenhwkim/angularjs-google-maps/master/build/scripts/ng-map.js"></script>
 	<script src="https://maps.google.com/maps/api/js?libraries=placeses,visualization,drawing,geometry,places"></script>
 </head>
-<body ng-app="ngMap" >
+<body ng-app="ngMap">
 	<header>
 		<nav>
 			<a class="btn btn-lg btn-link"><span class="glyphicon glyphicon-th"></span></a>

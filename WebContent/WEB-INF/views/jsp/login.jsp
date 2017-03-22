@@ -1,21 +1,9 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+
 <!DOCTYPE>
 <html>
-<<<<<<< HEAD
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<title>Insert title here</title>
-</head>
-<body>
-	<form id="personne" action="login" method="post">
-		<input name="username" value="${personne.username}" />
-		<input name="password" value="${personne.password}" />
-		<button type="submit">login</button>
-	</form>
-</body>
-=======
 
 	<head>
 
@@ -32,13 +20,13 @@
 			</header>
 			<section>
 				<div>
-					<form action="#" method="post">
+					<form id="personne" action="login" method="post">
 						<div class="cLogin form-group">
 						<hr />
-							<input type="text" class="form-control" placeholder="Nom d'utilisateur"/>
+							<input id="username" type="text" class="form-control" placeholder="Nom d'utilisateur"/>
 						</div>
 						<div class="cLogin form-group">
-							<input type="password" class="form-control" placeholder="Mot de passe"/>
+							<input id="password" type="password" class="form-control" placeholder="Mot de passe"/>
 						</div>
 						<div class="cLogin form-group">
 							<input name="submit" type="submit" class="btn btn-primary btn-lg cLogin" value="Connexion"/>
@@ -67,5 +55,4 @@
 	<link rel="stylesheet" type="text/css" href="${ pageContext.request.contextPath }/resources/css/global.css"/>
 	<link rel="stylesheet" type="text/css" href="${ pageContext.request.contextPath }/resources/css/login.css"/>
 	<link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
->>>>>>> branch 'feature/login' of https://github.com/Gwennbr/TukTuk.git
 </html>
