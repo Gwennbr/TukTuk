@@ -20,7 +20,7 @@
 			</header>
 			<section>
 				<div>
-					<form id="personne" action="#" method="post">
+					<form id="personne" action="login" method="post">
 						<div class="cLogin form-group">
 						<hr />
 							<input id="username" type="text" class="form-control" placeholder="Nom d'utilisateur"/>
