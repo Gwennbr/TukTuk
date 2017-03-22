@@ -35,8 +35,20 @@ public class ClientRestController {
 		return new ResponseEntity<List<Course>>(this.clientDAO.find(id).getCourses(), HttpStatus.OK);
 	}
 	
+//	@RequestMapping(value="/{id}/commentaire/{idCourse}", method = RequestMethod.PUT)
+//	@ResponseBody
+//	public ResponseEntity<Course> setCommAndNote(@PathVariable int id, @PathVariable int idCourse, @RequestParam String commentaire, @RequestParam float note ) {
+//				
+//		return null;
+//	}
 	
-	
-	
-	
+	@RequestMapping(value="/{id}/infos", method=RequestMethod.GET)
+	public ResponseEntity<Client> getInfos(@PathVariable int id) {
+		Client c = clientDAO.find(id);
+		c.setDateValiditeCB(null);
+		c.setNumeroCarteBancaire(null);
+		c.setPictogramme(null);		
+		c.setMail(null);
+		return new ResponseEntity<Client>(c, HttpStatus.OK);
+	}	
 }
