@@ -1,5 +1,7 @@
 package com.tuktukteam.tuktuk.restcontroller;
 
+import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +21,7 @@ public class AccountRestController
 	private PersonneDAO personneDAO;
 	
 	@RequestMapping(value = "/login", method = RequestMethod.GET)
-	public ResponseEntity<Personne> login(@RequestParam String username, @RequestParam String password)
+	public ResponseEntity<Personne> login(@RequestParam String username, @RequestParam String password, HttpSession session)
 	{
 		Personne personne = new Personne();
 		personne.setUsername(username);
@@ -33,8 +35,14 @@ public class AccountRestController
 		{
 			personne = null;
 		}
+		
 		if (personne == null)
-			return new ResponseEntity<Personne>(HttpStatus.NOT_FOUND); 
+		{
+			session.setAttribute("user", null);			
+			return new ResponseEntity<Personne>(HttpStatus.NOT_FOUND);
+		}
+		
+		session.setAttribute("user", personne);
 		return new ResponseEntity<Personne>(personne, HttpStatus.OK);
 	}
 }
