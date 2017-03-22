@@ -2,6 +2,8 @@ package com.tuktukteam.tuktuk.restcontroller;
 
 import java.util.List;
 
+import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,10 +24,11 @@ public class ClientRestController {
 	@Autowired
 	private ClientDAO clientDAO;
 	
-	@RequestMapping(value="/{id}/profil", method = RequestMethod.GET)
+	@RequestMapping(value="/profil", method = RequestMethod.GET)
 	@ResponseBody
-	public ResponseEntity<Client> getProfile(@PathVariable int id) {
-		return new ResponseEntity<Client>(this.clientDAO.find(id), HttpStatus.OK);
+	public ResponseEntity<Client> getProfile(HttpSession session) {
+		
+		return new ResponseEntity<Client>(this.clientDAO.find(((Client) session.getAttribute("user")).getId()), HttpStatus.OK);
 	}
 	
 	@RequestMapping(value="/{id}/courses", method = RequestMethod.GET)
@@ -35,8 +38,21 @@ public class ClientRestController {
 		return new ResponseEntity<List<Course>>(this.clientDAO.find(id).getCourses(), HttpStatus.OK);
 	}
 	
+//	@RequestMapping(value="/{id}/commentaire/{idCourse}", method = RequestMethod.PUT)
+//	@ResponseBody
+//	public ResponseEntity<Course> setCommAndNote(@PathVariable int id, @PathVariable int idCourse, @RequestParam String commentaire, @RequestParam float note ) {
+//				
+//		return null;
+//	}
 	
-	
-	
-	
+	@RequestMapping(value="/{id}/infos", method=RequestMethod.GET)
+	@ResponseBody
+	public ResponseEntity<Client> getInfos(@PathVariable int id) {
+		Client c = clientDAO.find(id);
+		c.setDateValiditeCB(null);
+		c.setNumeroCarteBancaire(null);
+		c.setPictogramme(null);		
+		c.setMail(null);
+		return new ResponseEntity<Client>(c, HttpStatus.OK);
+	}	
 }

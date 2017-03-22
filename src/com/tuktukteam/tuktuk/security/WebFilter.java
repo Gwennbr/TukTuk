@@ -16,7 +16,7 @@ public class WebFilter implements Filter
 {
 	private String whiteListURIs[] =
 		{
-				"^(resources/)",
+				"^(resources/).*",
 				"^(login)$",
 				"^(register)$",
 				"^(api/toto)$"
