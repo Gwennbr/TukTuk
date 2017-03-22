@@ -30,9 +30,11 @@ public class ClientRestController {
 	
 	@RequestMapping(value="/{id}/courses", method = RequestMethod.GET)
 	@ResponseBody
-	public ResponseEntity<List<Course>> getCourse(@PathVariable int id) {
+	public ResponseEntity<List<Course>> getCourses(@PathVariable int id) {		
+		//TODO TOUT DOUX : si erreur, gérer list course null
 		return new ResponseEntity<List<Course>>(this.clientDAO.find(id).getCourses(), HttpStatus.OK);
 	}
+	
 	
 	
 	
