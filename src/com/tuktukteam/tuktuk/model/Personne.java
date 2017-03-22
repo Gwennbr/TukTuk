@@ -47,7 +47,11 @@ public class Personne implements Serializable {
 	@Column(name="PER_DATE_INSCRIPTION")
 	private Date date_inscription;
 	
-	public Personne(String password, String username) {
+	public Personne() {
+		
+	}
+	
+	public Personne(String username, String password) {
 		super();
 		this.password = password;
 		this.username = username;
