@@ -20,13 +20,13 @@
 			</header>
 			<section>
 				<div>
-					<form action="#" method="post">
+					<form id="personne" action="#" method="post">
 						<div class="cLogin form-group">
 						<hr />
-							<input type="text" class="form-control" placeholder="Nom d'utilisateur"/>
+							<input id="username" type="text" class="form-control" placeholder="Nom d'utilisateur"/>
 						</div>
 						<div class="cLogin form-group">
-							<input type="password" class="form-control" placeholder="Mot de passe"/>
+							<input id="password" type="password" class="form-control" placeholder="Mot de passe"/>
 						</div>
 						<div class="cLogin form-group">
 							<input name="submit" type="submit" class="btn btn-primary btn-lg cLogin" value="Connexion"/>
