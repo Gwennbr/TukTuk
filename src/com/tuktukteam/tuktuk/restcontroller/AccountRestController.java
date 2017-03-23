@@ -1,5 +1,6 @@
 package com.tuktukteam.tuktuk.restcontroller;
 
+
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,9 +14,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.tuktukteam.genericdao.DAOException;
 import com.tuktukteam.tuktuk.dao.PersonneDAO;
+import com.tuktukteam.tuktuk.model.Client;
+import com.tuktukteam.tuktuk.model.Conducteur;
 import com.tuktukteam.tuktuk.model.Personne;
 
-@RestController
+@RestController @RequestMapping("/account")
 public class AccountRestController
 {
 	@Autowired
@@ -40,13 +43,19 @@ public class AccountRestController
 			personne = null;
 		}
 		
+		session.setAttribute("client", null);			
+		session.setAttribute("conducteur", null);			
+
 		if (personne == null)
-		{
-			session.setAttribute("user", null);			
 			return new ResponseEntity<Personne>(HttpStatus.NOT_FOUND);
-		}
-		
-		session.setAttribute("user", personne);
+
+		if (personne instanceof Client)
+			session.setAttribute("client", personne);
+		else
+			if (personne instanceof Conducteur)
+			session.setAttribute("conducteur", personne);		
+
 		return new ResponseEntity<Personne>(personne, HttpStatus.OK);
 	}
+	
 }

@@ -22,10 +22,10 @@
 					<form id="personne" action="login" method="post">
 						<div class="cLogin form-group">
 						<hr />
-							<input id="username" type="text" class="form-control" placeholder="Nom d'utilisateur"/>
+							<input id="username" name="username" type="text" class="form-control" placeholder="Nom d'utilisateur"/>
 						</div>
 						<div class="cLogin form-group">
-							<input id="password" type="password" class="form-control" placeholder="Mot de passe"/>
+							<input id="password" name="password" type="password" class="form-control" placeholder="Mot de passe"/>
 						</div>
 						<div class="cLogin form-group">
 							<input name="submit" type="submit" class="btn btn-primary btn-lg cLogin" value="Connexion"/>
