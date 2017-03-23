@@ -1,4 +1,4 @@
-package com.tuktukteam.tuktuk.controller;
+package com.tuktukteam.tuktuk.restapi;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

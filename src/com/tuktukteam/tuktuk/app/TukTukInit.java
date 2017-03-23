@@ -4,7 +4,7 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
 
-import com.tuktukteam.tuktuk.controller.TukTukRestServices;
+import com.tuktukteam.tuktuk.restapi.TukTukRestServices;
 
 @WebListener
 public class TukTukInit implements ServletContextListener
