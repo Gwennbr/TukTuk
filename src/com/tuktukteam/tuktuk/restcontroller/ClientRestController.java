@@ -57,7 +57,7 @@ public class ClientRestController {
 	@ResponseBody
 	public ResponseEntity<Client> getInfos(@PathVariable int id, HttpSession session) {
 
-		Client client = (Client) session.getAttribute("client");
+		
 		Conducteur conducteur = (Conducteur) session.getAttribute("conducteur");
 
 		if (conducteur != null) {
