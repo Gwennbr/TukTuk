@@ -2,6 +2,7 @@ package com.tuktukteam.tuktuk.restapi;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import com.tuktukteam.tuktuk.model.Personne;
@@ -23,8 +24,16 @@ public class TukTukRestServices
 	
 	public static Personne login(String username, String password)
 	{
-		ResponseEntity<Personne> personneEntity = 
-				restTemplate.getForEntity(fullURL(SERVICE_LOGIN), Personne.class, username, password);
+		ResponseEntity<Personne> personneEntity;
+		
+		try
+		{
+			personneEntity = restTemplate.getForEntity(fullURL(SERVICE_LOGIN), Personne.class, username, password);
+		}
+		catch(RestClientException e)
+		{
+			return null;			
+		}
 		
 		if (personneEntity.getStatusCode() == HttpStatus.OK)
 			return personneEntity.getBody();

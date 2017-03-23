@@ -51,6 +51,6 @@ public class LoginController
 			return "login"; 
 		}
 
-		return "accueil";
+		return "redirect:/";
 	}
 }
