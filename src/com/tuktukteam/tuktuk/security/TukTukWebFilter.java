@@ -23,7 +23,6 @@ public class TukTukWebFilter extends GenericFilterBean
 	{
 		// TODO Auto-generated method stub
 		HttpServletRequest R = (HttpServletRequest)req;
-		System.out.println(R.getRequestURL().toString());
 		String uri = R.getRequestURI().replaceFirst(R.getContextPath() + "/", "");
 
 		if (R.getSession().getAttribute("user") != null)
