@@ -1,4 +1,4 @@
-﻿/* -----BALISES----- */
+/* -----BALISES----- */
 
 input{
 	text-align: center;
@@ -16,6 +16,14 @@ section {
 
 form span {
 	color: #0d3e63;
+}
+
+.alert {
+	text-align: center;
+	border-radius: 0px;
+	margin: 0px;
+	max-width: 400px;
+	width: 100%;
 }
 
 /* -----CLASSES----- */

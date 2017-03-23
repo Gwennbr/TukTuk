@@ -21,14 +21,15 @@
 <body ng-app="ngMap">
 	<header>
 		<nav>
-			<a class="btn btn-lg btn-link"><span class="glyphicon glyphicon-th"></span></a>
+			<a class="left btn btn-lg btn-link"><span class="glyphicon glyphicon-th"></span></a>
+				<label class="btn-lg" id="titleNav"><b class="colorWhite">ADOPTE</b>UN<b class="colorWhite">TUK-TUK.COM</b></label>
 			<a class="right btn btn-lg btn-link" data-toggle="modal" data-target=".nav-side" data-dismiss="modal"><span class="glyphicon glyphicon-cog"></span></a>
 		</nav>
 	</header>
 	<section id="map">
 		<div id="gmap">
 		<ng-map zoom="16" map-type-id="MapTypeId.ROADMAP">
-			<marker position="current" animation="Animation.DROP" centered="true" icon=${ pageContext.request.contextPath }/resources/img\trishaw.png></marker>
+			<marker position="current" animation="Animation.DROP" centered="true" icon=${ pageContext.request.contextPath }/resources/img/trishaw.png></marker>
 		</ng-map>
 	</div>
 	
