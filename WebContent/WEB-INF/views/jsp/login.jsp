@@ -42,7 +42,7 @@
 			<section>
 				<div class="footer-form">
 					<div><a href="#">Mot de passe oublié</a></div>
-					<div><a href="#">S'inscrire</a></div>
+					<div><a href="register">S'inscrire</a></div> 
 				</div>
 			</section>
 		</div>
