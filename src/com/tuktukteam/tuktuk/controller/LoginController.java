@@ -1,13 +1,11 @@
 package com.tuktukteam.tuktuk.controller;
 
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 import com.tuktukteam.tuktuk.model.Personne;
 import com.tuktukteam.tuktuk.restapi.TukTukRestServices;
@@ -15,8 +13,8 @@ import com.tuktukteam.tuktuk.restapi.TukTukRestServices;
 @Controller
 public class LoginController
 {
-	@Autowired
-	private RequestMappingHandlerMapping handlerMapping;
+//	@Autowired
+//	private RequestMappingHandlerMapping handlerMapping;
 	
 	@RequestMapping(value = "/login", method = RequestMethod.GET)
 	public String showLoginView(Model model)
@@ -39,7 +37,6 @@ public class LoginController
 		
 		model.addAttribute("personne", c);
 		*/
-		System.out.println(handlerMapping);
 		return "login"; 
 	}
 	
