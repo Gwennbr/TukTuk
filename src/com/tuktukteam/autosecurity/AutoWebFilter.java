@@ -40,15 +40,14 @@ public class AutoWebFilter extends GenericFilterBean
 			SecurityAccess securityAccess = field.getAnnotation(SecurityAccess.class);
 			if (requestMapping != null)
 			{
-				String [] mappings = requestMapping.value();
-				if (mappings != null)
-					for (String mapping : mappings)
+				String [] urls = requestMapping.value();
+				if (urls != null)
+					for (String url : urls)
 					{
-						System.out.print("security mapping : " + mapping + " -> ");
-						mapping = mapping.replaceAll("{.*}", "*");
-						System.out.println(mapping);
-						if (securityAccess == null)
-							;
+						System.out.print("security mapping : " + url + " -> ");
+						url = url.replaceAll("{.*}", "*");
+						System.out.println(url);
+						securityMappings.add(new SecurityMappingEntry(url, securityAccess));
 					}
 			}
 		}

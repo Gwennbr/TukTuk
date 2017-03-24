@@ -10,20 +10,48 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.tuktukteam.genericdao.DAOException;
 import com.tuktukteam.tuktuk.dao.ClientDAO;
+import com.tuktukteam.tuktuk.dao.PersonneDAO;
 import com.tuktukteam.tuktuk.model.Client;
 import com.tuktukteam.tuktuk.model.Conducteur;
 import com.tuktukteam.tuktuk.model.Course;
+import com.tuktukteam.tuktuk.model.Personne;
 
 @RestController
 @RequestMapping("/client")
 public class ClientRestController {
 
-	@Autowired
-	private ClientDAO clientDAO;
+	@Autowired private ClientDAO clientDAO;
+	@Autowired private PersonneDAO personneDAO;
+
+	
+	@RequestMapping(value = "/login", method = RequestMethod.GET)
+	@ResponseBody
+	public ResponseEntity<Client> login(@RequestParam String username, @RequestParam String password)
+	{
+		Personne personne = new Personne();
+		personne.setUsername(username);
+		personne.setPassword(password);
+		
+		try
+		{
+			personne = personneDAO.findByValues(personne);
+		}
+		catch (DAOException e)
+		{
+			personne = null;
+		}
+		
+		if (personne == null)
+			return new ResponseEntity<Client>(HttpStatus.NOT_FOUND);
+
+		return new ResponseEntity<Client>((Client)personne, HttpStatus.OK);
+	}
 
 	@RequestMapping(value = "/profil", method = RequestMethod.GET)
 	@ResponseBody
