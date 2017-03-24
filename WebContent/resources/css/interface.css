@@ -20,6 +20,11 @@ nav .right {
 	right: 0;
 }
 
+nav .left {
+	float: left;
+	left: 0;
+}
+
 #btn-control {
 	width: 100%;
 	margin: 0 auto;
@@ -52,6 +57,10 @@ nav .right {
     position: absolute;
     height: 90%;
     width: 100%;
+}
+
+#titleNav {
+	width: auto;
 }
 
 .modal-middle {

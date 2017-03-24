@@ -10,10 +10,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.tuktukteam.tuktuk.dao.ConducteurDAO;
+import com.tuktukteam.tuktuk.dao.CourseDAO;
 import com.tuktukteam.tuktuk.model.Client;
 import com.tuktukteam.tuktuk.model.Conducteur;
 import com.tuktukteam.tuktuk.model.Course;
@@ -24,6 +26,9 @@ public class ConducteurRestController {
 
 	@Autowired
 	private ConducteurDAO conducteurDAO;
+	
+	@Autowired
+	private CourseDAO courseDAO;
 
 	@RequestMapping(value = "/profil", method = RequestMethod.GET)
 	@ResponseBody
@@ -37,10 +42,22 @@ public class ConducteurRestController {
 		}
 		return new ResponseEntity<Conducteur>(HttpStatus.FORBIDDEN);
 	}
-
-	@RequestMapping(value = "/{id}/courses", method = RequestMethod.GET)
+	
+	@RequestMapping(value="/historique", method = RequestMethod.GET)
 	@ResponseBody
-	public ResponseEntity<List<Course>> getCourses(@PathVariable int id, HttpSession session) {
+	public ResponseEntity<Conducteur> getRunsHistory(HttpSession session) {
+		Conducteur cond = (Conducteur) session.getAttribute("conducteur");
+		if (cond != null) {
+			cond = conducteurDAO.find(cond.getId());
+			return new ResponseEntity<Conducteur>(cond, HttpStatus.OK);
+		}
+
+		return new ResponseEntity<Conducteur>(HttpStatus.FORBIDDEN);
+	}
+
+	@RequestMapping(value = "/{id}/historique", method = RequestMethod.GET)
+	@ResponseBody
+	public ResponseEntity<List<Course>> getDriverHistory(@PathVariable int id, HttpSession session) {
 		// TODO TOUT DOUX : si erreur, gérer list course null
 		Conducteur conducteur = (Conducteur) session.getAttribute("conducteur");
 		Client client = (Client) session.getAttribute("client");
@@ -63,9 +80,86 @@ public class ConducteurRestController {
 			c.setBic(null);
 			c.setIban(null);
 			c.setMail(null);
+			c.setPassword(null);
 			return new ResponseEntity<Conducteur>(c, HttpStatus.OK);
 		}		
 		return new ResponseEntity<Conducteur>(HttpStatus.FORBIDDEN);
 	}
-
+	
+	@RequestMapping(value="/pause", method = RequestMethod.PUT)
+	@ResponseBody
+	public ResponseEntity<Boolean> isNotAvailable(HttpSession session){
+		
+		Conducteur cond = (Conducteur) session.getAttribute("conducteur");
+		
+		if(cond != null)
+		{
+			cond.setAvailable(false);
+			cond = conducteurDAO.save(cond);
+			return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+		}		
+		return new ResponseEntity<Boolean>(HttpStatus.FORBIDDEN);
+	}
+	
+	@RequestMapping(value="/disponible", method = RequestMethod.PUT)
+	@ResponseBody
+	public ResponseEntity<Boolean> isAvailable(HttpSession session){
+		
+		Conducteur cond = (Conducteur) session.getAttribute("conducteur");
+		
+		if(cond != null)
+		{
+			cond.setAvailable(true);
+			cond = conducteurDAO.save(cond);
+			return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+		}		
+		return new ResponseEntity<Boolean>(HttpStatus.FORBIDDEN);
+	}
+	
+	@RequestMapping(value = "/maj", method = RequestMethod.PUT)
+	@ResponseBody
+	public ResponseEntity<List<Course>> runsWithoutDriver(HttpSession session, @RequestParam double longitude, @RequestParam double latitude) {	
+		Conducteur c = (Conducteur) session.getAttribute("conducteur");
+		if (c != null) {
+			c.setLongitude(longitude);
+			c.setLatitude(latitude);
+			c = conducteurDAO.save(c);
+			List<Course> courses = courseDAO.getAll();
+			for (Course course : courses) {
+				if (course.getConducteur() != null) {
+					courses.remove(course);
+				}
+			}
+			return new ResponseEntity<List<Course>>(courses, HttpStatus.OK);
+		}
+		return new ResponseEntity<List<Course>>(HttpStatus.FORBIDDEN);
+	}
+	
+	@RequestMapping(value="/{id}/note", method = RequestMethod.GET)
+	@ResponseBody
+	public ResponseEntity<Float> calculAvgNote(@PathVariable int id, HttpSession session)
+	{
+		Conducteur cond2 = (Conducteur) session.getAttribute("conducteur");
+		Conducteur cond1 = conducteurDAO.find(id);
+		Client cli = (Client) session.getAttribute("client");
+		
+		if(cli!= null || (cond2 != null && cond2.getId()==cond1.getId())){
+			float moy=0;
+			float somme=0;
+			int i=0;
+			List<Course> courses = cond1.getCourses();
+			for(Course course : courses)
+			{
+				if(course.getNoteConducteur()!=-1)
+				{
+					somme = somme + course.getNoteConducteur(); 
+					i++;
+				}				
+			}
+			moy = somme/i;
+			return new ResponseEntity<Float>(moy, HttpStatus.OK);
+		}		
+		return new ResponseEntity<Float>(HttpStatus.FORBIDDEN);
+	}
+	
 }

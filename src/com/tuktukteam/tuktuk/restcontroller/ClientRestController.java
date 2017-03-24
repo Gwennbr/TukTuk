@@ -33,36 +33,75 @@ public class ClientRestController {
 
 		if (c != null) {
 			int idC = c.getId();
-			return new ResponseEntity<Client>(this.clientDAO.find(idC),	HttpStatus.OK);
+			return new ResponseEntity<Client>(this.clientDAO.find(idC), HttpStatus.OK);
 		}
-		
 		return new ResponseEntity<Client>(HttpStatus.FORBIDDEN);
 	}
 
-	@RequestMapping(value = "/{id}/courses", method = RequestMethod.GET)
+	@RequestMapping(value="/historique", method = RequestMethod.GET)
 	@ResponseBody
-	public ResponseEntity<List<Course>> getCourses(@PathVariable int id, HttpSession session) {
-		// TODO TOUT DOUX : si erreur, gérer list course null
+	public ResponseEntity<Client> getRunsHistory(HttpSession session) {
 		Client client = (Client) session.getAttribute("client");
+		if (client != null) {
+			client = clientDAO.find(client.getId());
+			return new ResponseEntity<Client>(client, HttpStatus.OK);
+		}
+
+		return new ResponseEntity<Client>(HttpStatus.FORBIDDEN);
+	}
+
+	@RequestMapping(value = "/{id}/historique", method = RequestMethod.GET)
+	@ResponseBody
+	public ResponseEntity<List<Course>> getCustomerHistory(@PathVariable int id, HttpSession session) {
 		Conducteur conducteur = (Conducteur) session.getAttribute("conducteur");
 
-		if (conducteur != null || (client != null && client.getId() == id)) {
-			return new ResponseEntity<List<Course>>(this.clientDAO.find(id).getCourses(), HttpStatus.OK);
-		} else {
-			return new ResponseEntity<List<Course>>(HttpStatus.FORBIDDEN);
+		if (conducteur != null) {
+			Client client = clientDAO.find(id);
+			return new ResponseEntity<List<Course>>(client.getCourses(), HttpStatus.OK);
 		}
+		return new ResponseEntity<List<Course>>(HttpStatus.FORBIDDEN);
+	}
+	
+	
+	
+	@RequestMapping(value="/{id}/note", method = RequestMethod.GET)
+	@ResponseBody
+	public ResponseEntity<Float> calculAvgNote(@PathVariable int id, HttpSession session)
+	{
+		Conducteur cond = (Conducteur) session.getAttribute("conducteur");
+		Client cli1 = clientDAO.find(id);
+		Client cli2 = (Client) session.getAttribute("client");
+		
+		if(cond!= null || (cli2 != null && cli2.getId()==cli1.getId())){
+			float moy=0;
+			float somme=0;
+			int i=0;
+			List<Course> courses = cli1.getCourses();
+			for(Course course : courses)
+			{
+				if(course.getNoteConducteur()!=-1)
+				{
+					somme = somme + course.getNoteConducteur(); 
+					i++;
+				}				
+			}
+			moy = somme/i;
+			return new ResponseEntity<Float>(moy, HttpStatus.OK);
+		}
+		
+		return new ResponseEntity<Float>(HttpStatus.FORBIDDEN);
 	}
 
 	@RequestMapping(value = "/{id}/infos", method = RequestMethod.GET)
 	@ResponseBody
 	public ResponseEntity<Client> getInfos(@PathVariable int id, HttpSession session) {
 
-		
 		Conducteur conducteur = (Conducteur) session.getAttribute("conducteur");
 
 		if (conducteur != null) {
 			Client c = clientDAO.find(id);
 			c.setDateValiditeCB(null);
+			c.setPassword(null);
 			c.setNumeroCarteBancaire(null);
 			c.setPictogramme(null);
 			c.setMail(null);
