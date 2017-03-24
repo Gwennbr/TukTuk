@@ -52,5 +52,5 @@
 	<tx:annotation-driven transaction-manager="transactionManager" />
 
 	<!-- On active la translation d'exception -->
-	<bean class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor" />
+<!-- 	<bean class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor" /> -->
 </beans>

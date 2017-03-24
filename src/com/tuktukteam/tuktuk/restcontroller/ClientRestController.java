@@ -25,13 +25,13 @@ import com.tuktukteam.tuktuk.model.Course;
 public class ClientRestController {
 
 	@Autowired private ClientDAO clientDAO;
-
 	
 	@RequestMapping(value = "/login", method = RequestMethod.GET)
 	@ResponseBody
 	public ResponseEntity<Client> login(@RequestParam String username, @RequestParam String password)
 	{
 		Client client = new Client();
+
 		client.setUsername(username);
 		client.setPassword(password);
 		

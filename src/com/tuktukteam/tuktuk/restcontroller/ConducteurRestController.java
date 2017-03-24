@@ -34,6 +34,7 @@ public class ConducteurRestController {
 	{
 
 		Conducteur conducteur = new Conducteur();
+
 		conducteur.setUsername(username);
 		conducteur.setPassword(password);
 		

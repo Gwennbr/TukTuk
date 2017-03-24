@@ -27,35 +27,37 @@ public abstract class GenericDAO<T, K>
 	private static String getColumnName(Field field) { return field.getName(); }
 	protected String getTableName() { return type.getSimpleName(); }
 
-	public T findByValues(T t) throws DAOException
+	public T findByValues(T _t) throws DAOException
 	{
 		StringBuilder myQueryString = null;
 		List<Field> fieldsToCheck = new ArrayList<>();
 		
-		for (Field field : t.getClass().getDeclaredFields())
+		for (Class<?> t : getClassAndSuperClasses(_t.getClass()))
 		{
-			if (field.getDeclaredAnnotation(FindByValues.class) != null)
-				try
-				{
-					field.setAccessible(true);
-					String columnName = getColumnName(field);
-					if (field.getDeclaredAnnotation(HashedValue.class) != null)
-						fieldsToCheck.add(field);
-					else
-						if (myQueryString == null)
-							myQueryString = new StringBuilder(String.format("FROM %s WHERE %s='%s'", 
-									getTableName(),
-									columnName,
-									field.get(t).toString()));
+			for (Field field : t.getDeclaredFields())
+			{
+				if (field.getDeclaredAnnotation(FindByValues.class) != null)
+					try
+					{
+						field.setAccessible(true);
+						String columnName = getColumnName(field);
+						if (field.getDeclaredAnnotation(HashedValue.class) != null)
+							fieldsToCheck.add(field);
 						else
-							myQueryString.append(String.format(" AND %s='%s'", columnName, field.get(t).toString()));
-				}
-				catch (IllegalArgumentException | IllegalAccessException e)
-				{
-					throw new DAOException("error while getting class infos", e);
-				}
+							if (myQueryString == null)
+								myQueryString = new StringBuilder(String.format("FROM %s WHERE %s='%s'", 
+										getTableName(),
+										columnName,
+										field.get(_t).toString()));
+							else
+								myQueryString.append(String.format(" AND %s='%s'", columnName, field.get(_t).toString()));
+					}
+					catch (IllegalArgumentException | IllegalAccessException e)
+					{
+						throw new DAOException("error while getting class infos", e);
+					}
+			}
 		}
-		
 		if (myQueryString == null)
 			throw new DAOException("no @FindByValues annotation in class");
 		
@@ -66,7 +68,7 @@ public abstract class GenericDAO<T, K>
 			for (Field field : fieldsToCheck)
 			{
 				field.setAccessible(true); // TODO remove, useless
-				if (!matchesHashedValue(returnObject, field.getName(), (String)field.get(t)))
+				if (!matchesHashedValue(returnObject, field.getName(), (String)field.get(_t)))
 				{
 					bAllChecksPassed = false;
 					break;
@@ -130,6 +132,17 @@ public abstract class GenericDAO<T, K>
 		return entityManager.find(type, id);
 	}
 
+	public List<Class<?>> getClassAndSuperClasses(Class<?> type)
+	{
+		List<Class<?>> classes = new ArrayList<>();
+		while (type != null)
+		{
+			classes.add(type);
+			type = type.getSuperclass();
+		}
+		return classes;
+	}
+	
 	public Field getDeclaredFieldTroughAllInheritance(T t, String fieldName)
 	{
 		Class<?> type = t.getClass();
@@ -144,6 +157,7 @@ public abstract class GenericDAO<T, K>
 			} 
 		return null;
 	}
+	
 	public boolean matchesHashedValue(T t, String fieldName, String rawValue) throws NoSuchFieldException
 	{
 		Field field = getDeclaredFieldTroughAllInheritance(t, fieldName);
@@ -197,25 +211,28 @@ public abstract class GenericDAO<T, K>
 		}
 	}
 	
-	private T hashAnnotedFields(T t)
+	private T hashAnnotedFields(T _t)
 	{
-		for (Field field : t.getClass().getDeclaredFields())
+		for (Class<?> t : getClassAndSuperClasses(_t.getClass()))
 		{
-			HashedValue hv = field.getDeclaredAnnotation(HashedValue.class);
-			if (hv != null)
+			for (Field field : t.getDeclaredFields())
 			{
-				field.setAccessible(true);
-				try
+				HashedValue hv = field.getDeclaredAnnotation(HashedValue.class);
+				if (hv != null)
 				{
-					field.set(t, encodeValue(t, field, hv.strength()));
-				}
-				catch (IllegalArgumentException | IllegalAccessException e)
-				{
-					e.printStackTrace();
+					field.setAccessible(true);
+					try
+					{
+						field.set(_t, encodeValue(_t, field, hv.strength()));
+					}
+					catch (IllegalArgumentException | IllegalAccessException e)
+					{
+						e.printStackTrace();
+					}
 				}
 			}
 		}
-		return t;
+		return _t;
 	}
 	
 }
