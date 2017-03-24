@@ -26,7 +26,7 @@ public class LoginController
 //	private AccountRestController AccountRestController;
 	
 	@RequestMapping(value = "/login", method = RequestMethod.GET)
-	public String showLoginView(Model model)
+	public String showLoginView(Model model) 
 	{
 		/*
 		ObjectMapper mapper = new ObjectMapper();
