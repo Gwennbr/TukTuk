@@ -4,12 +4,14 @@
 
 <html>
 <head>
-	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 	<script src="${ pageContext.request.contextPath }/resources/js/angular.min.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css">
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
+	<script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
 	<script src="${ pageContext.request.contextPath }/resources/js/gmap.js"></script>
 	<link rel="stylesheet" type="text/css" href="${ pageContext.request.contextPath }/resources/css/global.css"/>
 	<link rel="stylesheet" type="text/css" href="${ pageContext.request.contextPath }/resources/css/interface.css"/>
@@ -35,37 +37,55 @@
 	
 	</section>
 	
-	
-	
 	<section id="control">
 		<div id="btn-control" >
 			<button type="button" class="btn btn-primary btn-circle btn-xl" data-toggle="modal" data-target=".modal-commande"><i class="glyphicon glyphicon-menu-up"></i></button>
 		</div>
-		
 		<!-- Modal -->
 		<div index="modal-control" class="modal fade modal-commande" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
 			<div class="modal-dialog modal-lg" role="document">
 			
-				<div class="modal-content">
-					<div class="modal-header">
-						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-						<h4 class="modal-title">Commander un tuk-tuk :</h4>
+			<c:choose>
+  				<c:when test="${not empty conducteur}">
+   					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+							<h4 class="modal-title">Option conducteur : ${ conducteur.prenom } ${ conducteur.nom }</h4>
+						</div>
+						<div class="modal-body">
+							<div class="alert alert-info" role="alert">
+								<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+  								<span class="sr-only">Info:</span>Vous êtes actuellement <strong>Disponible</strong>
+  							</div>
+							<button id="btn-pause" href="#"  type="button" class="btn btn-primary chauffeur">Activer mode pause</button>
+							<button id="btn-endCourse" href="#"  type="button" class="btn btn-success">Course terminer</button>
+							<button id="btn-cancelCourse" href="#"  type="button" class="btn btn-danger">Course annulee</button>
+						</div>
+					</div>	
+  				</c:when>
+				<c:otherwise>
+  					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+							<h4 class="modal-title">Commander un tuk-tuk :</h4>
+						</div>
+						<div class="modal-body">
+							<label>Entrer l'adresse de départ</label>
+							<input id="vmadresse" places-auto-complete ng-model="vm.address" component-restrictions="{country:'fr'}" types="{{types}}" on-place-changed="vm.placeChanged()" />
+							<br/>
+							<div ng-show="vm.place">
+								Address = {{vm.place.formatted_address}} <br/>
+								Location: {{vm.place.geometry.location}}<br/>
+							</div>
+							<button id="btn-search" type="button" class="btn btn-primary"  data-toggle="modal" data-target=".modal-chauffeur" data-dismiss="modal">Rechercher un tuk-tuk</button>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+						</div>
 					</div>
-				<div class="modal-body">
-				<label>Entrer l'adresse de départ</label>
-					<input id="vmadresse" places-auto-complete ng-model="vm.address" component-restrictions="{country:'fr'}" types="{{types}}" on-place-changed="vm.placeChanged()" />
-					<br/>
-					<div ng-show="vm.place">
-						Address = {{vm.place.formatted_address}} <br/>
-						Location: {{vm.place.geometry.location}}<br/>
-					</div>
-					<button id="btn-search" type="button" class="btn btn-primary"  data-toggle="modal" data-target=".modal-chauffeur" data-dismiss="modal">Rechercher un tuk-tuk</button>
-				</div>
-				<!-- <div class="modal-footer"> -->
-					<!-- <button type="button" class="btn btn-default" data-dismiss="modal">Close</button> -->
-				<!-- </div> -->
-				</div>
-				
+  				</c:otherwise>
+			</c:choose>
+			
 			</div>
 		</div>
 		
@@ -112,16 +132,22 @@
 				<div class="modal-content navsider">
 					<div class="sidenav-img">
 						<img class="img-profil img-circle" height="140px" width="140px" src="${ pageContext.request.contextPath }/resources/img/chauffeur.jpg"/><br><br>
-						<label>Jean Dupont</label>
+						<label>${ conducteur.prenom } ${ conducteur.nom }</label>
 						<hr />
 						
 						<div class="middle-sidenav">
+							<label>Option :</label>
 							<button id="btn-payoption" href="#"  type="button" class="btn btn-success">Option de payement</button>
 							<button id="btn-history" type="button" class="btn btn-warning"  data-toggle="modal" data-target=".modal-history" data-dismiss="modal">Historique</button>
+							<c:if test="${ not empty conducteur }">
+							<hr />
+							<label>Disponible :</label>
+							<input type="checkbox" checked   data-on="Disponible" data-off="Non disponible" data-onstyle="success" data-offstyle="danger" data-width="100%">
+							</c:if>
 						</div>
 						
 						<div class="bottom-sidenav">
-							<button id="btn-disconnect" href="#"  type="button" class="btn btn-danger">Deconnexion</button>
+							<button id="btn-disconnect" href="logout"  type="button" class="btn btn-danger">Deconnexion</button>
 						</div>
 					</div>				
 				</div>
@@ -134,139 +160,121 @@
 			
 				<div class="modal-content hisroty-content">
 					<div class="modal-header">
-						<h4 class="modal-title">Historique des commande :</h4>
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						<h4 class="modal-title">Historique des course : ${ conducteur.prenom } ${ conducteur.nom }</h4>
 					</div>
 					<div class="modal-body">
 						<table class="table table-bordered">
 							<tr class="warning">
-								<th>Adresse de départ</th>
-								<th>Adresse d'arrivée</th>
-								<th>Temps de trajet</th>
+								<th>Adresse</th>
+								<th>Temps</th>
 								<th>Distance</th>
 								<th>Prix</th>
 							</tr>
 							<tr class="danger">
 								<td>1 rue de Troy - 59100 - Lille</td>
-								<td>99 rue des olivier - 59100 - Lille</td>
 							    <td>00:12:24</td>
 							    <td>3,7 km</td>
 							    <td>5,54 €</td>
 							</tr>
 							<tr class="success">
 								<td>1 rue de Troy - 59100 - Lille</td>
-								<td>99 rue des olivier - 59100 - Lille</td>
 							    <td>00:12:24</td>
 							    <td>3,7 km</td>
 							    <td>5,54 €</td>
 							</tr>
 							<tr class="danger">
 								<td>1 rue de Troy - 59100 - Lille</td>
-								<td>99 rue des olivier - 59100 - Lille</td>
 							    <td>00:12:24</td>
 							    <td>3,7 km</td>
 							    <td>5,54 €</td>
 							</tr>
 							<tr class="success">
 								<td>1 rue de Troy - 59100 - Lille</td>
-								<td>99 rue des olivier - 59100 - Lille</td>
 							    <td>00:12:24</td>
 							    <td>3,7 km</td>
 							    <td>5,54 €</td>
 							</tr>
 							<tr class="success">
 								<td>1 rue de Troy - 59100 - Lille</td>
-								<td>99 rue des olivier - 59100 - Lille</td>
 							    <td>00:12:24</td>
 							    <td>3,7 km</td>
 							    <td>5,54 €</td>
 							</tr>
 							<tr class="success">
 								<td>1 rue de Troy - 59100 - Lille</td>
-								<td>99 rue des olivier - 59100 - Lille</td>
 							    <td>00:12:24</td>
 							    <td>3,7 km</td>
 							    <td>5,54 €</td>
 							</tr>
 							<tr class="danger">
 								<td>1 rue de Troy - 59100 - Lille</td>
-								<td>99 rue des olivier - 59100 - Lille</td>
 							    <td>00:12:24</td>
 							    <td>3,7 km</td>
 							    <td>5,54 €</td>
 							</tr>
 							<tr class="danger">
 								<td>1 rue de Troy - 59100 - Lille</td>
-								<td>99 rue des olivier - 59100 - Lille</td>
 							    <td>00:12:24</td>
 							    <td>3,7 km</td>
 							    <td>5,54 €</td>
 							</tr>
 							<tr class="danger">
 								<td>1 rue de Troy - 59100 - Lille</td>
-								<td>99 rue des olivier - 59100 - Lille</td>
 							    <td>00:12:24</td>
 							    <td>3,7 km</td>
 							    <td>5,54 €</td>
 							</tr>
 							<tr class="danger">
 								<td>1 rue de Troy - 59100 - Lille</td>
-								<td>99 rue des olivier - 59100 - Lille</td>
 							    <td>00:12:24</td>
 							    <td>3,7 km</td>
 							    <td>5,54 €</td>
 							</tr>
 							<tr class="danger">
 								<td>1 rue de Troy - 59100 - Lille</td>
-								<td>99 rue des olivier - 59100 - Lille</td>
 							    <td>00:12:24</td>
 							    <td>3,7 km</td>
 							    <td>5,54 €</td>
 							</tr>
 							<tr class="danger">
 								<td>1 rue de Troy - 59100 - Lille</td>
-								<td>99 rue des olivier - 59100 - Lille</td>
 							    <td>00:12:24</td>
 							    <td>3,7 km</td>
 							    <td>5,54 €</td>
 							</tr>
 							<tr class="danger">
 								<td>1 rue de Troy - 59100 - Lille</td>
-								<td>99 rue des olivier - 59100 - Lille</td>
 							    <td>00:12:24</td>
 							    <td>3,7 km</td>
 							    <td>5,54 €</td>
 							</tr>
 							<tr class="danger">
 								<td>1 rue de Troy - 59100 - Lille</td>
-								<td>99 rue des olivier - 59100 - Lille</td>
 							    <td>00:12:24</td>
 							    <td>3,7 km</td>
 							    <td>5,54 €</td>
 							</tr>
 							<tr class="danger">
 								<td>1 rue de Troy - 59100 - Lille</td>
-								<td>99 rue des olivier - 59100 - Lille</td>
 							    <td>00:12:24</td>
 							    <td>3,7 km</td>
 							    <td>5,54 €</td>
 							</tr>
 							<tr class="danger">
 								<td>1 rue de Troy - 59100 - Lille</td>
-								<td>99 rue des olivier - 59100 - Lille</td>
 							    <td>00:12:24</td>
 							    <td>3,7 km</td>
 							    <td>5,54 €</td>
 							</tr>
 							<tr class="danger">
 								<td>1 rue de Troy - 59100 - Lille</td>
-								<td>99 rue des olivier - 59100 - Lille</td>
 							    <td>00:12:24</td>
 							    <td>3,7 km</td>
 							    <td>5,54 €</td>
 							</tr>
 							<tr class="danger">
 								<td>1 rue de Troy - 59100 - Lille</td>
-								<td>99 rue des olivier - 59100 - Lille</td>
 							    <td>00:12:24</td>
 							    <td>3,7 km</td>
 							    <td>5,54 €</td>

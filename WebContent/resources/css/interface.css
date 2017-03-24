@@ -13,6 +13,7 @@ header {
 
 nav {
 	background-color: #0d3e63;
+	text-align: center;
 }
 
 nav .right {
@@ -43,6 +44,26 @@ nav .left {
 	width: 100%;
 }
 
+#btn-pause {
+	margin-top: 10px;
+	width: 100%;
+}
+
+#btn-endCourse {
+	margin-top: 10px;
+	width: 100%;
+}
+
+#btn-cancelCourse {
+	margin-top: 10px;
+	width: 100%;
+}
+
+.btn-chauffeur {
+	margin-top: 10px;
+	width: 100%;
+}
+
 #btn-commander {
 	margin-top: 10px;
 	width: 100%;
@@ -57,10 +78,6 @@ nav .left {
     position: absolute;
     height: 90%;
     width: 100%;
-}
-
-#titleNav {
-	width: auto;
 }
 
 .modal-middle {
@@ -119,6 +136,14 @@ nav .left {
 .modal-body{
     max-height: 500px;
     overflow-y: auto;
+}
+
+#toogleChauffeur {
+	text-align: center;
+	color: white;
+	width: auto;
+	padding: 20px;
+	background-color: rgba(0, 0, 0, 0.3);
 }
 
 .modal{
@@ -186,6 +211,10 @@ nav .left {
 	width: 100%;
 }
 
+input[data-toggle=toggle] {
+	padding: 20px;
+}
+
 .middle-sidenav {
 	padding-bottom: 10px;
 	position: absolute;
@@ -205,6 +234,15 @@ nav .btn-link:hover {
         height: 100%;
 }
 
-#control {
-	/* height: 15%; */
+#titleNav {
+	width: auto;
+	/* font-size: 16px; */
+}
+
+.colorWhite {
+	color: white;
+}
+
+input[type=checkbox]{
+	width: 100%;
 }
