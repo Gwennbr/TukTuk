@@ -35,6 +35,7 @@ public class TukTukRestServices
 			return null;			
 		}
 		
+		
 		if (personneEntity.getStatusCode() == HttpStatus.OK)
 			return personneEntity.getBody();
 		else
