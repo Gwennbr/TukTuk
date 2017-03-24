@@ -33,24 +33,6 @@ public class LoginController
 	@RequestMapping(value = "/login", method = RequestMethod.GET)
 	public String showLoginView(Model model) 
 	{
-		/*
-		ObjectMapper mapper = new ObjectMapper();
-		
-		Client c = null;
-		try
-		{
-			c = mapper.readValue(new URL("http://localhost:8080/TukTuk/api/toto"), Client.class);
-		}
-		catch (IOException e)
-		{ 
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} 
-		
-		System.out.println(c.getNumeroCarteBancaire() + " " + c.getPictogramme());
-		
-		model.addAttribute("personne", c);
-		*/
 		return "login"; 
 	}
 	
