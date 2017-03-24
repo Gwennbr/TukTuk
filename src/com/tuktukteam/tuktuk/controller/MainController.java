@@ -14,7 +14,7 @@ import com.tuktukteam.tuktuk.model.Conducteur;
 import com.tuktukteam.tuktuk.restapi.TukTukRestServices;
 
 @Controller
-public class LoginController
+public class MainController
 {
 //	@Autowired
 //	private RequestMappingHandlerMapping handlerMapping;
@@ -25,7 +25,7 @@ public class LoginController
 //	@Autowired
 //	private AutoWebFilter filter;
 	
-	public LoginController()
+	public MainController()
 	{
 		//filter.addController(LoginController.class);
 	}
