@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.tuktukteam.autosecurity.AutoFilterForSpringControllers;
 import com.tuktukteam.genericdao.DAOException;
 import com.tuktukteam.tuktuk.dao.ConducteurDAO;
 import com.tuktukteam.tuktuk.dao.CourseDAO;
@@ -28,11 +29,14 @@ public class ConducteurRestController {
 	@Autowired private ConducteurDAO conducteurDAO;
 	@Autowired private CourseDAO courseDAO;
 
+	public ConducteurRestController() { AutoFilterForSpringControllers.addController(getClass(), "/api"); }
+	
 	@RequestMapping(value = "/login", method = RequestMethod.GET)
 	@ResponseBody
 	public ResponseEntity<Conducteur> login(@RequestParam String username, @RequestParam String password)
 	{
-
+		System.out.println("REST /conducteur/login : " + this);
+		
 		Conducteur conducteur = new Conducteur();
 
 		conducteur.setUsername(username);

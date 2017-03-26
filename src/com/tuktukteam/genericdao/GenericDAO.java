@@ -2,15 +2,19 @@ package com.tuktukteam.genericdao;
 
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Transient;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.tuktukteam.genericdao.annotations.ColumnTag;
 import com.tuktukteam.genericdao.annotations.FindByValues;
 import com.tuktukteam.genericdao.annotations.HashedValue;
 
@@ -26,7 +30,7 @@ public abstract class GenericDAO<T, K>
 	
 	private static String getColumnName(Field field) { return field.getName(); }
 	protected String getTableName() { return type.getSimpleName(); }
-
+	
 	public T findByValues(T _t) throws DAOException
 	{
 		StringBuilder myQueryString = null;
@@ -86,9 +90,7 @@ public abstract class GenericDAO<T, K>
 	}
 	public List<T> getAll()
 	{
-		String myQueryString = String.format("FROM %s", getTableName());
-		
-		return entityManager.createQuery(myQueryString, type).getResultList();
+		return entityManager.createQuery(String.format("FROM %s", getTableName()), type).getResultList();
 	}
 	
 	public T save(T t)
@@ -118,7 +120,6 @@ public abstract class GenericDAO<T, K>
 			return;
 		for (T t : listOfT)
 			delete(t);
-		return;
 	}
 	
 	public void delete(T t)
@@ -129,9 +130,97 @@ public abstract class GenericDAO<T, K>
 	
 	public T find(K id)
 	{
-		return entityManager.find(type, id);
+		try
+		{
+			return entityManager.find(type, id);
+		}
+		catch (Exception e)
+		{
+			return null;
+		}
 	}
 
+	public T getAndFillOnlyFieldsWithTags(K id, List<String> includeTags, List<String> excludeTags)
+	{
+		T persistenceInstance = find(id);
+		if (persistenceInstance == null)
+			return null;
+		
+		List<Field> fieldsToReturn = new ArrayList<>();
+		
+		for (Class<?> typ : getClassAndSuperClasses(type))
+			for (Field field : typ.getDeclaredFields())
+				if (!field.isAnnotationPresent(Transient.class) && !Modifier.isStatic(field.getModifiers()))
+				{
+					ColumnTag tags = field.getDeclaredAnnotation(ColumnTag.class);
+					if (excludeTags != null && tags != null)
+					{
+						boolean bContinueToNextField = false;
+						for (String tag : tags.value())
+							if (excludeTags != null && excludeTags.contains(tag))
+							{
+								bContinueToNextField = true;
+								break;
+							}	
+						if (bContinueToNextField)
+							continue;
+					}
+					
+					if (includeTags == null || includeTags.size() == 0)
+						fieldsToReturn.add(field);
+					else
+						if (tags != null)
+							for (String tag : tags.value())
+								if (includeTags.contains(tag))
+								{
+									fieldsToReturn.add(field);
+									break;
+								}
+				}
+	
+		T returnInstance;
+		try
+		{
+			returnInstance = type.newInstance();
+		}
+		catch (InstantiationException | IllegalAccessException e)
+		{
+			return null;
+		}
+		
+		for (Field field : fieldsToReturn)
+		{
+			field.setAccessible(true);
+			try
+			{
+				field.set(returnInstance, field.get(persistenceInstance));
+			}
+			catch (IllegalArgumentException | IllegalAccessException e)
+			{
+				return null;
+			}
+		}
+		return returnInstance;
+		
+	}
+
+	public T getAndFillOnlyFieldsWithTags(K id, String includeTags[], String excludeTags[])
+	{
+		return getAndFillOnlyFieldsWithTags(id, 
+				includeTags == null ? null : Arrays.asList(includeTags), 
+				excludeTags == null ? null : Arrays.asList(excludeTags));
+	}
+	
+	public T getAndFillOnlyFieldsTaggedBy(K id, String...includeTags)
+	{
+		return getAndFillOnlyFieldsWithTags(id, Arrays.asList(includeTags), null);
+	}
+	
+	public T getAndFillOnlyFieldsNotTaggedBy(K id, String...excludeTags)
+	{
+		return getAndFillOnlyFieldsWithTags(id, null, Arrays.asList(excludeTags));
+	}
+	
 	public List<Class<?>> getClassAndSuperClasses(Class<?> type)
 	{
 		List<Class<?>> classes = new ArrayList<>();

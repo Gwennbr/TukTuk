@@ -12,19 +12,21 @@
 	<!-- On autorise la configuration par annotation (évitera de déclarer nos beans via ce fichier) -->
 	<context:annotation-config />
 
+	<!--  -->
 	<!-- On active les annotations pour ces packages -->
-	<context:component-scan base-package="com.tuktukteam.tuktuk.dao" />
+	<context:component-scan base-package="com.tuktukteam.tuktuk.dao,com.tuktukteam.autosecurity,com.tuktukteam.tuktuk.restcontroller" />
 
 	<!-- On crée le DataSource -->
 	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
 		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
-		<property name="url" value="jdbc:mysql://172.16.162.105:3306/tuktuk" />
+		<property name="url" value="jdbc:mysql://vps.prog-fr.org:31506/tuktuk" />
 		<property name="username" value="tuktuk" />
 		<property name="password" value="velotaxi" />
 		<property name="maxActive" value="10" />
 	</bean>
 
-
+	<bean class="com.tuktukteam.autosecurity.AccessTokenSecurity">
+	</bean>
 	
 	<!-- On crée un entityManagerFactory local à partir de la dataSource -->
 	<bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">

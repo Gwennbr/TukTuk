@@ -5,15 +5,21 @@ import java.util.List;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.tuktukteam.autosecurity.AccessTokenSecurity;
+import com.tuktukteam.autosecurity.AutoFilterForSpringControllers;
+import com.tuktukteam.autosecurity.RestrictedAccess;
+import com.tuktukteam.autosecurity.RestrictedAccess.AccessType;
 import com.tuktukteam.genericdao.DAOException;
 import com.tuktukteam.tuktuk.dao.ClientDAO;
 import com.tuktukteam.tuktuk.model.Client;
@@ -22,12 +28,15 @@ import com.tuktukteam.tuktuk.model.Course;
 
 @RestController
 @RequestMapping("/client")
-public class ClientRestController {
-
+public class ClientRestController
+{
 	@Autowired private ClientDAO clientDAO;
+	
+	public ClientRestController() { AutoFilterForSpringControllers.addController(this.getClass(), "/api"); }
 	
 	@RequestMapping(value = "/login", method = RequestMethod.GET)
 	@ResponseBody
+	@RestrictedAccess(value=AccessType.PUBLIC)
 	public ResponseEntity<Client> login(@RequestParam String username, @RequestParam String password)
 	{
 		Client client = new Client();
@@ -45,14 +54,16 @@ public class ClientRestController {
 		}
 		
 		if (client == null)
-			return new ResponseEntity<Client>(HttpStatus.NOT_FOUND);
+			return new ResponseEntity<Client>(HttpStatus.NOT_ACCEPTABLE);
 
-		return new ResponseEntity<Client>(client, HttpStatus.OK);
+		HttpHeaders headers = new HttpHeaders();
+		AccessTokenSecurity.addNewAccessInHeaders(headers, client);
+		return new ResponseEntity<Client>(client, headers, HttpStatus.OK);
 	}
 
-	@RequestMapping(value = "/profil", method = RequestMethod.GET)
 	@ResponseBody
-	public ResponseEntity<Client> getProfile(HttpSession session) {
+	@RequestMapping(value = "/profil_old", method = RequestMethod.GET)
+	public ResponseEntity<Client> getProfile_old(HttpSession session) {
 
 		Client c = (Client) session.getAttribute("client");
 
@@ -61,6 +72,14 @@ public class ClientRestController {
 			return new ResponseEntity<Client>(this.clientDAO.find(idC), HttpStatus.OK);
 		}
 		return new ResponseEntity<Client>(HttpStatus.FORBIDDEN);
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/profil", method = RequestMethod.GET)
+	@RestrictedAccess(value=AccessType.TOKEN, authorized=Client.class)
+	public ResponseEntity<Client> getProfile(@RequestHeader(AccessTokenSecurity.TOKEN_HEADER_NAME) String token)
+	{
+		return new ResponseEntity<Client>(AccessTokenSecurity.getUser(Client.class, token), HttpStatus.OK);
 	}
 
 	@RequestMapping(value="/historique", method = RequestMethod.GET)
@@ -135,4 +154,5 @@ public class ClientRestController {
 			return new ResponseEntity<Client>(HttpStatus.FORBIDDEN);
 		}
 	}
+
 }

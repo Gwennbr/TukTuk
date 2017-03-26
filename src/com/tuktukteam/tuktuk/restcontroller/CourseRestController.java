@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.tuktukteam.autosecurity.AutoFilterForSpringControllers;
 import com.tuktukteam.tuktuk.dao.ClientDAO;
 import com.tuktukteam.tuktuk.dao.ConducteurDAO;
 import com.tuktukteam.tuktuk.dao.CourseDAO;
@@ -33,6 +34,8 @@ public class CourseRestController {
 	@Autowired
 	private ConducteurDAO conducteurDAO;
 
+	public CourseRestController() { AutoFilterForSpringControllers.addController(getClass(), "/api"); }
+	
 	@RequestMapping(value = "/course/prise_en_charge", method = RequestMethod.POST)
 	@ResponseBody
 	public ResponseEntity<Course> createRun(HttpSession session, @RequestParam String adresseDepart) {

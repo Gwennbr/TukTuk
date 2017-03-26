@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.tuktukteam.autosecurity.AutoFilterForSpringControllers;
 import com.tuktukteam.tuktuk.dao.ClientDAO;
 import com.tuktukteam.tuktuk.dao.ConducteurDAO;
 import com.tuktukteam.tuktuk.model.Client;
@@ -22,7 +23,7 @@ public class AccountRestController
 	@Autowired private ConducteurDAO conducteurDAO;
 	@Autowired private ClientDAO clientDAO;
 
-	
+	public AccountRestController() { AutoFilterForSpringControllers.addController(getClass(), "/api"); }
 	
 	@RequestMapping(value = "/registerDriver", method = RequestMethod.PUT)
 	@ResponseBody

@@ -12,6 +12,7 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Table;
 
+import com.tuktukteam.genericdao.annotations.ColumnTag;
 import com.tuktukteam.genericdao.annotations.FindByValues;
 import com.tuktukteam.genericdao.annotations.HashedValue;
 
@@ -33,10 +34,12 @@ public class Personne implements Serializable {
 	private String prenom;
 	
 	@Column(name="PER_MAIL")
+	@ColumnTag(ColumnTag.FRONT_RESTRICTED)
 	private String mail;
 	
 	@FindByValues @HashedValue
 	@Column(name="PER_PASSWORD")
+	@ColumnTag(ColumnTag.FRONT_RESTRICTED)
 	private String password;
 	
 	/*
@@ -46,6 +49,7 @@ public class Personne implements Serializable {
 	*/
 	
 	@FindByValues @Column(name="PER_USERNAME")
+	@ColumnTag(ColumnTag.FRONT_RESTRICTED)
 	private String username;
 	
 	@Column(name="PER_DATE_INSCRIPTION")
