@@ -42,8 +42,6 @@ public class Conducteur extends Personne {
 	
 	@Column(name="COND_DEBUT_PAUSE")
 	private Date dateDébutPause;
-	
-
 
 	@OneToMany(mappedBy="conducteur")
 	@ColumnTag(ColumnTag.FRONT_RESTRICTED)
