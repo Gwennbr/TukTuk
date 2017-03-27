@@ -2,7 +2,6 @@ package com.tuktukteam.tuktuk.restcontroller;
 
 import java.util.List;
 
-import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -10,14 +9,19 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.tuktukteam.autosecurity.AccessTokenSecurity;
 import com.tuktukteam.autosecurity.AutoFilterForSpringControllers;
+import com.tuktukteam.autosecurity.RestrictedAccess;
+import com.tuktukteam.autosecurity.RestrictedAccess.AccessType;
 import com.tuktukteam.genericdao.DAOException;
+import com.tuktukteam.genericdao.annotations.ColumnTag;
 import com.tuktukteam.tuktuk.dao.ConducteurDAO;
 import com.tuktukteam.tuktuk.dao.CourseDAO;
 import com.tuktukteam.tuktuk.dao.PersonneDAO;
@@ -38,6 +42,7 @@ public class ConducteurRestController {
 	
 	@RequestMapping(value = "/login", method = RequestMethod.GET)
 	@ResponseBody
+	@RestrictedAccess(value = AccessType.PUBLIC)
 	public ResponseEntity<Conducteur> login(@RequestParam String username, @RequestParam String password)
 	{
 		System.out.println("REST /conducteur/login : " + this);
@@ -64,151 +69,127 @@ public class ConducteurRestController {
 
 	@RequestMapping(value = "", method = RequestMethod.GET)
 	@ResponseBody
-	public ResponseEntity<Conducteur> getProfile(HttpSession session) {
-
-		Conducteur c = (Conducteur) session.getAttribute("conducteur");
-
-		if (c != null) {
-			int idC = c.getId();
-			return new ResponseEntity<Conducteur>(this.conducteurDAO.find(idC), HttpStatus.OK);
-		}
-		return new ResponseEntity<Conducteur>(HttpStatus.FORBIDDEN);
+	@RestrictedAccess(value = AccessType.TOKEN, authorized = Conducteur.class)
+	public ResponseEntity<Conducteur> getProfile(@RequestHeader(AccessTokenSecurity.TOKEN_HEADER_NAME) String token) {		
+		return new ResponseEntity<Conducteur>(AccessTokenSecurity.getUser(Conducteur.class, token), HttpStatus.OK);
 	}
 	
 	@RequestMapping(value="", method = RequestMethod.PUT)
 	@ResponseBody
-	public ResponseEntity<Conducteur> updateProfile(HttpSession session, @RequestBody Personne p, BindingResult result) {
-		Conducteur cond = (Conducteur) session.getAttribute("conducteur");
-		
-		if(cond!= null){
-			if(!result.hasErrors()){
-				p.setId(cond.getId());
-				personneDAO.save(p);
-				cond = conducteurDAO.find(cond.getId());
-				return new ResponseEntity<Conducteur>(cond, HttpStatus.OK);
-			}
-			return new ResponseEntity<Conducteur>(HttpStatus.NOT_MODIFIED);
-		}		
-		return new ResponseEntity<Conducteur>(HttpStatus.FORBIDDEN);
+	public ResponseEntity<Conducteur> updateProfile(@RequestHeader(AccessTokenSecurity.TOKEN_HEADER_NAME) String token, @RequestBody Personne p, BindingResult result) {
+		Conducteur cond = AccessTokenSecurity.getUser(Conducteur.class, token) ;		
+		if(!result.hasErrors()){
+			p.setId(cond.getId());
+			personneDAO.save(p);
+			cond = conducteurDAO.find(cond.getId());
+			return new ResponseEntity<Conducteur>(cond, HttpStatus.OK);
+		}
+		return new ResponseEntity<Conducteur>(HttpStatus.NOT_MODIFIED);
 	}
 	
 	@RequestMapping(value="/historique", method = RequestMethod.GET)
 	@ResponseBody
-	public ResponseEntity<Conducteur> getRunsHistory(HttpSession session) {
-		Conducteur cond = (Conducteur) session.getAttribute("conducteur");
-		if (cond != null) {
-			cond = conducteurDAO.find(cond.getId());
-			return new ResponseEntity<Conducteur>(cond, HttpStatus.OK);
-		}
-
-		return new ResponseEntity<Conducteur>(HttpStatus.FORBIDDEN);
+	@RestrictedAccess(value = AccessType.TOKEN, authorized = Conducteur.class)
+	public ResponseEntity<List<Course>> getRunsHistory(@RequestHeader(AccessTokenSecurity.TOKEN_HEADER_NAME) String token) {
+		return new ResponseEntity<List<Course>>(AccessTokenSecurity.getUser(Conducteur.class, token).getCourses(), HttpStatus.OK);
 	}
 
 	@RequestMapping(value = "/{id}/historique", method = RequestMethod.GET)
 	@ResponseBody
-	public ResponseEntity<List<Course>> getDriverHistory(@PathVariable int id, HttpSession session) {
-		// TODO TOUT DOUX : si erreur, gérer list course null
-		Conducteur conducteur = (Conducteur) session.getAttribute("conducteur");
-		Client client = (Client) session.getAttribute("client");
-
-		if (client != null || (conducteur != null && conducteur.getId() == id)) {
-			return new ResponseEntity<List<Course>>(this.conducteurDAO.find(id).getCourses(), HttpStatus.OK);
-		} else {
-			return new ResponseEntity<List<Course>>(HttpStatus.FORBIDDEN);
-		}
+	@RestrictedAccess(value = AccessType.TOKEN, authorized = Client.class)
+	public ResponseEntity<List<Course>> getDriverHistory(@PathVariable int id, @RequestHeader(AccessTokenSecurity.TOKEN_HEADER_NAME) String token) {
+		return new ResponseEntity<List<Course>>(this.conducteurDAO.find(id).getCourses(), HttpStatus.OK);
 	}
 
 	@RequestMapping(value = "/{id}/infos", method = RequestMethod.GET)
 	@ResponseBody
-	public ResponseEntity<Conducteur> getInfos(@PathVariable int id, HttpSession session) {
-
-		Client client = (Client) session.getAttribute("client");
-
-		if (client != null) {			
-			Conducteur c = conducteurDAO.find(id);
-			c.setBic(null);
-			c.setIban(null);
-			c.setMail(null);
-			c.setPassword(null);
-			return new ResponseEntity<Conducteur>(c, HttpStatus.OK);
-		}		
-		return new ResponseEntity<Conducteur>(HttpStatus.FORBIDDEN);
+	@RestrictedAccess(value=AccessType.TOKEN, authorized = Client.class)
+	public ResponseEntity<Conducteur> getInfos(@PathVariable int id, @RequestHeader(AccessTokenSecurity.TOKEN_HEADER_NAME) String token) {		
+		return new ResponseEntity<Conducteur>(conducteurDAO.getAndFillOnlyFieldsNotTaggedBy(id, ColumnTag.FRONT_RESTRICTED), HttpStatus.OK);
 	}
 	
 	@RequestMapping(value="/pause", method = RequestMethod.PUT)
 	@ResponseBody
-	public ResponseEntity<Boolean> isNotAvailable(HttpSession session){
+	@RestrictedAccess(value=AccessType.TOKEN, authorized = Conducteur.class)
+	public ResponseEntity<Boolean> isNotAvailable(@RequestHeader(AccessTokenSecurity.TOKEN_HEADER_NAME) String token){
 		
-		Conducteur cond = (Conducteur) session.getAttribute("conducteur");
-		
-		if(cond != null)
-		{
-			cond.setAvailable(false);
-			cond = conducteurDAO.save(cond);
-			return new ResponseEntity<Boolean>(true, HttpStatus.OK);
-		}		
-		return new ResponseEntity<Boolean>(HttpStatus.FORBIDDEN);
+		Conducteur cond = AccessTokenSecurity.getUser(Conducteur.class, token);
+		cond.setAvailable(false);
+		cond = conducteurDAO.save(cond);
+		return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+
 	}
 	
 	@RequestMapping(value="/disponible", method = RequestMethod.PUT)
 	@ResponseBody
-	public ResponseEntity<Boolean> isAvailable(HttpSession session){
+	@RestrictedAccess(value=AccessType.TOKEN, authorized = Conducteur.class)
+	public ResponseEntity<Boolean> isAvailable(@RequestHeader(AccessTokenSecurity.TOKEN_HEADER_NAME) String token){
 		
-		Conducteur cond = (Conducteur) session.getAttribute("conducteur");
-		
-		if(cond != null)
-		{
-			cond.setAvailable(true);
-			cond = conducteurDAO.save(cond);
-			return new ResponseEntity<Boolean>(true, HttpStatus.OK);
-		}		
-		return new ResponseEntity<Boolean>(HttpStatus.FORBIDDEN);
+		Conducteur cond = AccessTokenSecurity.getUser(Conducteur.class, token);
+		cond.setAvailable(true);
+		cond = conducteurDAO.save(cond);
+		return new ResponseEntity<Boolean>(true, HttpStatus.OK);
 	}
 	
 	@RequestMapping(value = "/maj", method = RequestMethod.PUT)
 	@ResponseBody
-	public ResponseEntity<List<Course>> runsWithoutDriver(HttpSession session, @RequestParam double longitude, @RequestParam double latitude) {	
-		Conducteur c = (Conducteur) session.getAttribute("conducteur");
-		if (c != null) {
-			c.setLongitude(longitude);
-			c.setLatitude(latitude);
-			c = conducteurDAO.save(c);
-			List<Course> courses = courseDAO.getAll();
-			for (Course course : courses) {
-				if (course.getConducteur() != null) {
-					courses.remove(course);
-				}
+	@RestrictedAccess(value=AccessType.TOKEN, authorized = Conducteur.class)
+	public ResponseEntity<List<Course>> runsWithoutDriver(@RequestHeader(AccessTokenSecurity.TOKEN_HEADER_NAME) String token, @RequestParam double longitude, @RequestParam double latitude) {	
+		Conducteur c = AccessTokenSecurity.getUser(Conducteur.class, token);
+		c.setLongitude(longitude);
+		c.setLatitude(latitude);
+		c = conducteurDAO.save(c);
+		List<Course> courses = courseDAO.getAll();
+		for (Course course : courses) {
+			if (course.getConducteur() != null) {
+				courses.remove(course);
 			}
-			return new ResponseEntity<List<Course>>(courses, HttpStatus.OK);
 		}
-		return new ResponseEntity<List<Course>>(HttpStatus.FORBIDDEN);
+		return new ResponseEntity<List<Course>>(courses, HttpStatus.OK);
+	}
+	
+	@RequestMapping(value="/note", method = RequestMethod.GET)
+	@ResponseBody
+	@RestrictedAccess(value=AccessType.TOKEN, authorized = Conducteur.class)
+	public ResponseEntity<Float> calculAvgNote(@RequestHeader(AccessTokenSecurity.TOKEN_HEADER_NAME) String token)
+	{
+		Conducteur cond = AccessTokenSecurity.getUser(Conducteur.class, token);
+		float moy=0;
+		float somme=0;
+		int i=0;
+		List<Course> courses = cond.getCourses();
+		for(Course course : courses)
+		{
+			if(course.getNoteConducteur()!=-1)
+			{
+				somme = somme + course.getNoteConducteur(); 
+				i++;
+			}				
+		}
+		moy = somme/i;
+		return new ResponseEntity<Float>(moy, HttpStatus.OK);
 	}
 	
 	@RequestMapping(value="/{id}/note", method = RequestMethod.GET)
 	@ResponseBody
-	public ResponseEntity<Float> calculAvgNote(@PathVariable int id, HttpSession session)
+	@RestrictedAccess(value=AccessType.TOKEN, authorized = Client.class)
+	public ResponseEntity<Float> calculAvgNoteDriver(@PathVariable int id, @RequestHeader(AccessTokenSecurity.TOKEN_HEADER_NAME) String token)
 	{
-		Conducteur cond2 = (Conducteur) session.getAttribute("conducteur");
-		Conducteur cond1 = conducteurDAO.find(id);
-		Client cli = (Client) session.getAttribute("client");
-		
-		if(cli!= null || (cond2 != null && cond2.getId()==cond1.getId())){
-			float moy=0;
-			float somme=0;
-			int i=0;
-			List<Course> courses = cond1.getCourses();
-			for(Course course : courses)
+		Conducteur cond = conducteurDAO.find(id);
+		float moy=0;
+		float somme=0;
+		int i=0;
+		List<Course> courses = cond.getCourses();
+		for(Course course : courses)
+		{
+			if(course.getNoteConducteur()!=-1)
 			{
-				if(course.getNoteConducteur()!=-1)
-				{
-					somme = somme + course.getNoteConducteur(); 
-					i++;
-				}				
-			}
-			moy = somme/i;
-			return new ResponseEntity<Float>(moy, HttpStatus.OK);
-		}		
-		return new ResponseEntity<Float>(HttpStatus.FORBIDDEN);
+				somme = somme + course.getNoteConducteur(); 
+				i++;
+			}				
+		}
+		moy = somme/i;
+		return new ResponseEntity<Float>(moy, HttpStatus.OK);
 	}
 	
 }
