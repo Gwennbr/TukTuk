@@ -67,7 +67,7 @@ public class AccessTokenSecurity
 		
 		AccessEntry accessEntry = accesses.get(token);
 		
-		if (accessEntry == null)
+		if (accessEntry == null) 
 			return null;
 		
 		headers.add(TOKEN_HEADER_NAME, token);
