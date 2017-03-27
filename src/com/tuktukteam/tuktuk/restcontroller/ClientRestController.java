@@ -5,18 +5,25 @@ import java.util.List;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.tuktukteam.autosecurity.AccessTokenSecurity;
+import com.tuktukteam.autosecurity.AutoFilterForSpringControllers;
+import com.tuktukteam.autosecurity.RestrictedAccess;
+import com.tuktukteam.autosecurity.RestrictedAccess.AccessType;
+import com.tuktukteam.genericdao.DAOException;
 import com.tuktukteam.tuktuk.dao.ClientDAO;
-import com.tuktukteam.tuktuk.dao.PersonneDAO;
 import com.tuktukteam.tuktuk.model.Client;
 import com.tuktukteam.tuktuk.model.Conducteur;
 import com.tuktukteam.tuktuk.model.Course;
@@ -24,17 +31,42 @@ import com.tuktukteam.tuktuk.model.Personne;
 
 @RestController
 @RequestMapping("/client")
-public class ClientRestController {
-
-	@Autowired
-	private ClientDAO clientDAO;
+public class ClientRestController
+{
+	@Autowired private ClientDAO clientDAO;
 	
-	@Autowired
-	private PersonneDAO personneDAO;
-
-	@RequestMapping(value = "", method = RequestMethod.GET)
+	public ClientRestController() { AutoFilterForSpringControllers.addController(this.getClass(), "/api"); }
+	
+	@RequestMapping(value = "/login", method = RequestMethod.GET)
 	@ResponseBody
-	public ResponseEntity<Client> getProfile(HttpSession session) {
+	@RestrictedAccess(value=AccessType.PUBLIC)
+	public ResponseEntity<Client> login(@RequestParam String username, @RequestParam String password)
+	{
+		Client client = new Client();
+
+		client.setUsername(username);
+		client.setPassword(password);
+		
+		try
+		{
+			client = clientDAO.findByValues(client);
+		}
+		catch (DAOException e)
+		{
+			client = null;
+		}
+		
+		if (client == null)
+			return new ResponseEntity<Client>(HttpStatus.NOT_ACCEPTABLE);
+
+		HttpHeaders headers = new HttpHeaders();
+		AccessTokenSecurity.addNewAccessInHeaders(headers, client);
+		return new ResponseEntity<Client>(client, headers, HttpStatus.OK);
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/profil_old", method = RequestMethod.GET)
+	public ResponseEntity<Client> getProfile_old(HttpSession session) {
 
 		Client c = (Client) session.getAttribute("client");
 
@@ -44,6 +76,14 @@ public class ClientRestController {
 		}
 		return new ResponseEntity<Client>(HttpStatus.FORBIDDEN);
 	}
+
+	@ResponseBody
+	@RequestMapping(value = "/profil", method = RequestMethod.GET)
+	@RestrictedAccess(value=AccessType.TOKEN, authorized=Client.class)
+	public ResponseEntity<Client> getProfile(@RequestHeader(AccessTokenSecurity.TOKEN_HEADER_NAME) String token)
+	{
+		return new ResponseEntity<Client>(AccessTokenSecurity.getUser(Client.class, token), HttpStatus.OK);
+	}
 	
 	@RequestMapping(value="", method = RequestMethod.PUT)
 	public ResponseEntity<Client> updateProfile(HttpSession session, @RequestBody Personne p, BindingResult result) {
@@ -52,7 +92,7 @@ public class ClientRestController {
 		if(cli!= null){
 			if(!result.hasErrors()){
 				p.setId(cli.getId());
-				personneDAO.save(p);
+				//personneDAO.save(p);
 				cli = clientDAO.find(cli.getId());
 				return new ResponseEntity<Client>(cli, HttpStatus.OK);
 			}
@@ -134,4 +174,5 @@ public class ClientRestController {
 			return new ResponseEntity<Client>(HttpStatus.FORBIDDEN);
 		}
 	}
+
 }

@@ -14,3 +14,16 @@ body{
 .input-group-addon {
 	border-radius: 0px;
 }
+
+.alert {
+	border-radius: 0px;
+	text-align: center;
+}
+
+.form-group {
+	border-radius: 0px;
+}
+
+.alert .glyphicon {
+	color: inherit;
+}

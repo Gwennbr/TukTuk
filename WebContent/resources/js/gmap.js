@@ -22,4 +22,15 @@ var app = angular.module('myApp', ['ngMap']);
   NgMap.getMap().then(function(map) {
     vm.map = map;
   });
+  
+  
+  
+//  vm.addMarker = function(event) {
+//      var ll = event.latLng;
+//      vm.positions.push({lat:ll.lat(), lng: ll.lng()});
+//    }
+//    vm.deleteMarkers = function() {
+//      vm.positions = [];
+//    };
+  
  });

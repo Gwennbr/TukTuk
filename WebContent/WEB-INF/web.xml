@@ -34,6 +34,8 @@
 	<listener>
 		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
 	</listener>
+	
+	
 	<filter>
 		<filter-name>openEntityManagerInViewFilter</filter-name>
 		<filter-class>org.springframework.orm.jpa.support.OpenEntityManagerInViewFilter</filter-class>
@@ -48,12 +50,12 @@
 	</filter-mapping>
 
 	<filter>
-		<filter-name>TukTukWebFilter</filter-name>
-		<filter-class>com.tuktukteam.tuktuk.security.TukTukWebFilter</filter-class>
+		<filter-name>TukTukFilter</filter-name>
+		<filter-class>com.tuktukteam.autosecurity.AutoFilterForSpringControllers</filter-class>
 	</filter>
 
 	<filter-mapping>
-		<filter-name>TukTukWebFilter</filter-name>
+		<filter-name>TukTukFilter</filter-name>
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
 	

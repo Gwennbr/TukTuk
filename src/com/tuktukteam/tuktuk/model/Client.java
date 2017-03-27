@@ -9,6 +9,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 
+import com.tuktukteam.genericdao.annotations.ColumnTag;
+
 @Entity
 @Table(name="client")
 @PrimaryKeyJoinColumn(name="CLI_ID", referencedColumnName="PER_ID")
@@ -16,15 +18,19 @@ public class Client extends Personne {
 	private static final long serialVersionUID = 1L;
 
 	@Column(name="CLI_NUM_CB")
+	@ColumnTag(ColumnTag.FRONT_RESTRICTED)
 	private String numeroCarteBancaire;
 	
-	@Column(name="CLI_PICTOGRAMME")
+	@Column(name="CLI_PICTOGRAMME") 
+	@ColumnTag(ColumnTag.FRONT_RESTRICTED)
 	private String pictogramme;
 
-	@Column(name="CLI_DATE_VALIDITE_CB")
+	@Column(name="CLI_DATE_VALIDITE_CB") 
+	@ColumnTag(ColumnTag.FRONT_RESTRICTED)
 	private Date dateValiditeCB;
 	
-	@OneToMany(mappedBy="client")
+	@OneToMany(mappedBy="client") 
+	@ColumnTag(ColumnTag.FRONT_RESTRICTED)
 	private List<Course> courses;
 
 	

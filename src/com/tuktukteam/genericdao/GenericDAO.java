@@ -2,15 +2,19 @@ package com.tuktukteam.genericdao;
 
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Transient;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.tuktukteam.genericdao.annotations.ColumnTag;
 import com.tuktukteam.genericdao.annotations.FindByValues;
 import com.tuktukteam.genericdao.annotations.HashedValue;
 
@@ -26,36 +30,38 @@ public abstract class GenericDAO<T, K>
 	
 	private static String getColumnName(Field field) { return field.getName(); }
 	protected String getTableName() { return type.getSimpleName(); }
-
-	public T findByValues(T t) throws DAOException
+	
+	public T findByValues(T _t) throws DAOException
 	{
 		StringBuilder myQueryString = null;
 		List<Field> fieldsToCheck = new ArrayList<>();
 		
-		for (Field field : t.getClass().getDeclaredFields())
+		for (Class<?> t : getClassAndSuperClasses(_t.getClass()))
 		{
-			if (field.getDeclaredAnnotation(FindByValues.class) != null)
-				try
-				{
-					field.setAccessible(true);
-					String columnName = getColumnName(field);
-					if (field.getDeclaredAnnotation(HashedValue.class) != null)
-						fieldsToCheck.add(field);
-					else
-						if (myQueryString == null)
-							myQueryString = new StringBuilder(String.format("FROM %s WHERE %s='%s'", 
-									getTableName(),
-									columnName,
-									field.get(t).toString()));
+			for (Field field : t.getDeclaredFields())
+			{
+				if (field.getDeclaredAnnotation(FindByValues.class) != null)
+					try
+					{
+						field.setAccessible(true);
+						String columnName = getColumnName(field);
+						if (field.getDeclaredAnnotation(HashedValue.class) != null)
+							fieldsToCheck.add(field);
 						else
-							myQueryString.append(String.format(" AND %s='%s'", columnName, field.get(t).toString()));
-				}
-				catch (IllegalArgumentException | IllegalAccessException e)
-				{
-					throw new DAOException("error while getting class infos", e);
-				}
+							if (myQueryString == null)
+								myQueryString = new StringBuilder(String.format("FROM %s WHERE %s='%s'", 
+										getTableName(),
+										columnName,
+										field.get(_t).toString()));
+							else
+								myQueryString.append(String.format(" AND %s='%s'", columnName, field.get(_t).toString()));
+					}
+					catch (IllegalArgumentException | IllegalAccessException e)
+					{
+						throw new DAOException("error while getting class infos", e);
+					}
+			}
 		}
-		
 		if (myQueryString == null)
 			throw new DAOException("no @FindByValues annotation in class");
 		
@@ -66,7 +72,7 @@ public abstract class GenericDAO<T, K>
 			for (Field field : fieldsToCheck)
 			{
 				field.setAccessible(true); // TODO remove, useless
-				if (!matchesHashedValue(returnObject, field.getName(), (String)field.get(t)))
+				if (!matchesHashedValue(returnObject, field.getName(), (String)field.get(_t)))
 				{
 					bAllChecksPassed = false;
 					break;
@@ -84,9 +90,7 @@ public abstract class GenericDAO<T, K>
 	}
 	public List<T> getAll()
 	{
-		String myQueryString = String.format("FROM %s", getTableName());
-		
-		return entityManager.createQuery(myQueryString, type).getResultList();
+		return entityManager.createQuery(String.format("FROM %s", getTableName()), type).getResultList();
 	}
 	
 	public T save(T t)
@@ -116,7 +120,6 @@ public abstract class GenericDAO<T, K>
 			return;
 		for (T t : listOfT)
 			delete(t);
-		return;
 	}
 	
 	public void delete(T t)
@@ -127,9 +130,108 @@ public abstract class GenericDAO<T, K>
 	
 	public T find(K id)
 	{
-		return entityManager.find(type, id);
+		try
+		{
+			return entityManager.find(type, id);
+		}
+		catch (Exception e)
+		{
+			return null;
+		}
 	}
 
+	public T getAndFillOnlyFieldsWithTags(K id, List<String> includeTags, List<String> excludeTags)
+	{
+		T persistenceInstance = find(id);
+		if (persistenceInstance == null)
+			return null;
+		
+		List<Field> fieldsToReturn = new ArrayList<>();
+		
+		for (Class<?> typ : getClassAndSuperClasses(type))
+			for (Field field : typ.getDeclaredFields())
+				if (!field.isAnnotationPresent(Transient.class) && !Modifier.isStatic(field.getModifiers()))
+				{
+					ColumnTag tags = field.getDeclaredAnnotation(ColumnTag.class);
+					if (excludeTags != null && tags != null)
+					{
+						boolean bContinueToNextField = false;
+						for (String tag : tags.value())
+							if (excludeTags != null && excludeTags.contains(tag))
+							{
+								bContinueToNextField = true;
+								break;
+							}	
+						if (bContinueToNextField)
+							continue;
+					}
+					
+					if (includeTags == null || includeTags.size() == 0)
+						fieldsToReturn.add(field);
+					else
+						if (tags != null)
+							for (String tag : tags.value())
+								if (includeTags.contains(tag))
+								{
+									fieldsToReturn.add(field);
+									break;
+								}
+				}
+	
+		T returnInstance;
+		try
+		{
+			returnInstance = type.newInstance();
+		}
+		catch (InstantiationException | IllegalAccessException e)
+		{
+			return null;
+		}
+		
+		for (Field field : fieldsToReturn)
+		{
+			field.setAccessible(true);
+			try
+			{
+				field.set(returnInstance, field.get(persistenceInstance));
+			}
+			catch (IllegalArgumentException | IllegalAccessException e)
+			{
+				return null;
+			}
+		}
+		return returnInstance;
+		
+	}
+
+	public T getAndFillOnlyFieldsWithTags(K id, String includeTags[], String excludeTags[])
+	{
+		return getAndFillOnlyFieldsWithTags(id, 
+				includeTags == null ? null : Arrays.asList(includeTags), 
+				excludeTags == null ? null : Arrays.asList(excludeTags));
+	}
+	
+	public T getAndFillOnlyFieldsTaggedBy(K id, String...includeTags)
+	{
+		return getAndFillOnlyFieldsWithTags(id, Arrays.asList(includeTags), null);
+	}
+	
+	public T getAndFillOnlyFieldsNotTaggedBy(K id, String...excludeTags)
+	{
+		return getAndFillOnlyFieldsWithTags(id, null, Arrays.asList(excludeTags));
+	}
+	
+	public List<Class<?>> getClassAndSuperClasses(Class<?> type)
+	{
+		List<Class<?>> classes = new ArrayList<>();
+		while (type != null)
+		{
+			classes.add(type);
+			type = type.getSuperclass();
+		}
+		return classes;
+	}
+	
 	public Field getDeclaredFieldTroughAllInheritance(T t, String fieldName)
 	{
 		Class<?> type = t.getClass();
@@ -144,6 +246,7 @@ public abstract class GenericDAO<T, K>
 			} 
 		return null;
 	}
+	
 	public boolean matchesHashedValue(T t, String fieldName, String rawValue) throws NoSuchFieldException
 	{
 		Field field = getDeclaredFieldTroughAllInheritance(t, fieldName);
@@ -197,25 +300,28 @@ public abstract class GenericDAO<T, K>
 		}
 	}
 	
-	private T hashAnnotedFields(T t)
+	private T hashAnnotedFields(T _t)
 	{
-		for (Field field : t.getClass().getDeclaredFields())
+		for (Class<?> t : getClassAndSuperClasses(_t.getClass()))
 		{
-			HashedValue hv = field.getDeclaredAnnotation(HashedValue.class);
-			if (hv != null)
+			for (Field field : t.getDeclaredFields())
 			{
-				field.setAccessible(true);
-				try
+				HashedValue hv = field.getDeclaredAnnotation(HashedValue.class);
+				if (hv != null)
 				{
-					field.set(t, encodeValue(t, field, hv.strength()));
-				}
-				catch (IllegalArgumentException | IllegalAccessException e)
-				{
-					e.printStackTrace();
+					field.setAccessible(true);
+					try
+					{
+						field.set(_t, encodeValue(_t, field, hv.strength()));
+					}
+					catch (IllegalArgumentException | IllegalAccessException e)
+					{
+						e.printStackTrace();
+					}
 				}
 			}
 		}
-		return t;
+		return _t;
 	}
 	
 }
