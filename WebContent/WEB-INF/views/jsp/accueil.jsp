@@ -34,7 +34,7 @@
 	</header>
 	<section id="map">
 		<div id="gmap">
-		<ng-map zoom="16" map-type-id="MapTypeId.ROADMAP">
+		<ng-map id="currentMap" zoom="16" map-type-id="MapTypeId.ROADMAP">
 			<c:choose>
 				<c:when test="${not empty conducteur}">
 					<marker position="current" animation="Animation.NONE" centered="true" icon=${ pageContext.request.contextPath }/resources/img/trishaw.png></marker>
