@@ -1,5 +1,6 @@
 package com.tuktukteam.tuktuk.model;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -38,6 +39,9 @@ public class Conducteur extends Personne {
 	
 	@Column(name="COND_AVAILABLE")
 	private boolean available;
+	
+	@Column(name="COND_DEBUT_PAUSE")
+	private Date dateDébutPause;
 	
 	@OneToMany(mappedBy="conducteur")
 	@ColumnTag(ColumnTag.FRONT_RESTRICTED)
