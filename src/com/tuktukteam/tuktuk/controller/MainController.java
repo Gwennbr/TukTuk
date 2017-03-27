@@ -42,7 +42,7 @@ public class MainController
 	public String showLoginView(Model model) 
 	{
 		SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
-		return "login"; 
+		return "accueil2"; 
 	}
 	
 	@RequestMapping(value = "/login", method = RequestMethod.POST)

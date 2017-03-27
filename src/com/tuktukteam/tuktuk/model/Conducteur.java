@@ -40,18 +40,18 @@ public class Conducteur extends Personne {
 	private boolean available;
 	
 	@Column(name="COND_DEBUT_PAUSE")
-	private long dateDébutPause;
+	private long dateDebutPause;
 
 	@OneToMany(mappedBy="conducteur")
 	@ColumnTag(ColumnTag.FRONT_RESTRICTED)
 	private List<Course> courses;
 	
-	public long getDateDébutPause() {
-		return dateDébutPause;
+	public long getDateDebutPause() {
+		return dateDebutPause;
 	}
 
-	public void setDateDébutPause(long dateDébutPause) {
-		this.dateDébutPause = dateDébutPause;
+	public void setDateDebutPause(long dateDebutPause) {
+		this.dateDebutPause = dateDebutPause;
 	}
 
 	public String getIban() {
