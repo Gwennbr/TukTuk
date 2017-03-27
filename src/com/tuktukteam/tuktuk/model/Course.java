@@ -59,6 +59,17 @@ public class Course implements Serializable {
 	
 	@Column(name="COU_COM_COND")
 	private String comConducteur;
+	
+	@Column(name="COU_TEMPS_PAUSE")
+	private long tempsPause;
+
+	public long getTempsPause() {
+		return tempsPause;
+	}
+
+	public void setTempsPause(long tempsPause) {
+		this.tempsPause = tempsPause;
+	}
 
 	public int getId() {
 		return id;

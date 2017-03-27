@@ -5,7 +5,6 @@ import java.util.List;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -61,10 +60,8 @@ public class ClientRestController {
 
 		if (client == null)
 			return new ResponseEntity<Client>(HttpStatus.NOT_ACCEPTABLE);
-
-		HttpHeaders headers = new HttpHeaders();
-		AccessTokenSecurity.addNewAccessInHeaders(headers, client);
-		return new ResponseEntity<Client>(client, headers, HttpStatus.OK);
+		return null;
+		//return new ResponseEntity<Client>(client, headers, HttpStatus.OK);
 	}
 
 	@ResponseBody
