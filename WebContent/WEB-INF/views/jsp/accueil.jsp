@@ -2,7 +2,7 @@
     pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
-<html>
+<html ng-app="myApp">
 <head>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 	<script src="${ pageContext.request.contextPath }/resources/js/angular.min.js"></script>
@@ -21,7 +21,7 @@
 	<script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
 	<script src="https://maps.google.com/maps/api/js?libraries=placeses,visualization,drawing,geometry,places&key=AIzaSyBWK16ZhsCDITiislRiRzpb4qjPrYfXp4s"></script>
 </head>
-<body ng-app="ngMap">
+<body ng-app="ngMap" onload="refreshMap()">
 	<header>
 		<nav>
 			<a class="left btn btn-lg btn-link"><span class="glyphicon glyphicon-th"></span></a>
@@ -32,17 +32,17 @@
 			
 		</div>
 	</header>
-	<section id="map">
-		<div id="gmap">
-		<ng-map id="currentMap" zoom="16" map-type-id="MapTypeId.ROADMAP">
+	<section id="map" >
+		<div id="gmap" ng-controller="mapController as vm">
+    	<ng-map id="currentMap" zoom="15" center="current" map-type-id="MapTypeId.ROADMAP">
 			<c:choose>
 				<c:when test="${not empty conducteur}">
-					<marker position="current" animation="Animation.NONE" centered="true" icon=${ pageContext.request.contextPath }/resources/img/trishaw.png></marker>
-					<marker position="[50.624259,3.127829]" animation="Animation.NONE" centered="true" icon=${ pageContext.request.contextPath }/resources/img/user.png></marker>
+					<marker position="{{vm.current}}" animation="Animation.NONE" icon=${ pageContext.request.contextPath }/resources/img/trishawColor.png></marker>			
+					<marker ng-repeat="pos in vm.positions" position="{{pos.lat}},{{pos.lng}}" icon=${ pageContext.request.contextPath }/resources/img/userColor.png></marker>
 				</c:when>
 				<c:otherwise>
-					<marker position="current" animation="Animation.NONE" centered="true" icon=${ pageContext.request.contextPath }/resources/img/user.png></marker>
-					<marker position="[50.624259,3.127829]" animation="Animation.NONE" centered="true" icon=${ pageContext.request.contextPath }/resources/img/trishaw.png></marker>
+					<marker position="{{vm.current}}" animation="Animation.NONE" icon=${ pageContext.request.contextPath }/resources/img/userColor.png></marker>			
+					<marker ng-repeat="pos in vm.positions" position="{{pos.lat}},{{pos.lng}}" icon=${ pageContext.request.contextPath }/resources/img/trishawColor.png></marker>
 				</c:otherwise>
 			</c:choose>
 		</ng-map>
@@ -70,9 +70,11 @@
 							<h4 class="modal-title">Option conducteur : ${ conducteur.prenom } ${ conducteur.nom }</h4>
 						</div>
 						<div class="modal-body">
-							<div class="alert alert-info" role="alert">
-								<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-  								<span class="sr-only">Info:</span>Vous êtes actuellement <strong id="dispoVar">Disponible</strong>
+							<div id="dispoVar">
+								<div class="alert alert-info" role="alert">
+									<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+  									<span class="sr-only">Info:</span>Vous êtes actuellement <strong>Disponible</strong>
+  								</div>
   							</div>
 							<button id="btn-pause" href="#"  type="button" class="btn btn-primary chauffeur">Activer mode pause</button>
 							<button id="btn-endCourse" href="#"  type="button" class="btn btn-success">Course terminer</button>
@@ -159,7 +161,7 @@
 							<c:if test="${ not empty conducteur }">
 							<hr />
 							<label>Disponible :</label>
-							<input id="toggle-trigger" type="checkbox" data-toggle="toggle" checked data-on="Disponible" data-off="Non disponible" data-onstyle="success" data-offstyle="danger" data-width="160px" data-dismiss="modal">
+							<input data-dismiss="modal" id="toggle-trigger" type="checkbox" data-toggle="toggle" checked data-on="Disponible" data-off="Non disponible" data-onstyle="success" data-offstyle="danger" data-width="160px" data-dismiss="modal">
 							</c:if>
 						</div>
 						

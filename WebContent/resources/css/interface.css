@@ -133,7 +133,8 @@ nav .left {
 }
 
 .modal.fade .modal-dialog.navside {
-	top: 20px;
+	margin: 0px;
+	top: 0px;
 	width: 180px;
 	transform: translate3d(0, 0, 0);
 	float: right;
@@ -159,18 +160,14 @@ nav .left {
 }
 .modal-backdrop{
     z-index: 10;      
-}​
-
-.nav-side {
-	background-color: green;
-	color: red;
 }
 
 .modal-content.navsider{ 
+	border-radius: 0px;
 	background-color: rgba(255, 255, 255, 0.3);
 	color: white;
 	text-align: center;
-	height: 90%;
+	height: 100%;
 }
 	   
 .btn-circle {
