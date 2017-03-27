@@ -10,14 +10,14 @@
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css">
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-	<link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
-	<script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
 	<script src="${ pageContext.request.contextPath }/resources/js/gmap.js"></script>
 	<link rel="stylesheet" type="text/css" href="${ pageContext.request.contextPath }/resources/css/global.css"/>
 	<link rel="stylesheet" type="text/css" href="${ pageContext.request.contextPath }/resources/css/interface.css"/>
 	<link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
 	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 	<script src="https://rawgit.com/allenhwkim/angularjs-google-maps/master/build/scripts/ng-map.js"></script>
+	<link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
+	<script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
 	<script src="https://maps.google.com/maps/api/js?libraries=placeses,visualization,drawing,geometry,places&key=AIzaSyBWK16ZhsCDITiislRiRzpb4qjPrYfXp4s"></script>
 </head>
 <body ng-app="ngMap">
@@ -132,7 +132,7 @@
 				<div class="modal-content navsider">
 					<div class="sidenav-img">
 						<img class="img-profil img-circle" height="140px" width="140px" src="${ pageContext.request.contextPath }/resources/img/chauffeur.jpg"/><br><br>
-						<label>${ conducteur.prenom } ${ conducteur.nom }</label>
+						<label>${ conducteur.prenom } ${ conducteur.nom }${ client.prenom } ${ client.nom }</label>
 						<hr />
 						
 						<div class="middle-sidenav">
@@ -142,7 +142,7 @@
 							<c:if test="${ not empty conducteur }">
 							<hr />
 							<label>Disponible :</label>
-							<input type="checkbox" checked   data-on="Disponible" data-off="Non disponible" data-onstyle="success" data-offstyle="danger" data-width="100%">
+							<input type="checkbox" data-toggle="toggle" checked data-on="Disponible" data-off="Non disponible" data-onstyle="success" data-offstyle="danger" data-width="100%">
 							</c:if>
 						</div>
 						
@@ -161,7 +161,7 @@
 				<div class="modal-content hisroty-content">
 					<div class="modal-header">
 						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-						<h4 class="modal-title">Historique des course : ${ conducteur.prenom } ${ conducteur.nom }</h4>
+						<h4 class="modal-title">Historique des course : ${ conducteur.prenom } ${ conducteur.nom }${ client.prenom } ${ client.nom }</h4>
 					</div>
 					<div class="modal-body">
 						<table class="table table-bordered">
