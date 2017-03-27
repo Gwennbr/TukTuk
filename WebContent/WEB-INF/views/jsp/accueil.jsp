@@ -11,6 +11,7 @@
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css">
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 	<script src="${ pageContext.request.contextPath }/resources/js/gmap.js"></script>
+	<script src="${ pageContext.request.contextPath }/resources/js/accueil.js"></script>
 	<link rel="stylesheet" type="text/css" href="${ pageContext.request.contextPath }/resources/css/global.css"/>
 	<link rel="stylesheet" type="text/css" href="${ pageContext.request.contextPath }/resources/css/interface.css"/>
 	<link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
@@ -27,13 +28,29 @@
 				<label class="btn-lg" id="titleNav"><b class="colorWhite">ADOPTE</b>UN<b class="colorWhite">TUK-TUK.COM</b></label>
 			<a class="right btn btn-lg btn-link" data-toggle="modal" data-target=".nav-side" data-dismiss="modal"><span class="glyphicon glyphicon-cog"></span></a>
 		</nav>
+		<div id="alertZone">
+			
+		</div>
 	</header>
 	<section id="map">
 		<div id="gmap">
-		<ng-map zoom="16" map-type-id="MapTypeId.ROADMAP">
-			<marker position="current" animation="Animation.DROP" centered="true" icon=${ pageContext.request.contextPath }/resources/img/trishaw.png></marker>
+		<ng-map id="currentMap" zoom="16" map-type-id="MapTypeId.ROADMAP">
+			<c:choose>
+				<c:when test="${not empty conducteur}">
+					<marker position="current" animation="Animation.NONE" centered="true" icon=${ pageContext.request.contextPath }/resources/img/trishaw.png></marker>
+					<marker position="[50.624259,3.127829]" animation="Animation.NONE" centered="true" icon=${ pageContext.request.contextPath }/resources/img/user.png></marker>
+				</c:when>
+				<c:otherwise>
+					<marker position="current" animation="Animation.NONE" centered="true" icon=${ pageContext.request.contextPath }/resources/img/user.png></marker>
+					<marker position="[50.624259,3.127829]" animation="Animation.NONE" centered="true" icon=${ pageContext.request.contextPath }/resources/img/trishaw.png></marker>
+				</c:otherwise>
+			</c:choose>
 		</ng-map>
 	</div>
+	
+	</section>
+	
+	<section id="alertSection">
 	
 	</section>
 	
@@ -55,7 +72,7 @@
 						<div class="modal-body">
 							<div class="alert alert-info" role="alert">
 								<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-  								<span class="sr-only">Info:</span>Vous êtes actuellement <strong>Disponible</strong>
+  								<span class="sr-only">Info:</span>Vous êtes actuellement <strong id="dispoVar">Disponible</strong>
   							</div>
 							<button id="btn-pause" href="#"  type="button" class="btn btn-primary chauffeur">Activer mode pause</button>
 							<button id="btn-endCourse" href="#"  type="button" class="btn btn-success">Course terminer</button>
@@ -142,7 +159,7 @@
 							<c:if test="${ not empty conducteur }">
 							<hr />
 							<label>Disponible :</label>
-							<input type="checkbox" data-toggle="toggle" checked data-on="Disponible" data-off="Non disponible" data-onstyle="success" data-offstyle="danger" data-width="100%">
+							<input id="toggle-trigger" type="checkbox" data-toggle="toggle" checked data-on="Disponible" data-off="Non disponible" data-onstyle="success" data-offstyle="danger" data-width="160px" data-dismiss="modal">
 							</c:if>
 						</div>
 						

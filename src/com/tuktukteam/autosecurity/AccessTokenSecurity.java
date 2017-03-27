@@ -132,7 +132,8 @@ public class AccessTokenSecurity
 	{
 		return buildResponseAndCreateAccess(entity, user, DEFAULT_TOKEN_TIMEOUT, status);
 	}
-	/*
+	
+	// comment
 	public static void addNewAccessInResponseHeaders(HttpHeaders headers, Object user, long timeout)
 	{
 		String token = newAccessToken(user, timeout);
@@ -145,7 +146,8 @@ public class AccessTokenSecurity
 	{
 		addNewAccessInResponseHeaders(headers, user, DEFAULT_TOKEN_TIMEOUT);
 	}
-	*/
+	// end comment
+	
 	public static String updateToken(String token) //TODO change method access to private
 	{
 		AccessEntry accessEntry = accesses.get(token);
