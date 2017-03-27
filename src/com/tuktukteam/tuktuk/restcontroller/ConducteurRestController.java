@@ -76,6 +76,7 @@ public class ConducteurRestController {
 	
 	@RequestMapping(value="", method = RequestMethod.PUT)
 	@ResponseBody
+	@RestrictedAccess(value = AccessType.TOKEN, authorized = Conducteur.class)
 	public ResponseEntity<Conducteur> updateProfile(@RequestHeader(AccessTokenSecurity.TOKEN_HEADER_NAME) String token, @RequestBody Personne p, BindingResult result) {
 		Conducteur cond = AccessTokenSecurity.getUser(Conducteur.class, token) ;		
 		if(!result.hasErrors()){

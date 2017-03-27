@@ -1,5 +1,6 @@
 package com.tuktukteam.tuktuk.restcontroller;
 
+import java.io.IOException;
 import java.util.Date;
 
 
@@ -13,7 +14,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestClientException;
+import org.springframework.web.client.RestTemplate;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tuktukteam.autosecurity.AccessTokenSecurity;
 import com.tuktukteam.autosecurity.AutoFilterForSpringControllers;
 import com.tuktukteam.autosecurity.RestrictedAccess;
@@ -195,6 +200,29 @@ public class CourseRestController {
 			}
 		}		
 		return AccessTokenSecurity.buildResponse(Course.class, token, HttpStatus.FORBIDDEN);
+	}
+	
+	
+	private int calculDistance(Conducteur cond, String adresse) {
+		
+		RestTemplate template = new RestTemplate();
+		ResponseEntity<String> jsonEntity = null;
+		try{
+			jsonEntity = template.getForEntity("https://maps.googleapis.com/maps/api/directions/json?origin={lng},{lat}&destination={adresse}", String.class,cond.getLongitude(), cond.getLatitude(), adresse.replaceAll(" ", "+"));
+		} catch (RestClientException e){
+			e.printStackTrace();
+		}
+		
+		if(jsonEntity.getStatusCode()==HttpStatus.OK){
+			ObjectMapper objmp = new ObjectMapper();
+			try {
+				JsonNode rootNode = objmp.readValue(jsonEntity.getBody(), JsonNode.class);
+				return rootNode.get("routes[0].legs[0].distance.value").asInt(); 
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}		
+		return 0;
 	}
 
 }
