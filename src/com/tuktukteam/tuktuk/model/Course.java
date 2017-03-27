@@ -63,6 +63,14 @@ public class Course implements Serializable {
 	@Column(name="COU_TEMPS_PAUSE")
 	private int tempsPause;
 
+	public int getTempsPause() {
+		return tempsPause;
+	}
+
+	public void setTempsPause(int tempsPause) {
+		this.tempsPause = tempsPause;
+	}
+
 	public int getId() {
 		return id;
 	}
