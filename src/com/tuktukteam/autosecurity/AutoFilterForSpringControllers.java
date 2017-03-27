@@ -249,7 +249,7 @@ public class AutoFilterForSpringControllers extends GenericFilterBean
 								//token = AccessTokenSecurity.updateToken(token);
 								//ResponseWrapper responseWrapper = new ResponseWrapper(response, AccessTokenSecurity.TOKEN_HEADER_NAME, token);
 								//PrintWriter out = response.getWriter();
-								AccessTokenSecurity.addUpdatedTokenInResponseHeaders(response, request.getHeader(AccessTokenSecurity.TOKEN_HEADER_NAME));
+								//AccessTokenSecurity.addUpdatedTokenInResponseHeaders(response, request.getHeader(AccessTokenSecurity.TOKEN_HEADER_NAME));
 								filterChain.doFilter(request, response); //responseWrapper);
 								//out.write(responseWrapper.toString());
 								//out.close();
