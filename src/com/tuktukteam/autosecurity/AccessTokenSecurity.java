@@ -46,6 +46,16 @@ public class AccessTokenSecurity
 		return true;
 	}
 	
+	public static Class<?> typeOfUser(String token)
+	{
+		AccessEntry accessEntry = accesses.get(token);
+		
+		if (accessEntry == null)
+			return null;
+		
+		return accessEntry.getUser().getClass();
+	}
+	
 	public <T> ResponseEntity<T> buildResponse(T entity, String oldToken, HttpStatus status)
 	{
 		HttpHeaders headers = new HttpHeaders();
