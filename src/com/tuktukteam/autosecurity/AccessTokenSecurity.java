@@ -7,8 +7,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 import com.tuktukteam.tools.Random;
+import com.tuktukteam.tuktuk.model.Client;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -43,6 +46,36 @@ public class AccessTokenSecurity
 		return true;
 	}
 	
+	public <T> ResponseEntity<T> buildResponse(T entity, String oldToken, HttpStatus status)
+	{
+		HttpHeaders headers = new HttpHeaders();
+		
+		AccessEntry accessEntry = accesses.get(oldToken);
+		
+		if (accessEntry == null)
+			return null;
+		
+		headers.add(TOKEN_HEADER_NAME, updateToken(oldToken));
+		headers.add(TOKEN_EXPIRES_HEADER_NAME, String.valueOf(accessEntry.getTimeout()));
+
+		return new ResponseEntity<T>(entity, headers, status);
+	}
+	
+	public <T> ResponseEntity<T> buildResponse(String token, HttpStatus status)
+	{
+		HttpHeaders headers = new HttpHeaders();
+		
+		AccessEntry accessEntry = accesses.get(token);
+		
+		if (accessEntry == null)
+			return null;
+		
+		headers.add(TOKEN_HEADER_NAME, token);
+		headers.add(TOKEN_EXPIRES_HEADER_NAME, String.valueOf(accessEntry.getTimeout()));
+
+		return new ResponseEntity<T>(headers, status);
+	}
+	
 	public static String newAccessToken(Object user, long timeout)
 	{
 		if (!accesses.isEmpty())
@@ -70,7 +103,7 @@ public class AccessTokenSecurity
 		addNewAccessInResponseHeaders(headers, user, DEFAULT_TOKEN_TIMEOUT);
 	}
 	
-	private static String updateToken(String token)
+	public static String updateToken(String token) //TODO change method access to private
 	{
 		AccessEntry accessEntry = accesses.get(token);
 
