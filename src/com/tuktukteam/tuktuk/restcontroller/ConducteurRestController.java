@@ -7,7 +7,9 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -16,9 +18,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.tuktukteam.tuktuk.dao.ConducteurDAO;
 import com.tuktukteam.tuktuk.dao.CourseDAO;
+import com.tuktukteam.tuktuk.dao.PersonneDAO;
 import com.tuktukteam.tuktuk.model.Client;
 import com.tuktukteam.tuktuk.model.Conducteur;
 import com.tuktukteam.tuktuk.model.Course;
+import com.tuktukteam.tuktuk.model.Personne;
 
 @RestController
 @RequestMapping(value = "/conducteur")
@@ -29,8 +33,11 @@ public class ConducteurRestController {
 	
 	@Autowired
 	private CourseDAO courseDAO;
+	
+	@Autowired
+	private PersonneDAO personneDAO;
 
-	@RequestMapping(value = "/profil", method = RequestMethod.GET)
+	@RequestMapping(value = "", method = RequestMethod.GET)
 	@ResponseBody
 	public ResponseEntity<Conducteur> getProfile(HttpSession session) {
 
@@ -40,6 +47,23 @@ public class ConducteurRestController {
 			int idC = c.getId();
 			return new ResponseEntity<Conducteur>(this.conducteurDAO.find(idC), HttpStatus.OK);
 		}
+		return new ResponseEntity<Conducteur>(HttpStatus.FORBIDDEN);
+	}
+	
+	@RequestMapping(value="", method = RequestMethod.PUT)
+	@ResponseBody
+	public ResponseEntity<Conducteur> updateProfile(HttpSession session, @RequestBody Personne p, BindingResult result) {
+		Conducteur cond = (Conducteur) session.getAttribute("conducteur");
+		
+		if(cond!= null){
+			if(!result.hasErrors()){
+				p.setId(cond.getId());
+				personneDAO.save(p);
+				cond = conducteurDAO.find(cond.getId());
+				return new ResponseEntity<Conducteur>(cond, HttpStatus.OK);
+			}
+			return new ResponseEntity<Conducteur>(HttpStatus.NOT_MODIFIED);
+		}		
 		return new ResponseEntity<Conducteur>(HttpStatus.FORBIDDEN);
 	}
 	

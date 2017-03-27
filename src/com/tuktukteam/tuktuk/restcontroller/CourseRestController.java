@@ -62,10 +62,11 @@ public class CourseRestController {
 		if (c != null) {
 			int idConducteur = c.getId();
 
-			if (course.getConducteur() == null) {
-				course.setConducteur(conducteurDAO.find(idConducteur));
-				course = courseDAO.save(course);
+			if (course.getConducteur() != null) {
+				return new ResponseEntity<Course>(HttpStatus.UNAUTHORIZED);
 			}
+			course.setConducteur(conducteurDAO.find(idConducteur));
+			course = courseDAO.save(course);
 			return new ResponseEntity<Course>(course, HttpStatus.OK);
 		}
 		return new ResponseEntity<Course>(HttpStatus.FORBIDDEN);

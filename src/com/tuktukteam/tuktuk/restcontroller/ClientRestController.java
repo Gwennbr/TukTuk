@@ -7,16 +7,20 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.tuktukteam.tuktuk.dao.ClientDAO;
+import com.tuktukteam.tuktuk.dao.PersonneDAO;
 import com.tuktukteam.tuktuk.model.Client;
 import com.tuktukteam.tuktuk.model.Conducteur;
 import com.tuktukteam.tuktuk.model.Course;
+import com.tuktukteam.tuktuk.model.Personne;
 
 @RestController
 @RequestMapping("/client")
@@ -24,8 +28,11 @@ public class ClientRestController {
 
 	@Autowired
 	private ClientDAO clientDAO;
+	
+	@Autowired
+	private PersonneDAO personneDAO;
 
-	@RequestMapping(value = "/profil", method = RequestMethod.GET)
+	@RequestMapping(value = "", method = RequestMethod.GET)
 	@ResponseBody
 	public ResponseEntity<Client> getProfile(HttpSession session) {
 
@@ -37,6 +44,23 @@ public class ClientRestController {
 		}
 		return new ResponseEntity<Client>(HttpStatus.FORBIDDEN);
 	}
+	
+	@RequestMapping(value="", method = RequestMethod.PUT)
+	public ResponseEntity<Client> updateProfile(HttpSession session, @RequestBody Personne p, BindingResult result) {
+		Client cli = (Client) session.getAttribute("client");
+		
+		if(cli!= null){
+			if(!result.hasErrors()){
+				p.setId(cli.getId());
+				personneDAO.save(p);
+				cli = clientDAO.find(cli.getId());
+				return new ResponseEntity<Client>(cli, HttpStatus.OK);
+			}
+			return new ResponseEntity<Client>(HttpStatus.NOT_MODIFIED);
+		}		
+		return new ResponseEntity<Client>(HttpStatus.FORBIDDEN);
+	}
+	
 
 	@RequestMapping(value="/historique", method = RequestMethod.GET)
 	@ResponseBody
