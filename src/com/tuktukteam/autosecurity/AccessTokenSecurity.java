@@ -134,7 +134,7 @@ public class AccessTokenSecurity
 		@Getter @Setter private long timeout;
 		@Getter         private long invalidateTime;
 		
-		public AccessEntry(Object user, String token, long timeout)
+		public AccessEntry(Object user, String token, long timeout) 
 		{
 			this.user = user;
 			this.token = token;
