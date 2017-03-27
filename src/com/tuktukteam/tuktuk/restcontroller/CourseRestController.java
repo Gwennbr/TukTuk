@@ -140,6 +140,39 @@ public class CourseRestController {
 		return AccessTokenSecurity.buildResponse(Course.class, token, HttpStatus.FORBIDDEN);
 	}
 	
+	@RequestMapping(value="/course/{id}/pause", method = RequestMethod.PUT)
+	@ResponseBody
+	@RestrictedAccess(value=AccessType.TOKEN, authorized=Conducteur.class)
+	public ResponseEntity<Boolean> startPause(@PathVariable int id, @RequestHeader(AccessTokenSecurity.TOKEN_HEADER_NAME) String token) {
+		Conducteur cond = AccessTokenSecurity.getUser(Conducteur.class, token);
+		Course course = courseDAO.find(id);
+		if(cond.getDateDébutPause()==0 && cond.getId() == course.getConducteur().getId() && course.isValide())
+		{
+			cond.setDateDébutPause(System.currentTimeMillis());
+			return AccessTokenSecurity.buildResponse(true, token, HttpStatus.OK);
+		}
+		
+		return AccessTokenSecurity.buildResponse(Boolean.class, token, HttpStatus.FORBIDDEN);
+	}
+	
+	@RequestMapping(value="/course/{id}/reprise", method = RequestMethod.PUT)
+	@ResponseBody
+	@RestrictedAccess(value=AccessType.TOKEN, authorized = Conducteur.class)
+	private ResponseEntity<Boolean> unPause(@PathVariable int id, @RequestHeader(AccessTokenSecurity.TOKEN_HEADER_NAME) String token) {
+		
+		Conducteur cond = AccessTokenSecurity.getUser(Conducteur.class, token);
+		Course course = courseDAO.find(id);
+		
+		if(cond.getDateDébutPause()> 0 && cond.getId() == course.getConducteur().getId() && course.isValide()) {
+			
+			long tempsP = Math.round(((double)(System.currentTimeMillis() - cond.getDateDébutPause()) / 60));
+			course.setTempsPause(course.getTempsPause()+tempsP);	
+			return AccessTokenSecurity.buildResponse(true, token, HttpStatus.OK);
+		}
+		
+		return AccessTokenSecurity.buildResponse(Boolean.class, token, HttpStatus.FORBIDDEN);
+	}
+	
 	
 
 	@RequestMapping(value = "/course/{id}/commenter", method = RequestMethod.PUT)

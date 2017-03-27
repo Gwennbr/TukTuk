@@ -1,6 +1,5 @@
 package com.tuktukteam.tuktuk.model;
 
-import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -41,17 +40,17 @@ public class Conducteur extends Personne {
 	private boolean available;
 	
 	@Column(name="COND_DEBUT_PAUSE")
-	private Date dateDébutPause;
+	private long dateDébutPause;
 
 	@OneToMany(mappedBy="conducteur")
 	@ColumnTag(ColumnTag.FRONT_RESTRICTED)
 	private List<Course> courses;
 	
-	public Date getDateDébutPause() {
+	public long getDateDébutPause() {
 		return dateDébutPause;
 	}
 
-	public void setDateDébutPause(Date dateDébutPause) {
+	public void setDateDébutPause(long dateDébutPause) {
 		this.dateDébutPause = dateDébutPause;
 	}
 

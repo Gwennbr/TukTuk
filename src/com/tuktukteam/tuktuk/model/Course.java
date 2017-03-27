@@ -61,13 +61,13 @@ public class Course implements Serializable {
 	private String comConducteur;
 	
 	@Column(name="COU_TEMPS_PAUSE")
-	private int tempsPause;
+	private long tempsPause;
 
-	public int getTempsPause() {
+	public long getTempsPause() {
 		return tempsPause;
 	}
 
-	public void setTempsPause(int tempsPause) {
+	public void setTempsPause(long tempsPause) {
 		this.tempsPause = tempsPause;
 	}
 
