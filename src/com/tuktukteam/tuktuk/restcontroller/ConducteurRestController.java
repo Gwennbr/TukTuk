@@ -82,30 +82,30 @@ public class ConducteurRestController {
 			p.setId(cond.getId());
 			personneDAO.save(p);
 			cond = conducteurDAO.find(cond.getId());
-			return new ResponseEntity<Conducteur>(cond, HttpStatus.OK);
+			return AccessTokenSecurity.buildResponse(cond, token, HttpStatus.OK);
 		}
-		return new ResponseEntity<Conducteur>(HttpStatus.NOT_MODIFIED);
+		return AccessTokenSecurity.buildResponse(Conducteur.class, token, HttpStatus.NOT_MODIFIED);
 	}
 	
 	@RequestMapping(value="/historique", method = RequestMethod.GET)
 	@ResponseBody
 	@RestrictedAccess(value = AccessType.TOKEN, authorized = Conducteur.class)
 	public ResponseEntity<List<Course>> getRunsHistory(@RequestHeader(AccessTokenSecurity.TOKEN_HEADER_NAME) String token) {
-		return new ResponseEntity<List<Course>>(AccessTokenSecurity.getUser(Conducteur.class, token).getCourses(), HttpStatus.OK);
+		return AccessTokenSecurity.buildResponse(AccessTokenSecurity.getUser(Conducteur.class, token).getCourses(), token, HttpStatus.OK);
 	}
 
 	@RequestMapping(value = "/{id}/historique", method = RequestMethod.GET)
 	@ResponseBody
 	@RestrictedAccess(value = AccessType.TOKEN, authorized = Client.class)
 	public ResponseEntity<List<Course>> getDriverHistory(@PathVariable int id, @RequestHeader(AccessTokenSecurity.TOKEN_HEADER_NAME) String token) {
-		return new ResponseEntity<List<Course>>(this.conducteurDAO.find(id).getCourses(), HttpStatus.OK);
+		return AccessTokenSecurity.buildResponse(this.conducteurDAO.find(id).getCourses(), token, HttpStatus.OK);
 	}
 
 	@RequestMapping(value = "/{id}/infos", method = RequestMethod.GET)
 	@ResponseBody
 	@RestrictedAccess(value=AccessType.TOKEN, authorized = Client.class)
-	public ResponseEntity<Conducteur> getInfos(@PathVariable int id, @RequestHeader(AccessTokenSecurity.TOKEN_HEADER_NAME) String token) {		
-		return new ResponseEntity<Conducteur>(conducteurDAO.getAndFillOnlyFieldsNotTaggedBy(id, ColumnTag.FRONT_RESTRICTED), HttpStatus.OK);
+	public ResponseEntity<Conducteur> getInfos(@PathVariable int id, @RequestHeader(AccessTokenSecurity.TOKEN_HEADER_NAME) String token) {	
+		return AccessTokenSecurity.buildResponse(conducteurDAO.getAndFillOnlyFieldsNotTaggedBy(id, ColumnTag.FRONT_RESTRICTED), token, HttpStatus.OK);
 	}
 	
 	@RequestMapping(value="/pause", method = RequestMethod.PUT)
@@ -116,7 +116,7 @@ public class ConducteurRestController {
 		Conducteur cond = AccessTokenSecurity.getUser(Conducteur.class, token);
 		cond.setAvailable(false);
 		cond = conducteurDAO.save(cond);
-		return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+		return AccessTokenSecurity.buildResponse(true, token, HttpStatus.OK);
 
 	}
 	
@@ -128,7 +128,7 @@ public class ConducteurRestController {
 		Conducteur cond = AccessTokenSecurity.getUser(Conducteur.class, token);
 		cond.setAvailable(true);
 		cond = conducteurDAO.save(cond);
-		return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+		return AccessTokenSecurity.buildResponse(true, token, HttpStatus.OK);
 	}
 	
 	@RequestMapping(value = "/maj", method = RequestMethod.PUT)
@@ -145,7 +145,7 @@ public class ConducteurRestController {
 				courses.remove(course);
 			}
 		}
-		return new ResponseEntity<List<Course>>(courses, HttpStatus.OK);
+		return AccessTokenSecurity.buildResponse(courses, token, HttpStatus.OK);
 	}
 	
 	@RequestMapping(value="/note", method = RequestMethod.GET)
@@ -167,7 +167,7 @@ public class ConducteurRestController {
 			}				
 		}
 		moy = somme/i;
-		return new ResponseEntity<Float>(moy, HttpStatus.OK);
+		return AccessTokenSecurity.buildResponse(moy, token, HttpStatus.OK);
 	}
 	
 	@RequestMapping(value="/{id}/note", method = RequestMethod.GET)
@@ -189,7 +189,7 @@ public class ConducteurRestController {
 			}				
 		}
 		moy = somme/i;
-		return new ResponseEntity<Float>(moy, HttpStatus.OK);
+		return AccessTokenSecurity.buildResponse(moy, token, HttpStatus.OK);
 	}
 	
 }
