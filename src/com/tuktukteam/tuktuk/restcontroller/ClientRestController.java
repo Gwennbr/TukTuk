@@ -23,6 +23,7 @@ import com.tuktukteam.autosecurity.AutoFilterForSpringControllers;
 import com.tuktukteam.autosecurity.RestrictedAccess;
 import com.tuktukteam.autosecurity.RestrictedAccess.AccessType;
 import com.tuktukteam.genericdao.DAOException;
+import com.tuktukteam.genericdao.annotations.ColumnTag;
 import com.tuktukteam.tuktuk.dao.ClientDAO;
 import com.tuktukteam.tuktuk.model.Client;
 import com.tuktukteam.tuktuk.model.Conducteur;
@@ -158,21 +159,10 @@ public class ClientRestController
 
 	@RequestMapping(value = "/{id}/infos", method = RequestMethod.GET)
 	@ResponseBody
+	@RestrictedAccess(value=AccessType.TOKEN, authorized=Conducteur.class)
 	public ResponseEntity<Client> getInfos(@PathVariable int id, HttpSession session) {
 
-		Conducteur conducteur = (Conducteur) session.getAttribute("conducteur");
-
-		if (conducteur != null) {
-			Client c = clientDAO.find(id);
-			c.setDateValiditeCB(null);
-			c.setPassword(null);
-			c.setNumeroCarteBancaire(null);
-			c.setPictogramme(null);
-			c.setMail(null);
-			return new ResponseEntity<Client>(c, HttpStatus.OK);
-		} else {
-			return new ResponseEntity<Client>(HttpStatus.FORBIDDEN);
-		}
+		return new ResponseEntity<Client>(clientDAO.getAndFillOnlyFieldsNotTaggedBy(id, ColumnTag.FRONT_RESTRICTED), HttpStatus.OK);
 	}
 
 }

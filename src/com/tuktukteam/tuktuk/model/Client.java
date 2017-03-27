@@ -30,7 +30,6 @@ public class Client extends Personne {
 	private Date dateValiditeCB;
 	
 	@OneToMany(mappedBy="client") 
-	@ColumnTag(ColumnTag.FRONT_RESTRICTED)
 	private List<Course> courses;
 
 	

@@ -39,7 +39,7 @@ public class Personne implements Serializable {
 	
 	@FindByValues @HashedValue
 	@Column(name="PER_PASSWORD")
-	@ColumnTag(ColumnTag.FRONT_RESTRICTED)
+	@ColumnTag({ColumnTag.FRONT_RESTRICTED, "password"})
 	private String password;
 	
 	/*
