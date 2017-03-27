@@ -245,11 +245,11 @@ public class AutoFilterForSpringControllers extends GenericFilterBean
 						case TOKEN:
 							if (AccessTokenSecurity.accessIsAuthorized(request, access.authorized()))
 							{
-								ResponseWrapper responseWrapper = new ResponseWrapper(response);
-								PrintWriter out = response.getWriter();
+								//ResponseWrapper responseWrapper = new ResponseWrapper(response);
+								//PrintWriter out = response.getWriter();
 								//AccessTokenSecurity.addUpdatedTokenInResponseHeaders(responseWrapper, request.getHeader(AccessTokenSecurity.TOKEN_HEADER_NAME));
-								filterChain.doFilter(request, responseWrapper);
-								out.write(responseWrapper.toString());
+								filterChain.doFilter(request, response); //responseWrapper);
+								//out.write(responseWrapper.toString());
 								//out.close();
 							}
 							else
