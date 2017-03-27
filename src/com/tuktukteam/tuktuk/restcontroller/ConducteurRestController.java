@@ -142,7 +142,8 @@ public class ConducteurRestController {
 		c = conducteurDAO.save(c);
 		List<Course> courses = courseDAO.getAll();
 		for (Course course : courses) {
-			if (course.getConducteur() != null) {
+			if (cour
+					se.getConducteur() != null) {
 				courses.remove(course);
 			}
 		}
