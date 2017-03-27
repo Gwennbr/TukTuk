@@ -43,9 +43,19 @@ public class Conducteur extends Personne {
 	@Column(name="COND_DEBUT_PAUSE")
 	private Date dateDébutPause;
 	
+
+
 	@OneToMany(mappedBy="conducteur")
 	@ColumnTag(ColumnTag.FRONT_RESTRICTED)
 	private List<Course> courses;
+	
+	public Date getDateDébutPause() {
+		return dateDébutPause;
+	}
+
+	public void setDateDébutPause(Date dateDébutPause) {
+		this.dateDébutPause = dateDébutPause;
+	}
 
 	public String getIban() {
 		return iban;
