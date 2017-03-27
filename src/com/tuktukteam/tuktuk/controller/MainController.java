@@ -61,7 +61,7 @@ public class MainController
 
 		ResponseEntity<Client> clientEntity = clientRest.login(username, password);
 			
-		if (clientEntity.getStatusCode() != HttpStatus.OK)
+		if (clientEntity.getStatusCode() != HttpStatus.OK) 
 		{
 			model.addAttribute("errorMsg", "login failed");
 			return "login"; 

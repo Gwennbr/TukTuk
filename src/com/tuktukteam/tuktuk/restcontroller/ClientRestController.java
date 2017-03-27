@@ -25,6 +25,7 @@ import com.tuktukteam.autosecurity.RestrictedAccess.AccessType;
 import com.tuktukteam.genericdao.DAOException;
 import com.tuktukteam.genericdao.annotations.ColumnTag;
 import com.tuktukteam.tuktuk.dao.ClientDAO;
+import com.tuktukteam.tuktuk.dao.PersonneDAO;
 import com.tuktukteam.tuktuk.model.Client;
 import com.tuktukteam.tuktuk.model.Conducteur;
 import com.tuktukteam.tuktuk.model.Course;
@@ -32,31 +33,32 @@ import com.tuktukteam.tuktuk.model.Personne;
 
 @RestController
 @RequestMapping("/client")
-public class ClientRestController
-{
-	@Autowired private ClientDAO clientDAO;
-	
-	public ClientRestController() { AutoFilterForSpringControllers.addController(this.getClass(), "/api"); }
-	
+public class ClientRestController {
+	@Autowired
+	private ClientDAO clientDAO;
+
+	@Autowired
+	private PersonneDAO personneDAO;
+
+	public ClientRestController() {
+		AutoFilterForSpringControllers.addController(this.getClass(), "/api");
+	}
+
 	@RequestMapping(value = "/login", method = RequestMethod.GET)
 	@ResponseBody
-	@RestrictedAccess(value=AccessType.PUBLIC)
-	public ResponseEntity<Client> login(@RequestParam String username, @RequestParam String password)
-	{
+	@RestrictedAccess(value = AccessType.PUBLIC)
+	public ResponseEntity<Client> login(@RequestParam String username, @RequestParam String password) {
 		Client client = new Client();
 
 		client.setUsername(username);
 		client.setPassword(password);
-		
-		try
-		{
+
+		try {
 			client = clientDAO.findByValues(client);
-		}
-		catch (DAOException e)
-		{
+		} catch (DAOException e) {
 			client = null;
 		}
-		
+
 		if (client == null)
 			return new ResponseEntity<Client>(HttpStatus.NOT_ACCEPTABLE);
 
@@ -79,90 +81,94 @@ public class ClientRestController
 	}
 
 	@ResponseBody
-	@RequestMapping(value = "/profil", method = RequestMethod.GET)
-	@RestrictedAccess(value=AccessType.TOKEN, authorized=Client.class)
-	public ResponseEntity<Client> getProfile(@RequestHeader(AccessTokenSecurity.TOKEN_HEADER_NAME) String token)
-	{
+	@RequestMapping(value = "", method = RequestMethod.GET)
+	@RestrictedAccess(value = AccessType.TOKEN, authorized = Client.class)
+	public ResponseEntity<Client> getProfile(@RequestHeader(AccessTokenSecurity.TOKEN_HEADER_NAME) String token) {
 		return new ResponseEntity<Client>(AccessTokenSecurity.getUser(Client.class, token), HttpStatus.OK);
 	}
-	
-	@RequestMapping(value="", method = RequestMethod.PUT)
-	public ResponseEntity<Client> updateProfile(HttpSession session, @RequestBody Personne p, BindingResult result) {
-		Client cli = (Client) session.getAttribute("client");
-		
-		if(cli!= null){
-			if(!result.hasErrors()){
-				p.setId(cli.getId());
-				//personneDAO.save(p);
-				cli = clientDAO.find(cli.getId());
-				return new ResponseEntity<Client>(cli, HttpStatus.OK);
-			}
-			return new ResponseEntity<Client>(HttpStatus.NOT_MODIFIED);
-		}		
-		return new ResponseEntity<Client>(HttpStatus.FORBIDDEN);
-	}
-	
 
-	@RequestMapping(value="/historique", method = RequestMethod.GET)
 	@ResponseBody
-	public ResponseEntity<Client> getRunsHistory(HttpSession session) {
-		Client client = (Client) session.getAttribute("client");
-		if (client != null) {
-			client = clientDAO.find(client.getId());
-			return new ResponseEntity<Client>(client, HttpStatus.OK);
-		}
+	@RequestMapping(value = "", method = RequestMethod.PUT)
+	@RestrictedAccess(value = AccessType.TOKEN, authorized = Client.class)
+	public ResponseEntity<Client> updateProfile(@RequestHeader(AccessTokenSecurity.TOKEN_HEADER_NAME) String token,
+			@RequestBody Personne p, BindingResult result) {
 
-		return new ResponseEntity<Client>(HttpStatus.FORBIDDEN);
+		Client cli = AccessTokenSecurity.getUser(Client.class, token);
+		if (!result.hasErrors()) {
+			p.setId(cli.getId());
+			personneDAO.save(p);
+			cli = clientDAO.find(cli.getId());
+			return new ResponseEntity<Client>(cli, HttpStatus.OK);
+		}
+		return new ResponseEntity<Client>(HttpStatus.NOT_MODIFIED);
 	}
 
+	@ResponseBody
+	@RequestMapping(value = "/historique", method = RequestMethod.GET)
+	@RestrictedAccess(value = AccessType.TOKEN, authorized = Client.class)
+	public ResponseEntity<List<Course>> getRunsHistory(
+			@RequestHeader(AccessTokenSecurity.TOKEN_HEADER_NAME) String token) {
+		Client client = AccessTokenSecurity.getUser(Client.class, token);
+		client = clientDAO.find(client.getId());
+		return new ResponseEntity<List<Course>>(client.getCourses(), HttpStatus.OK);
+
+	}
+
+	@ResponseBody
 	@RequestMapping(value = "/{id}/historique", method = RequestMethod.GET)
-	@ResponseBody
-	public ResponseEntity<List<Course>> getCustomerHistory(@PathVariable int id, HttpSession session) {
-		Conducteur conducteur = (Conducteur) session.getAttribute("conducteur");
-
-		if (conducteur != null) {
-			Client client = clientDAO.find(id);
-			return new ResponseEntity<List<Course>>(client.getCourses(), HttpStatus.OK);
-		}
-		return new ResponseEntity<List<Course>>(HttpStatus.FORBIDDEN);
+	@RestrictedAccess(value = AccessType.TOKEN, authorized = Conducteur.class)
+	public ResponseEntity<List<Course>> getCustomerHistory(@PathVariable int id,
+			@RequestHeader(AccessTokenSecurity.TOKEN_HEADER_NAME) String token) {
+		return new ResponseEntity<List<Course>>(clientDAO.find(id).getCourses(), HttpStatus.OK);
 	}
 	
-	
-	
-	@RequestMapping(value="/{id}/note", method = RequestMethod.GET)
 	@ResponseBody
-	public ResponseEntity<Float> calculAvgNote(@PathVariable int id, HttpSession session)
-	{
-		Conducteur cond = (Conducteur) session.getAttribute("conducteur");
-		Client cli1 = clientDAO.find(id);
-		Client cli2 = (Client) session.getAttribute("client");
-		
-		if(cond!= null || (cli2 != null && cli2.getId()==cli1.getId())){
-			float moy=0;
-			float somme=0;
-			int i=0;
-			List<Course> courses = cli1.getCourses();
-			for(Course course : courses)
-			{
-				if(course.getNoteConducteur()!=-1)
-				{
-					somme = somme + course.getNoteConducteur(); 
-					i++;
-				}				
+	@RequestMapping(value = "/note", method = RequestMethod.GET)
+	@RestrictedAccess(value = AccessType.TOKEN, authorized = Client.class)
+	public ResponseEntity<Float> calculAvgNote(@RequestHeader(AccessTokenSecurity.TOKEN_HEADER_NAME) String token) {
+		Client cli1 = AccessTokenSecurity.getUser(Client.class, token);
+		float moy = 0;
+		float somme = 0;
+		int i = 0;
+		List<Course> courses = cli1.getCourses();
+		for (Course course : courses) {
+			if (course.getNoteConducteur() != -1) {
+				somme = somme + course.getNoteConducteur();
+				i++;
 			}
-			moy = somme/i;
-			return new ResponseEntity<Float>(moy, HttpStatus.OK);
 		}
+		moy = somme / i;
 		
-		return new ResponseEntity<Float>(HttpStatus.FORBIDDEN);
+		return new ResponseEntity<Float>(moy, HttpStatus.OK);
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/{id}/note", method = RequestMethod.GET)
+	@RestrictedAccess(value = AccessType.TOKEN, authorized = Conducteur.class)
+	public ResponseEntity<Float> calculAvgNoteClient(@PathVariable int id, @RequestHeader(AccessTokenSecurity.TOKEN_HEADER_NAME) String token) {
+		Client cli1 = clientDAO.find(id);
+		float moy = 0;
+		float somme = 0;
+		int i = 0;
+		List<Course> courses = cli1.getCourses();
+		for (Course course : courses) {
+			if (course.getNoteConducteur() != -1) {
+				somme = somme + course.getNoteConducteur();
+				i++;
+			}
+		}
+		moy = somme / i;
+		
+		return new ResponseEntity<Float>(moy, HttpStatus.OK);
 	}
 
 	@RequestMapping(value = "/{id}/infos", method = RequestMethod.GET)
 	@ResponseBody
-	@RestrictedAccess(value=AccessType.TOKEN, authorized=Conducteur.class)
+	@RestrictedAccess(value = AccessType.TOKEN, authorized = Conducteur.class)
 	public ResponseEntity<Client> getInfos(@PathVariable int id, HttpSession session) {
 
-		return new ResponseEntity<Client>(clientDAO.getAndFillOnlyFieldsNotTaggedBy(id, ColumnTag.FRONT_RESTRICTED), HttpStatus.OK);
+		return new ResponseEntity<Client>(clientDAO.getAndFillOnlyFieldsNotTaggedBy(id, ColumnTag.FRONT_RESTRICTED),
+				HttpStatus.OK);
 	}
 
 }

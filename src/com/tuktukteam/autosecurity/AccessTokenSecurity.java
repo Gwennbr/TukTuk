@@ -7,6 +7,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 import com.tuktukteam.tools.Random;
 
@@ -43,6 +45,46 @@ public class AccessTokenSecurity
 		return true;
 	}
 	
+	public static Class<?> typeOfUser(String token)
+	{
+		AccessEntry accessEntry = accesses.get(token);
+		
+		if (accessEntry == null)
+			return null;
+		
+		return accessEntry.getUser().getClass();
+	}
+	
+	public static <T> ResponseEntity<T> buildResponse(T entity, String oldToken, HttpStatus status)
+	{
+		HttpHeaders headers = new HttpHeaders();
+		
+		AccessEntry accessEntry = accesses.get(oldToken);
+		
+		if (accessEntry == null)
+			return null;
+		
+		headers.add(TOKEN_HEADER_NAME, updateToken(oldToken));
+		headers.add(TOKEN_EXPIRES_HEADER_NAME, String.valueOf(accessEntry.getTimeout()));
+
+		return new ResponseEntity<T>(entity, headers, status);
+	}
+	
+	public static <T> ResponseEntity<T> buildResponse(Class<T> type, String token, HttpStatus status)
+	{
+		HttpHeaders headers = new HttpHeaders();
+		
+		AccessEntry accessEntry = accesses.get(token);
+		
+		if (accessEntry == null) 
+			return null;
+		
+		headers.add(TOKEN_HEADER_NAME, token);
+		headers.add(TOKEN_EXPIRES_HEADER_NAME, String.valueOf(accessEntry.getTimeout()));
+
+		return new ResponseEntity<T>(headers, status);
+	}
+	
 	public static String newAccessToken(Object user, long timeout)
 	{
 		if (!accesses.isEmpty())
@@ -57,6 +99,41 @@ public class AccessTokenSecurity
 	
 	public static String newAccessToken(Object user) { return newAccessToken(user, DEFAULT_TOKEN_TIMEOUT); }
 	
+	public static <T> ResponseEntity<T> buildResponseAndCreateAccess(Class<T> type, Object user, long timeout, HttpStatus status)
+	{
+		HttpHeaders headers = new HttpHeaders();
+		
+		String token = newAccessToken(user, timeout);
+		
+		headers.add(TOKEN_HEADER_NAME, token);
+		headers.add(TOKEN_EXPIRES_HEADER_NAME, String.valueOf(timeout));
+		
+		return new ResponseEntity<>(headers, status);
+	}
+	
+	public static <T> ResponseEntity<T> buildResponseAndCreateAccess(Class<T> type, Object user, HttpStatus status)
+	{
+		return buildResponseAndCreateAccess(type, user, DEFAULT_TOKEN_TIMEOUT, status);
+	}
+	
+	public <T> ResponseEntity<T> buildResponseAndCreateAccess(T entity, Object user, long timeout, HttpStatus status)
+	{
+		HttpHeaders headers = new HttpHeaders();
+		
+		String token = newAccessToken(user, timeout);
+		
+		headers.add(TOKEN_HEADER_NAME, token);
+		headers.add(TOKEN_EXPIRES_HEADER_NAME, String.valueOf(timeout));
+		
+		return new ResponseEntity<>(entity, headers, status);		
+	}
+	
+	public <T> ResponseEntity<T> buildResponseAndCreateAccess(T entity, Object user, HttpStatus status)
+	{
+		return buildResponseAndCreateAccess(entity, user, DEFAULT_TOKEN_TIMEOUT, status);
+	}
+	
+	// comment
 	public static void addNewAccessInResponseHeaders(HttpHeaders headers, Object user, long timeout)
 	{
 		String token = newAccessToken(user, timeout);
@@ -69,8 +146,9 @@ public class AccessTokenSecurity
 	{
 		addNewAccessInResponseHeaders(headers, user, DEFAULT_TOKEN_TIMEOUT);
 	}
+	// end comment
 	
-	private static String updateToken(String token)
+	public static String updateToken(String token) //TODO change method access to private
 	{
 		AccessEntry accessEntry = accesses.get(token);
 
@@ -101,7 +179,7 @@ public class AccessTokenSecurity
 		
 		return false;
 	}
-	
+	/*
 	public static void addUpdatedTokenInResponseHeaders(HttpServletResponse response, String oldToken)
 	{
 		AccessEntry accessEntry = accesses.get(oldToken);
@@ -112,7 +190,7 @@ public class AccessTokenSecurity
 		response.addHeader(TOKEN_HEADER_NAME, updateToken(oldToken));
 		response.addHeader(TOKEN_EXPIRES_HEADER_NAME, String.valueOf(accessEntry.getTimeout()));
 	}
-	
+	*/
 	public static void updateUserForToken(String token, Object user)
 	{
 		AccessEntry accessEntry = accesses.get(token);
