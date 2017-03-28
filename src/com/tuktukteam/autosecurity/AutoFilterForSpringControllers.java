@@ -238,7 +238,7 @@ public class AutoFilterForSpringControllers extends GenericFilterBean
 						case CLASS_IN_SESSION:
 							if (userInSessionHasValidAccess(request.getSession(), access.authorized(), access.attributesNames()))
 								filterChain.doFilter(request, response);
-							else
+							else 
 								onForbidden(response, access.onForbidden());
 							break;
 							
