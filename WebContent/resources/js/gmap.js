@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 var app = angular.module('myApp', ['ngMap']);
 
   app.controller('mapController', function($interval) {
@@ -29,7 +28,7 @@ var app = angular.module('myApp', ['ngMap']);
 
     $interval(generateMarkers, 5000);//refresh position
   });
-=======
+  
 //var app = angular.module('myApp', ['ngMap']);
 //
 //  app.controller('mapController', function($interval) {
@@ -65,6 +64,3 @@ var app = angular.module('myApp', ['ngMap']);
 //    };
   
 // });
-  
-  
->>>>>>> branch 'feature/login' of https://github.com/Gwennbr/TukTuk.git
