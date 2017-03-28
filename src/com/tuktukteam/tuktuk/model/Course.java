@@ -12,6 +12,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+
+
 @Entity
 @Table(name="course")
 public class Course implements Serializable {
@@ -174,4 +176,5 @@ public class Course implements Serializable {
 	public void setComConducteur(String comConducteur) {
 		this.comConducteur = comConducteur;
 	}	
+	
 }

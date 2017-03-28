@@ -212,7 +212,9 @@ public class CourseRestController {
 		return AccessTokenSecurity.buildResponse(calculDistance(c, adr), token, HttpStatus.OK);
 	}
 	
-	private int calculDistance(Conducteur cond, String adresse) {
+	
+	
+	public static int calculDistance(Conducteur cond, String adresse) {
 		
 		RestTemplate template = new RestTemplate();
 		ResponseEntity<String> jsonEntity = null;

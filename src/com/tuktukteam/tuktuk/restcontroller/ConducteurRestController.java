@@ -1,5 +1,7 @@
 package com.tuktukteam.tuktuk.restcontroller;
 
+
+import java.io.IOException;
 import java.util.List;
 
 
@@ -15,11 +17,16 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestClientException;
+import org.springframework.web.client.RestTemplate;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tuktukteam.autosecurity.AccessTokenSecurity;
 import com.tuktukteam.autosecurity.AutoFilterForSpringControllers;
 import com.tuktukteam.autosecurity.RestrictedAccess;
 import com.tuktukteam.autosecurity.RestrictedAccess.AccessType;
+import com.tuktukteam.comparator.ComparatorCourse;
 import com.tuktukteam.genericdao.DAOException;
 import com.tuktukteam.genericdao.annotations.ColumnTag;
 import com.tuktukteam.tuktuk.dao.ConducteurDAO;
@@ -143,11 +150,14 @@ public class ConducteurRestController {
 		//TODO enlever commentaire
 		
 		for (Course course : courses) {
-			if (course.getConducteur() != null) {
+			if (course.getConducteur() != null) {				
 				courses.remove(course);
 			}
 		}
 		
+		ComparatorCourse comp = new ComparatorCourse(c);
+		courses.sort(comp);
+				
 		return AccessTokenSecurity.buildResponse(courses, token, HttpStatus.OK);
 	}
 	
@@ -193,6 +203,48 @@ public class ConducteurRestController {
 		}
 		moy = somme/i;
 		return AccessTokenSecurity.buildResponse(moy, token, HttpStatus.OK);
+	}
+	
+	@RequestMapping(value="/all", method = RequestMethod.GET)
+	@ResponseBody
+	@RestrictedAccess()
+	public ResponseEntity<List<Conducteur>> getAllNearDrivers(@RequestHeader(AccessTokenSecurity.TOKEN_HEADER_NAME) String token, @RequestParam double latitude, @RequestParam double longitude) {
+		
+		List<Conducteur> conducteurs = conducteurDAO.getAll();
+		
+		for(Conducteur cond : conducteurs) {
+			if(cond.getLatitude()>latitude+0.07 || cond.getLatitude()<latitude-0.07 || cond.getLongitude()>longitude+0.07 || cond.getLongitude()<longitude+0.07){
+				conducteurs.remove(cond);
+			}
+		}
+		
+		return AccessTokenSecurity.buildResponse(conducteurs, token, HttpStatus.OK);
+	}
+	
+	
+	public int calculDistanceClientCond(double latC, double lngC, Conducteur c) {
+		
+		RestTemplate template = new RestTemplate();
+		ResponseEntity<String> jsonEntity = null;
+		try{
+			jsonEntity = template.getForEntity("https://maps.googleapis.com/maps/api/distancematrix/json?origins={lng},{lat}&destinations={lngC},{latC}&mode=bicycling&units=metric", String.class,c.getLongitude(), c.getLatitude(), lngC, latC);
+		} catch (RestClientException e){
+			e.printStackTrace();
+		}
+		
+		if(jsonEntity.getStatusCode()==HttpStatus.OK){
+			ObjectMapper objmp = new ObjectMapper();
+			try {
+				JsonNode rootNode = objmp.readValue(jsonEntity.getBody(), JsonNode.class);
+				//return rootNode.get("routes").get(0).get("legs").get(0).get("distance").get("value").asInt();
+				return rootNode.get("rows").get(0).get("elements").get(0).get("distance").get("value").asInt();
+			} catch (IOException e) 
+			{
+			}
+		}		
+		return 0;
+		
+		
 	}
 	
 }
