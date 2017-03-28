@@ -61,7 +61,7 @@ public class ConducteurRestController {
 		}
 		
 		if (conducteur == null)
-			return new ResponseEntity<Conducteur>(HttpStatus.NOT_FOUND);
+			return new ResponseEntity<Conducteur>(HttpStatus.NOT_ACCEPTABLE);
 
 		return AccessTokenSecurity.buildResponseAndCreateAccess(conducteur);
 	}
@@ -70,7 +70,7 @@ public class ConducteurRestController {
 	@ResponseBody
 	@RestrictedAccess(value = AccessType.TOKEN, authorized = Conducteur.class)
 	public ResponseEntity<Conducteur> getProfile(@RequestHeader(AccessTokenSecurity.TOKEN_HEADER_NAME) String token) {		
-		return new ResponseEntity<Conducteur>(AccessTokenSecurity.getUser(Conducteur.class, token), HttpStatus.OK);
+		return AccessTokenSecurity.buildResponse(AccessTokenSecurity.getUser(Conducteur.class, token), token, HttpStatus.OK);
 	}
 	
 	@RequestMapping(value="", method = RequestMethod.PUT)

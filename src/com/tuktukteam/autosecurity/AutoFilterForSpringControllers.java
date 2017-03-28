@@ -228,7 +228,7 @@ public class AutoFilterForSpringControllers extends GenericFilterBean
 					filterChain.doFilter(request, response);
 				else
 				{
-					ResponseWrapper responseWrapper = new ResponseWrapper(response, request, access); //AccessTokenSecurity.TOKEN_HEADER_NAME, token);
+					//ResponseWrapper responseWrapper = new ResponseWrapper(response, request, access); //AccessTokenSecurity.TOKEN_HEADER_NAME, token);
 					switch (access.value())
 					{
 						case PUBLIC:
@@ -249,7 +249,7 @@ public class AutoFilterForSpringControllers extends GenericFilterBean
 								//token = AccessTokenSecurity.updateToken(token);
 								//PrintWriter out = response.getWriter();
 								//AccessTokenSecurity.addUpdatedTokenInResponseHeaders(response, request.getHeader(AccessTokenSecurity.TOKEN_HEADER_NAME));
-								filterChain.doFilter(request, responseWrapper); //responseWrapper);
+								filterChain.doFilter(request, response); //responseWrapper);
 								//out.write(responseWrapper.toString());
 								//out.close();
 							}
