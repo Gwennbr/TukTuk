@@ -41,7 +41,12 @@ public class MainController
 	@RequestMapping(value = "/login", method = RequestMethod.GET)
 	public String showLoginView(Model model) 
 	{
-		SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
+		return "login"; 
+	}
+	
+	@RequestMapping(value = "/login2", method = RequestMethod.GET)
+	public String tests(Model model) 
+	{
 		return "accueil2"; 
 	}
 	

@@ -1,4 +1,4 @@
-function RestTemplate(login, password)
+function RestTemplate(login, password, _loginErrorCallback)
 {
 	this.$http = angular.injector(["ng"]).get("$http");
 	this.userType = RestTemplate.ClientType.UNKNOWN;
@@ -6,6 +6,7 @@ function RestTemplate(login, password)
 	this.token = undefined;
 	this.userCallback = undefined;
 	this.tryLoginDriver = undefined;
+	this.loginErrorCallback = _loginErrorCallback;
 	
 	this.login = function()
 	{
@@ -59,7 +60,7 @@ function RestTemplate(login, password)
 
 RestTemplate.ClientType = { UNKNOWN:0, CUSTOMER:1, DRIVER:2 } 
 
-RestTemplate.HEADER_TOKEN_NAME = "TokenAuth-Token";
+RestTemplate.HEADER_TOKEN_NAME = "tokenauth-token";
 
 RestTemplate.RESTURI_CUSTOMER_LOGIN = "/TukTuk/api/client/login";
 RestTemplate.RESTURI_DRIVER_LOGIN = "/TukTuk/api/conducteur/login";
