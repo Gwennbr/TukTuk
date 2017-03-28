@@ -89,12 +89,12 @@ public class ClientRestController {
 	@RequestMapping(value = "", method = RequestMethod.PUT)
 	@RestrictedAccess(value = AccessType.TOKEN, authorized = Client.class)
 	public ResponseEntity<Client> updateProfile(@RequestHeader(AccessTokenSecurity.TOKEN_HEADER_NAME) String token,
-			@RequestBody Personne p, BindingResult result) {
+			@RequestBody Client client, BindingResult result) {
 
 		Client cli = AccessTokenSecurity.getUser(Client.class, token);
 		if (!result.hasErrors()) {
-			p.setId(cli.getId());
-			personneDAO.save(p);
+			client.setId(cli.getId());
+			personneDAO.save(client);
 			cli = clientDAO.find(cli.getId());
 			return new ResponseEntity<Client>(cli, HttpStatus.OK);
 		}
