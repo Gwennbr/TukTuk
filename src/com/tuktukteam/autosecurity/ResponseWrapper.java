@@ -56,6 +56,8 @@ public class ResponseWrapper extends HttpServletResponseWrapper
 		super.setStatus(sc);
  		if (!bHeaderAdded && sc >= 200 && sc <= 299)
  		{
+ 			String token = (String) request.getAttribute(AccessTokenSecurity.TOKEN_HEADER_NAME);
+ 			
  			System.out.println("set status");
  			//super.addHeader(headerName, headerValue);
  			bHeaderAdded = true;
