@@ -233,12 +233,12 @@ public class AutoFilterForSpringControllers extends GenericFilterBean
 					switch (access.value())
 					{
 						case PUBLIC:
-							filterChain.doFilter(request, responseWrapper);								
+							filterChain.doFilter(request, response);								
 							break;
 						
 						case CLASS_IN_SESSION:
 							if (userInSessionHasValidAccess(request.getSession(), access.authorized(), access.attributesNames()))
-								filterChain.doFilter(request, responseWrapper);
+								filterChain.doFilter(request, response);
 							else
 								onForbidden(response, access.onForbidden());
 							break;
@@ -263,6 +263,7 @@ public class AutoFilterForSpringControllers extends GenericFilterBean
 							onForbidden(response, access.onForbidden());
 							break;
 					}
+					//responseWrapper.getWriter().write(responseWrapper.toString());
 				}
 				return;
 			}
