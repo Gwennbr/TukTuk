@@ -19,3 +19,4 @@ public @interface RestrictedAccess
 	enum AccessType { NONE, PUBLIC, CLASS_IN_SESSION, TOKEN };	
 	enum AccessOptions { ASSIGN_TOKEN_ON_SUCCESS };
 }
+ 
