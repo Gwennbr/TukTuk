@@ -139,10 +139,13 @@ public abstract class GenericDAO<T, K>
 			return null;
 		}
 	}
-
 	public T getAndFillOnlyFieldsWithTags(K id, List<String> includeTags, List<String> excludeTags)
 	{
-		T persistenceInstance = find(id);
+		return fillOnlyFieldsWithTags(find(id), includeTags, excludeTags);
+	}
+	
+	public T fillOnlyFieldsWithTags(T persistenceInstance, List<String> includeTags, List<String> excludeTags)
+	{
 		if (persistenceInstance == null)
 			return null;
 		
@@ -204,11 +207,36 @@ public abstract class GenericDAO<T, K>
 		
 	}
 
+
+	
 	public T getAndFillOnlyFieldsWithTags(K id, String includeTags[], String excludeTags[])
 	{
 		return getAndFillOnlyFieldsWithTags(id, 
 				includeTags == null ? null : Arrays.asList(includeTags), 
 				excludeTags == null ? null : Arrays.asList(excludeTags));
+	}
+	
+	public List<T> getAllAndFillOnlyFieldsWithTags(String includeTags[], String excludeTags[])
+	{
+		List<T> list = getAll();
+		List<T> returnList = new ArrayList<>();
+		
+		for(T t : list)
+			returnList.add(fillOnlyFieldsWithTags(t, 
+						includeTags == null ? null : Arrays.asList(includeTags), 
+						excludeTags == null ? null : Arrays.asList(excludeTags)));
+		
+		return returnList;
+	}
+	
+	public List<T> getAllAndFillOnlyFieldsTaggedBy(String...includeTags)
+	{
+		return getAllAndFillOnlyFieldsWithTags(includeTags, null);
+	}
+	
+	public List<T> getAllAndFillOnlyFieldsNotTaggedBy(String...excludeTags)
+	{
+		return getAllAndFillOnlyFieldsWithTags(null, excludeTags);
 	}
 	
 	public T getAndFillOnlyFieldsTaggedBy(K id, String...includeTags)
