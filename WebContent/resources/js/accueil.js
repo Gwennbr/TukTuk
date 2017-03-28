@@ -1,5 +1,3 @@
-pouet poueeeeeeeeeeeeeeeeeeeeeet
-
 $(function() {
     $('#toggle-trigger').change(function() {
     	if ($(this).prop('checked') == true) {
