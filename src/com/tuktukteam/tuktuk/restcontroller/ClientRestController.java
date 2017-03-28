@@ -33,7 +33,7 @@ import com.tuktukteam.tuktuk.model.Course;
 import com.tuktukteam.tuktuk.model.Personne;
 
 @RestController
-@RequestMapping("/client")
+@RequestMapping("/customer")
 public class ClientRestController {
 	@Autowired
 	private ClientDAO clientDAO;
@@ -66,19 +66,6 @@ public class ClientRestController {
 	}
 
 	@ResponseBody
-	@RequestMapping(value = "/profil_old", method = RequestMethod.GET)
-	public ResponseEntity<Client> getProfile_old(HttpSession session) {
-
-		Client c = (Client) session.getAttribute("client");
-
-		if (c != null) {
-			int idC = c.getId();
-			return new ResponseEntity<Client>(this.clientDAO.find(idC), HttpStatus.OK);
-		}
-		return new ResponseEntity<Client>(HttpStatus.FORBIDDEN);
-	}
-
-	@ResponseBody
 	@RequestMapping(value = "", method = RequestMethod.GET)
 	@RestrictedAccess(value = AccessType.TOKEN, authorized = Client.class)
 	public ResponseEntity<Client> getProfile(@RequestHeader(AccessTokenSecurity.TOKEN_HEADER_NAME) String token) {
@@ -102,7 +89,7 @@ public class ClientRestController {
 	}
 
 	@ResponseBody
-	@RequestMapping(value = "/historique", method = RequestMethod.GET)
+	@RequestMapping(value = "/history", method = RequestMethod.GET)
 	@RestrictedAccess(value = AccessType.TOKEN, authorized = Client.class)
 	public ResponseEntity<List<Course>> getRunsHistory(
 			@RequestHeader(AccessTokenSecurity.TOKEN_HEADER_NAME) String token) {
@@ -113,7 +100,7 @@ public class ClientRestController {
 	}
 
 	@ResponseBody
-	@RequestMapping(value = "/{id}/historique", method = RequestMethod.GET)
+	@RequestMapping(value = "/{id}/history", method = RequestMethod.GET)
 	@RestrictedAccess(value = AccessType.TOKEN, authorized = Conducteur.class)
 	public ResponseEntity<List<Course>> getCustomerHistory(@PathVariable int id,
 			@RequestHeader(AccessTokenSecurity.TOKEN_HEADER_NAME) String token) {
@@ -160,7 +147,7 @@ public class ClientRestController {
 		return new ResponseEntity<Float>(moy, HttpStatus.OK);
 	}
 
-	@RequestMapping(value = "/{id}/infos", method = RequestMethod.GET)
+	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
 	@ResponseBody
 	@RestrictedAccess(value = AccessType.TOKEN, authorized = Conducteur.class)
 	public ResponseEntity<Client> getInfos(@PathVariable int id) {

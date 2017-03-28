@@ -41,7 +41,7 @@ public class CourseRestController {
 
 	public CourseRestController() { AutoFilterForSpringControllers.addController(getClass(), "/api"); }
 	
-	@RequestMapping(value = "/course/prise_en_charge", method = RequestMethod.POST)
+	@RequestMapping(value = "/ride/request", method = RequestMethod.POST)
 	@ResponseBody
 	@RestrictedAccess(value = AccessType.TOKEN, authorized = Client.class)
 	public ResponseEntity<Course> createRun(@RequestHeader(AccessTokenSecurity.TOKEN_HEADER_NAME) String token, @RequestParam String adresseDepart) {
@@ -56,7 +56,7 @@ public class CourseRestController {
 			return AccessTokenSecurity.buildResponse(courseDAO.save(course), token, HttpStatus.OK);
 	}
 
-	@RequestMapping(value = "/course/{idCourse}/accepter", method = RequestMethod.PUT)
+	@RequestMapping(value = "/ride/{idCourse}/accept", method = RequestMethod.PUT)
 	@ResponseBody
 	@RestrictedAccess(value = AccessType.TOKEN, authorized = Conducteur.class)
 	public ResponseEntity<Course> acceptRun(@RequestHeader(AccessTokenSecurity.TOKEN_HEADER_NAME) String token, @PathVariable int idCourse) {
@@ -74,7 +74,7 @@ public class CourseRestController {
 		return AccessTokenSecurity.buildResponse(course, token, HttpStatus.OK);
 	}
 
-	@RequestMapping(value = "/course/{id}/valider", method = RequestMethod.PUT)
+	@RequestMapping(value = "/ride/{id}/validate", method = RequestMethod.PUT)
 	@ResponseBody
 	@RestrictedAccess(value=AccessType.TOKEN, authorized=Client.class)
 	public ResponseEntity<Course> valideRun(@PathVariable int id, @RequestHeader(AccessTokenSecurity.TOKEN_HEADER_NAME) String token) {
@@ -88,7 +88,7 @@ public class CourseRestController {
 		return AccessTokenSecurity.buildResponse(Course.class, token, HttpStatus.FORBIDDEN);
 	}
 
-	@RequestMapping(value = "/course/{id}/refuser", method = RequestMethod.PUT)
+	@RequestMapping(value = "/ride/{id}/decline", method = RequestMethod.PUT)
 	@ResponseBody
 	@RestrictedAccess(value=AccessType.TOKEN, authorized=Client.class)
 	public ResponseEntity<Course> refuseRun(@PathVariable int id, @RequestHeader(AccessTokenSecurity.TOKEN_HEADER_NAME) String token) {
@@ -102,7 +102,7 @@ public class CourseRestController {
 		return AccessTokenSecurity.buildResponse(Course.class, token, HttpStatus.FORBIDDEN);
 	}
 
-	@RequestMapping(value = "/course/{id}", method = RequestMethod.GET)
+	@RequestMapping(value = "/ride/{id}", method = RequestMethod.GET)
 	@ResponseBody
 	@RestrictedAccess(value=AccessType.TOKEN, authorized = {Client.class, Conducteur.class})
 	public ResponseEntity<Course> refreshRun(@PathVariable int id, @RequestHeader(AccessTokenSecurity.TOKEN_HEADER_NAME) String token) {
@@ -116,7 +116,7 @@ public class CourseRestController {
 		return AccessTokenSecurity.buildResponse(Course.class, token, HttpStatus.FORBIDDEN);
 	}
 
-	@RequestMapping(value = "/course/{id}/demarrer", method = RequestMethod.PUT)
+	@RequestMapping(value = "/ride/{id}/start", method = RequestMethod.PUT)
 	@ResponseBody
 	@RestrictedAccess(value=AccessType.TOKEN, authorized = Conducteur.class)
 	public ResponseEntity<Course> startRun(@PathVariable int id, @RequestHeader(AccessTokenSecurity.TOKEN_HEADER_NAME) String token) {
@@ -131,7 +131,7 @@ public class CourseRestController {
 		return AccessTokenSecurity.buildResponse(Course.class, token, HttpStatus.FORBIDDEN);
 	}
 
-	@RequestMapping(value = "/course/{id}/terminer", method = RequestMethod.PUT)
+	@RequestMapping(value = "/ride/{id}/complete", method = RequestMethod.PUT)
 	@ResponseBody
 	@RestrictedAccess(value = AccessType.TOKEN, authorized=Conducteur.class)
 	public ResponseEntity<Course> endRun(@PathVariable int id, @RequestHeader(AccessTokenSecurity.TOKEN_HEADER_NAME) String token) {
@@ -145,7 +145,7 @@ public class CourseRestController {
 		return AccessTokenSecurity.buildResponse(Course.class, token, HttpStatus.FORBIDDEN);
 	}
 	
-	@RequestMapping(value="/course/{id}/pause", method = RequestMethod.PUT)
+	@RequestMapping(value="/ride/{id}/pause", method = RequestMethod.PUT)
 	@ResponseBody
 	@RestrictedAccess(value=AccessType.TOKEN, authorized=Conducteur.class)
 	public ResponseEntity<Boolean> startPause(@PathVariable int id, @RequestHeader(AccessTokenSecurity.TOKEN_HEADER_NAME) String token) {
@@ -160,7 +160,7 @@ public class CourseRestController {
 		return AccessTokenSecurity.buildResponse(Boolean.class, token, HttpStatus.FORBIDDEN);
 	}
 	
-	@RequestMapping(value="/course/{id}/reprise", method = RequestMethod.PUT)
+	@RequestMapping(value="/ride/{id}/resume", method = RequestMethod.PUT)
 	@ResponseBody
 	@RestrictedAccess(value=AccessType.TOKEN, authorized = Conducteur.class)
 	private ResponseEntity<Boolean> unPause(@PathVariable int id, @RequestHeader(AccessTokenSecurity.TOKEN_HEADER_NAME) String token) {
@@ -180,7 +180,7 @@ public class CourseRestController {
 	
 	
 
-	@RequestMapping(value = "/course/{id}/commenter", method = RequestMethod.PUT)
+	@RequestMapping(value = "/ride/{id}/comment", method = RequestMethod.PUT)
 	@ResponseBody
 	@RestrictedAccess(value = AccessType.TOKEN, authorized ={Conducteur.class, Client.class})
 	public ResponseEntity<Course> comment(@PathVariable int id, @RequestHeader(AccessTokenSecurity.TOKEN_HEADER_NAME) String token, @RequestParam float note, @RequestParam String commentaire) {
@@ -202,17 +202,7 @@ public class CourseRestController {
 		return AccessTokenSecurity.buildResponse(Course.class, token, HttpStatus.FORBIDDEN);
 	}
 	
-	@RequestMapping("/toto")
-	@ResponseBody
-	@RestrictedAccess(value = AccessType.TOKEN, authorized=Conducteur.class)
-	public ResponseEntity<Integer> toto(@RequestParam String adr, @RequestHeader(AccessTokenSecurity.TOKEN_HEADER_NAME) String token)
-	{
-		Conducteur c = AccessTokenSecurity.getUser(Conducteur.class, token);
-		
-		return AccessTokenSecurity.buildResponse(calculDistance(c, adr), token, HttpStatus.OK);
-	}
-	
-	
+
 	
 	public static int calculDistance(Conducteur cond, String adresse) {
 		
