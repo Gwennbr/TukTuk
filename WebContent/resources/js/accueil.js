@@ -11,7 +11,7 @@ $(function() {
 						'<span class="sr-only">Info:</span>Vous êtes actuellement <strong>Disponible</strong>'+
 					'</div>');
     	}
-    	else {
+    	else { 
     		$("#alertZone").html('<div id="alertDiv" class="alert alert-info">'+
             		'<button type="button" class="close" data-dismiss="alert">x</button>'+
             		'<strong>Info! </strong>'+
