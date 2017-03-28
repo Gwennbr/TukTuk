@@ -36,7 +36,7 @@ import com.tuktukteam.tuktuk.model.Course;
 import com.tuktukteam.tuktuk.model.Personne;
 
 @RestController
-@RequestMapping(value = "/conducteur")
+@RequestMapping(value = "/driver")
 public class ConducteurRestController {
 
 	@Autowired private ConducteurDAO conducteurDAO;
@@ -81,32 +81,32 @@ public class ConducteurRestController {
 	@RequestMapping(value="", method = RequestMethod.PUT)
 	@ResponseBody
 	@RestrictedAccess(value = AccessType.TOKEN, authorized = Conducteur.class)
-	public ResponseEntity<Conducteur> updateProfile(@RequestHeader(AccessTokenSecurity.TOKEN_HEADER_NAME) String token, @RequestBody Personne p, BindingResult result) {
-		Conducteur cond = AccessTokenSecurity.getUser(Conducteur.class, token) ;		
+	public ResponseEntity<Conducteur> updateProfile(@RequestHeader(AccessTokenSecurity.TOKEN_HEADER_NAME) String token, @RequestBody Conducteur conducteur, BindingResult result) {
+		Conducteur cond = AccessTokenSecurity.getUser(Conducteur.class, token) ;
 		if(!result.hasErrors()){
-			p.setId(cond.getId());
-			personneDAO.save(p);
+			conducteur.setId(cond.getId());
+			conducteurDAO.save(conducteur);
 			cond = conducteurDAO.find(cond.getId());
 			return AccessTokenSecurity.buildResponse(cond, token, HttpStatus.OK);
 		}
 		return AccessTokenSecurity.buildResponse(Conducteur.class, token, HttpStatus.NOT_MODIFIED);
 	}
 	
-	@RequestMapping(value="/historique", method = RequestMethod.GET)
+	@RequestMapping(value="/history", method = RequestMethod.GET)
 	@ResponseBody
 	@RestrictedAccess(value = AccessType.TOKEN, authorized = Conducteur.class)
 	public ResponseEntity<List<Course>> getRunsHistory(@RequestHeader(AccessTokenSecurity.TOKEN_HEADER_NAME) String token) {
 		return AccessTokenSecurity.buildResponse(AccessTokenSecurity.getUser(Conducteur.class, token).getCourses(), token, HttpStatus.OK);
 	}
 
-	@RequestMapping(value = "/{id}/historique", method = RequestMethod.GET)
+	@RequestMapping(value = "/{id}/history", method = RequestMethod.GET)
 	@ResponseBody
 	@RestrictedAccess(value = AccessType.TOKEN, authorized = Client.class)
 	public ResponseEntity<List<Course>> getDriverHistory(@PathVariable int id, @RequestHeader(AccessTokenSecurity.TOKEN_HEADER_NAME) String token) {
 		return AccessTokenSecurity.buildResponse(this.conducteurDAO.find(id).getCourses(), token, HttpStatus.OK);
 	}
 
-	@RequestMapping(value = "/{id}/infos", method = RequestMethod.GET)
+	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
 	@ResponseBody
 	@RestrictedAccess(value=AccessType.TOKEN, authorized = Client.class)
 	public ResponseEntity<Conducteur> getInfos(@PathVariable int id, @RequestHeader(AccessTokenSecurity.TOKEN_HEADER_NAME) String token) {	
@@ -125,7 +125,7 @@ public class ConducteurRestController {
 
 	}
 	
-	@RequestMapping(value="/disponible", method = RequestMethod.PUT)
+	@RequestMapping(value="/available", method = RequestMethod.PUT)
 	@ResponseBody
 	@RestrictedAccess(value=AccessType.TOKEN, authorized = Conducteur.class)
 	public ResponseEntity<Boolean> isAvailable(@RequestHeader(AccessTokenSecurity.TOKEN_HEADER_NAME) String token){
@@ -136,7 +136,7 @@ public class ConducteurRestController {
 		return AccessTokenSecurity.buildResponse(true, token, HttpStatus.OK);
 	}
 	
-	@RequestMapping(value = "/maj", method = RequestMethod.PUT)
+	@RequestMapping(value = "/refreshPos", method = RequestMethod.PUT)
 	@ResponseBody
 	@RestrictedAccess(value=AccessType.TOKEN, authorized = Conducteur.class)
 	public ResponseEntity<List<Course>> runsWithoutDriver(@RequestHeader(AccessTokenSecurity.TOKEN_HEADER_NAME) String token, @RequestParam double longitude, @RequestParam double latitude) {	
@@ -203,7 +203,7 @@ public class ConducteurRestController {
 		return AccessTokenSecurity.buildResponse(moy, token, HttpStatus.OK);
 	}
 	
-	@RequestMapping(value="/all", method = RequestMethod.GET)
+	@RequestMapping(value="s", method = RequestMethod.GET)
 	@ResponseBody
 	@RestrictedAccess()
 	public ResponseEntity<List<Coordonnee>> getAllNearDrivers(@RequestHeader(AccessTokenSecurity.TOKEN_HEADER_NAME) String token, @RequestParam double latitude, @RequestParam double longitude) {
@@ -217,6 +217,5 @@ public class ConducteurRestController {
 		
 		return AccessTokenSecurity.buildResponse(coordonnees, token, HttpStatus.OK);
 	}
-	
 	
 }
