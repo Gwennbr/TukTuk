@@ -14,12 +14,12 @@ function RestTemplate(login, password, _loginErrorCallback)
 		this.user = undefined;
 		this.token = undefined;
 		this.userType = RestTemplate.ClientType.UNKNOWN;
-		this.$http.get(RestTemplate.RESTURI_CUSTOMER_LOGIN + "?username=" + login + "&password=" + password)
-			.then(this.loginCallback, this.loginCallback);
+		this.$http.get(RestTemplate.RESTURI_DRIVER_LOGIN + "?username=" + login + "&password=" + password)
+			.then(this.internalLoginCallback, this.internalLoginCallbackError);
 	}
 	
 	this.doAjax = function(url, method, data, callback)
-	{
+	{ 
 		this.$http({
 			url: url,
 			method: method,
@@ -27,10 +27,26 @@ function RestTemplate(login, password, _loginErrorCallback)
 				HEADER_TOKEN_NAME : this.token
 			},
 			data: data
-		}).then(callback);
+		}).then(callback); 
 	}
-	
-	this.loginCallback = (function(response)
+	this.internalLoginCallbackError = (function(response)
+	{
+		if (this.tryLoginDriver)
+		{
+			this.tryLoginDriver = false;
+			this.$http.get(RestTemplate.RESTURI_CUSTOMER_LOGIN + "?username=" + login + "&password=" + password)
+				.then(this.internalLoginCallback, this.internalLoginCallbackError);
+		}
+		else
+		{
+			this.tryLoginDriver = undefined;
+			this.user = undefined;
+			this.token = undefined;
+			this.userType = RestTemplate.ClientType.UNKNOWN;
+		}
+	}).bind(this);
+
+	this.internalLoginCallback = (function(response)
 	{
 		if (response.status == 200)
 		{
@@ -41,20 +57,6 @@ function RestTemplate(login, password, _loginErrorCallback)
 			else
 				this.userType = RestTemplate.ClientType.CUSTOMER;
 		}
-		else
-			if (this.tryLoginDriver)
-			{
-				this.tryLoginDriver = false;
-				this.$http.get(RestTemplate.RESTURI_DRIVER_LOGIN + "?username=" + login + "&password=" + password)
-					.then(this.loginCallback, this.loginCallback);
-			}
-			else
-			{
-				this.tryLoginDriver = undefined;
-				this.user = undefined;
-				this.token = undefined;
-				this.userType = RestTemplate.ClientType.UNKNOWN;
-			}
 	}).bind(this);
 }
 
