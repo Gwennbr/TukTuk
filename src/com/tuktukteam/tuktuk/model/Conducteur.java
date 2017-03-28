@@ -8,6 +8,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.tuktukteam.genericdao.annotations.ColumnTag;
 
 @Entity
@@ -44,6 +45,7 @@ public class Conducteur extends Personne {
 
 	@OneToMany(mappedBy="conducteur")
 	@ColumnTag(ColumnTag.FRONT_RESTRICTED)
+	@JsonIgnore
 	private List<Course> courses;
 	
 	public Long getDateDebutPause() {

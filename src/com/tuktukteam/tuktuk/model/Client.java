@@ -9,6 +9,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.tuktukteam.genericdao.annotations.ColumnTag;
 
 @Entity
@@ -30,6 +31,7 @@ public class Client extends Personne {
 	private Date dateValiditeCB;
 	
 	@OneToMany(mappedBy="client") 
+	@JsonIgnore
 	private List<Course> courses;
 
 	

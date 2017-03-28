@@ -1,4 +1,4 @@
-function RestTemplate(login, password, loginErrorCallback)
+function RestTemplate(username, password, loginErrorCallback)
 {
 	this.$http = angular.injector(["ng"]).get("$http");
 	this.userType = RestTemplate.ClientType.UNKNOWN;
@@ -13,7 +13,7 @@ function RestTemplate(login, password, loginErrorCallback)
 		this.user = undefined;
 		this.token = undefined;
 		this.userType = RestTemplate.ClientType.UNKNOWN;
-		this.$http.get(RestTemplate.RESTURI_DRIVER_LOGIN + "?username=" + login + "&password=" + password)
+		this.$http.get(RestTemplate.RESTURI_DRIVER_LOGIN + "?username=" + username + "&password=" + password)
 			.then(this.internalLoginCallback.bind(this, doAfter.bind(this)), 
 				this.internalLoginCallbackError.bind(this, doAfter.bind(this)));
 	}
@@ -79,7 +79,7 @@ function RestTemplate(login, password, loginErrorCallback)
 		if (this.tryLoginDriver)
 		{
 			this.tryLoginDriver = false;
-			this.$http.get(RestTemplate.RESTURI_CUSTOMER_LOGIN + "?username=" + login + "&password=" + password)
+			this.$http.get(RestTemplate.RESTURI_CUSTOMER_LOGIN + "?username=" + username + "&password=" + password)
 				.then(this.internalLoginCallback, this.internalLoginCallbackError);
 		}
 		else
@@ -123,13 +123,27 @@ function RestTemplate(login, password, loginErrorCallback)
 
 	this.driver_GetProfil = function(callback, errorCallback)
 	{
-		this.doAjax(RestTemplate.RESTURI_DRIVER_PROFIL, "GET", undefined, callback, errorCallback)
+		this.doAjax(RestTemplate.RESTURI_DRIVER_PROFIL, "GET", undefined, 
+			(function(data) { this.user = data; callback(data); }).bind(this), errorCallback);
+	}
+
+	this.driver_UpdateProfil = function(driver, callback, errorCallback)
+	{
+		this.doAjax(RestTemplate.RESTURI_DRIVER_UPDATEPROFIL, "PUT", driver, 
+			(function(data) { this.user = data; callback(data); }).bind(this), errorCallback);
+	}
+
+	this.driver_GetRunsHistory = function(callback, errorCallback)
+	{
+		this.doAjax(RestTemplate.RESTURI_DRIVER_RUNSHISTORY, "GET", undefined, callback, errorCallback);
 	}
 }
 
 RestTemplate.ClientType = { UNKNOWN:0, CUSTOMER:1, DRIVER:2 } 
 RestTemplate.HEADER_TOKEN_NAME = "tokenauth-token";
 
-RestTemplate.RESTURI_CUSTOMER_LOGIN = "/TukTuk/api/client/login";
-RestTemplate.RESTURI_DRIVER_LOGIN = "/TukTuk/api/conducteur/login";
-RestTemplate.RESTURI_DRIVER_PROFIL = "/TukTuk/api/conducteur";
+RestTemplate.RESTURI_CUSTOMER_LOGIN = "/TukTuk/api/customer/login";
+RestTemplate.RESTURI_DRIVER_LOGIN = "/TukTuk/api/driver/login";
+RestTemplate.RESTURI_DRIVER_PROFIL = "/TukTuk/api/driver";
+RestTemplate.RESTURI_DRIVER_UPDATEPROFIL = "/TukTuk/api/driver";
+RestTemplate.RESTURI_DRIVER_RUNSHISTORY = "/TukTuk/api/driver/history";

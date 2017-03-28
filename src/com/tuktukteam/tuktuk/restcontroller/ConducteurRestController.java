@@ -96,7 +96,9 @@ public class ConducteurRestController {
 	@ResponseBody
 	@RestrictedAccess(value = AccessType.TOKEN, authorized = Conducteur.class)
 	public ResponseEntity<List<Course>> getRunsHistory(@RequestHeader(AccessTokenSecurity.TOKEN_HEADER_NAME) String token) {
-		return AccessTokenSecurity.buildResponse(AccessTokenSecurity.getUser(Conducteur.class, token).getCourses(), token, HttpStatus.OK);
+		Conducteur conducteur = AccessTokenSecurity.getUser(Conducteur.class, token);
+		conducteur = conducteurDAO.find(conducteur.getId());
+		return AccessTokenSecurity.buildResponse(conducteur.getCourses(), token, HttpStatus.OK);
 	}
 
 	@RequestMapping(value = "/{id}/history", method = RequestMethod.GET)
