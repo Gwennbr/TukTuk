@@ -1,7 +1,7 @@
 $(function() {
     $('#toggle-trigger').change(function() {
     	if ($(this).prop('checked') == true) {
-    		$("#zlertZone").html('<div id="alertDiv" class="alert alert-info">'+
+    		$("#alertZone").html('<div id="alertDiv" class="alert alert-info">'+
         		'<button type="button" class="close" data-dismiss="alert">x</button>'+
         		'<strong>Info! </strong>'+
         		'Vous êtes désormais disponible.'+
