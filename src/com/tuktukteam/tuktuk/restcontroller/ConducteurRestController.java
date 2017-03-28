@@ -28,12 +28,10 @@ import com.tuktukteam.genericdao.DAOException;
 import com.tuktukteam.genericdao.annotations.ColumnTag;
 import com.tuktukteam.tuktuk.dao.ConducteurDAO;
 import com.tuktukteam.tuktuk.dao.CourseDAO;
-import com.tuktukteam.tuktuk.dao.PersonneDAO;
 import com.tuktukteam.tuktuk.model.Client;
 import com.tuktukteam.tuktuk.model.Conducteur;
 import com.tuktukteam.tuktuk.model.Coordonnee;
 import com.tuktukteam.tuktuk.model.Course;
-import com.tuktukteam.tuktuk.model.Personne;
 
 @RestController
 @RequestMapping(value = "/driver")
@@ -41,7 +39,6 @@ public class ConducteurRestController {
 
 	@Autowired private ConducteurDAO conducteurDAO;
 	@Autowired private CourseDAO courseDAO;
-	@Autowired private PersonneDAO personneDAO;
 	
 	public ConducteurRestController() { AutoFilterForSpringControllers.addController(getClass(), "/api"); }
 	
@@ -71,6 +68,7 @@ public class ConducteurRestController {
 		return AccessTokenSecurity.buildResponseAndCreateAccess(conducteur);
 	}
 
+	//récupère et renvoie toutes les données du conducteur actuellement connecté.
 	@RequestMapping(value = "", method = RequestMethod.GET)
 	@ResponseBody
 	@RestrictedAccess(value = AccessType.TOKEN, authorized = Conducteur.class)
@@ -78,6 +76,7 @@ public class ConducteurRestController {
 		return AccessTokenSecurity.buildResponse(AccessTokenSecurity.getUser(Conducteur.class, token), token, HttpStatus.OK);
 	}
 	
+	//met à jour les informations du conducteur
 	@RequestMapping(value="", method = RequestMethod.PUT)
 	@ResponseBody
 	@RestrictedAccess(value = AccessType.TOKEN, authorized = Conducteur.class)
@@ -92,6 +91,7 @@ public class ConducteurRestController {
 		return AccessTokenSecurity.buildResponse(Conducteur.class, token, HttpStatus.NOT_MODIFIED);
 	}
 	
+	//récupère et renvoie l'historique des courses du conducteur actuemllement connecté
 	@RequestMapping(value="/history", method = RequestMethod.GET)
 	@ResponseBody
 	@RestrictedAccess(value = AccessType.TOKEN, authorized = Conducteur.class)
@@ -101,6 +101,7 @@ public class ConducteurRestController {
 		return AccessTokenSecurity.buildResponse(conducteur.getCourses(), token, HttpStatus.OK);
 	}
 
+	//récupère et renvoie l'historique des courses du conducteur demandé au client.
 	@RequestMapping(value = "/{id}/history", method = RequestMethod.GET)
 	@ResponseBody
 	@RestrictedAccess(value = AccessType.TOKEN, authorized = Client.class)
@@ -108,6 +109,7 @@ public class ConducteurRestController {
 		return AccessTokenSecurity.buildResponse(this.conducteurDAO.find(id).getCourses(), token, HttpStatus.OK);
 	}
 
+	//récupère et renvoie les informations utiles du conducteur demandé au client
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
 	@ResponseBody
 	@RestrictedAccess(value=AccessType.TOKEN, authorized = Client.class)
@@ -115,6 +117,7 @@ public class ConducteurRestController {
 		return AccessTokenSecurity.buildResponse(conducteurDAO.getAndFillOnlyFieldsNotTaggedBy(id, ColumnTag.FRONT_RESTRICTED), token, HttpStatus.OK);
 	}
 	
+	//rend le conducteur actuellement connecté non disponible.
 	@RequestMapping(value="/pause", method = RequestMethod.PUT)
 	@ResponseBody
 	@RestrictedAccess(value=AccessType.TOKEN, authorized = Conducteur.class)
@@ -127,6 +130,7 @@ public class ConducteurRestController {
 
 	}
 	
+	//rend le conducteur actuellement connecté disponible.
 	@RequestMapping(value="/available", method = RequestMethod.PUT)
 	@ResponseBody
 	@RestrictedAccess(value=AccessType.TOKEN, authorized = Conducteur.class)
@@ -138,6 +142,8 @@ public class ConducteurRestController {
 		return AccessTokenSecurity.buildResponse(true, token, HttpStatus.OK);
 	}
 	
+	
+	//met à jour la position du conducteur dans la base de donnée et récupère en même temps toutes les courses sans conducteur.
 	@RequestMapping(value = "/refreshPos", method = RequestMethod.PUT)
 	@ResponseBody
 	@RestrictedAccess(value=AccessType.TOKEN, authorized = Conducteur.class)
@@ -146,14 +152,14 @@ public class ConducteurRestController {
 		c.setLongitude(longitude);
 		c.setLatitude(latitude);
 		c = conducteurDAO.save(c);
-		List<Course> courses = courseDAO.getAll();
+		List<Course> courses = courseDAO.getRidesWithoutDriver();
 		//TODO enlever commentaire
 		
-		for (Course course : courses) {
-			if (course.getConducteur() != null) {				
-				courses.remove(course);
-			}
-		}
+//		for (Course course : courses) {
+//			if (course.getConducteur() != null) {				
+//				courses.remove(course);
+//			}
+//		}
 		
 		ComparatorCourse comp = new ComparatorCourse(c);
 		courses.sort(comp);
@@ -161,6 +167,7 @@ public class ConducteurRestController {
 		return AccessTokenSecurity.buildResponse(courses, token, HttpStatus.OK);
 	}
 	
+	//calcul la moyenne des notes du conducteur actuellement connecté et lui renvoie
 	@RequestMapping(value="/note", method = RequestMethod.GET)
 	@ResponseBody
 	@RestrictedAccess(value=AccessType.TOKEN, authorized = Conducteur.class)
@@ -183,6 +190,7 @@ public class ConducteurRestController {
 		return AccessTokenSecurity.buildResponse(moy, token, HttpStatus.OK);
 	}
 	
+	//calcul la moyenne des notes du conducteur demandé et la renvoie au client
 	@RequestMapping(value="/{id}/note", method = RequestMethod.GET)
 	@ResponseBody
 	@RestrictedAccess(value=AccessType.TOKEN, authorized = Client.class)
@@ -205,6 +213,7 @@ public class ConducteurRestController {
 		return AccessTokenSecurity.buildResponse(moy, token, HttpStatus.OK);
 	}
 	
+	//récupère tout les conducteurs à +/- 5 km et les renvoie au client
 	@RequestMapping(value="s", method = RequestMethod.GET)
 	@ResponseBody
 	@RestrictedAccess()

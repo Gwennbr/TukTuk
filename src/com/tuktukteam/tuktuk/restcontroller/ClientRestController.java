@@ -2,8 +2,6 @@ package com.tuktukteam.tuktuk.restcontroller;
 
 import java.util.List;
 
-import javax.servlet.http.HttpSession;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,7 +28,6 @@ import com.tuktukteam.tuktuk.dao.PersonneDAO;
 import com.tuktukteam.tuktuk.model.Client;
 import com.tuktukteam.tuktuk.model.Conducteur;
 import com.tuktukteam.tuktuk.model.Course;
-import com.tuktukteam.tuktuk.model.Personne;
 
 @RestController
 @RequestMapping("/customer")
@@ -65,6 +62,7 @@ public class ClientRestController {
 		return AccessTokenSecurity.buildResponseAndCreateAccess(client);
 	}
 
+	//récupère les infos du client actuellement connecté et lui renvoie
 	@ResponseBody
 	@RequestMapping(value = "", method = RequestMethod.GET)
 	@RestrictedAccess(value = AccessType.TOKEN, authorized = Client.class)
@@ -72,6 +70,7 @@ public class ClientRestController {
 		return new ResponseEntity<Client>(AccessTokenSecurity.getUser(Client.class, token), HttpStatus.OK);
 	}
 
+	//met à jour les infos du client et lui renvoie
 	@ResponseBody
 	@RequestMapping(value = "", method = RequestMethod.PUT)
 	@RestrictedAccess(value = AccessType.TOKEN, authorized = Client.class)
@@ -88,6 +87,7 @@ public class ClientRestController {
 		return new ResponseEntity<Client>(HttpStatus.NOT_MODIFIED);
 	}
 
+	//récupère l'historique du client actuellement connecté
 	@ResponseBody
 	@RequestMapping(value = "/history", method = RequestMethod.GET)
 	@RestrictedAccess(value = AccessType.TOKEN, authorized = Client.class)
@@ -99,6 +99,7 @@ public class ClientRestController {
 
 	}
 
+	//récupère l'historique du client demandé et le renvoie au conducteur
 	@ResponseBody
 	@RequestMapping(value = "/{id}/history", method = RequestMethod.GET)
 	@RestrictedAccess(value = AccessType.TOKEN, authorized = Conducteur.class)
@@ -107,6 +108,7 @@ public class ClientRestController {
 		return new ResponseEntity<List<Course>>(clientDAO.find(id).getCourses(), HttpStatus.OK);
 	}
 	
+	//calcul la moyenne du client actuellement connecté et lui renvoie
 	@ResponseBody
 	@RequestMapping(value = "/note", method = RequestMethod.GET)
 	@RestrictedAccess(value = AccessType.TOKEN, authorized = Client.class)
@@ -127,6 +129,7 @@ public class ClientRestController {
 		return new ResponseEntity<Float>(moy, HttpStatus.OK);
 	}
 
+	//calcul la moyenne du client demandé et la renvoie au conducteur
 	@ResponseBody
 	@RequestMapping(value = "/{id}/note", method = RequestMethod.GET)
 	@RestrictedAccess(value = AccessType.TOKEN, authorized = Conducteur.class)
@@ -147,6 +150,7 @@ public class ClientRestController {
 		return new ResponseEntity<Float>(moy, HttpStatus.OK);
 	}
 
+	//récupère les informations utiles du client demandé et les renvoie au conducteur
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
 	@ResponseBody
 	@RestrictedAccess(value = AccessType.TOKEN, authorized = Conducteur.class)
