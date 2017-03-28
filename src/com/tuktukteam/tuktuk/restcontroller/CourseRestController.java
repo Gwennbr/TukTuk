@@ -217,7 +217,7 @@ public class CourseRestController {
 		RestTemplate template = new RestTemplate();
 		ResponseEntity<String> jsonEntity = null;
 		try{
-			jsonEntity = template.getForEntity("https://maps.googleapis.com/maps/api/directions/json?origin={lng},{lat}&destination={adresse}", String.class,cond.getLongitude(), cond.getLatitude(), adresse.replaceAll(" ", "+"));
+			jsonEntity = template.getForEntity("https://maps.googleapis.com/maps/api/distancematrix/json?origins={lng},{lat}&destinations={adresse}&mode=bicycling&units=metric", String.class,cond.getLongitude(), cond.getLatitude(), adresse.replaceAll(" ", "+"));
 		} catch (RestClientException e){
 			e.printStackTrace();
 		}
@@ -226,9 +226,10 @@ public class CourseRestController {
 			ObjectMapper objmp = new ObjectMapper();
 			try {
 				JsonNode rootNode = objmp.readValue(jsonEntity.getBody(), JsonNode.class);
-				return rootNode.get("routes[0].legs[0].distance.value").asInt(); 
-			} catch (IOException e) {
-				e.printStackTrace();
+				//return rootNode.get("routes").get(0).get("legs").get(0).get("distance").get("value").asInt();
+				return rootNode.get("rows").get(0).get("elements").get(0).get("distance").get("value").asInt();
+			} catch (IOException e) 
+			{
 			}
 		}		
 		return 0;
