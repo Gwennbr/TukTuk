@@ -47,7 +47,7 @@ public class MainController
 	@RequestMapping(value = "/login2", method = RequestMethod.GET)
 	public String tests(Model model) 
 	{
-		return "accueil2"; 
+		return "accueil2";  
 	}
 	
 	@RequestMapping(value = "/login", method = RequestMethod.POST)
