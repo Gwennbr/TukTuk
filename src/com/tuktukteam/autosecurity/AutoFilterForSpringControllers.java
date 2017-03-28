@@ -229,15 +229,16 @@ public class AutoFilterForSpringControllers extends GenericFilterBean
 					filterChain.doFilter(request, response);
 				else
 				{
+					ResponseWrapper responseWrapper = new ResponseWrapper(response, request, access); //AccessTokenSecurity.TOKEN_HEADER_NAME, token);
 					switch (access.value())
 					{
 						case PUBLIC:
-							filterChain.doFilter(request, response);								
+							filterChain.doFilter(request, responseWrapper);								
 							break;
 						
 						case CLASS_IN_SESSION:
 							if (userInSessionHasValidAccess(request.getSession(), access.authorized(), access.attributesNames()))
-								filterChain.doFilter(request, response);
+								filterChain.doFilter(request, responseWrapper);
 							else
 								onForbidden(response, access.onForbidden());
 							break;
@@ -247,10 +248,9 @@ public class AutoFilterForSpringControllers extends GenericFilterBean
 							{
 								//String token = request.getHeader(AccessTokenSecurity.TOKEN_HEADER_NAME);
 								//token = AccessTokenSecurity.updateToken(token);
-								//ResponseWrapper responseWrapper = new ResponseWrapper(response, AccessTokenSecurity.TOKEN_HEADER_NAME, token);
 								//PrintWriter out = response.getWriter();
 								//AccessTokenSecurity.addUpdatedTokenInResponseHeaders(response, request.getHeader(AccessTokenSecurity.TOKEN_HEADER_NAME));
-								filterChain.doFilter(request, response); //responseWrapper);
+								filterChain.doFilter(request, responseWrapper); //responseWrapper);
 								//out.write(responseWrapper.toString());
 								//out.close();
 							}

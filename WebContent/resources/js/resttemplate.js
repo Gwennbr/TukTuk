@@ -29,7 +29,7 @@ function RestTemplate(login, password)
 		}).then(callback);
 	}
 	
-	this.loginCallback = function(response)
+	this.loginCallback = (function(response)
 	{
 		if (response.status == 200)
 		{
@@ -54,7 +54,7 @@ function RestTemplate(login, password)
 				this.token = undefined;
 				this.userType = RestTemplate.ClientType.UNKNOWN;
 			}
-	}
+	}).bind(this);
 }
 
 RestTemplate.ClientType = { UNKNOWN:0, CUSTOMER:1, DRIVER:2 } 

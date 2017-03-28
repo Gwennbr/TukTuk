@@ -60,8 +60,7 @@ public class ClientRestController {
 
 		if (client == null)
 			return new ResponseEntity<Client>(HttpStatus.NOT_ACCEPTABLE);
-		return null;
-		//return new ResponseEntity<Client>(client, headers, HttpStatus.OK);
+		return AccessTokenSecurity.buildResponseAndCreateAccess(client);
 	}
 
 	@ResponseBody
@@ -162,8 +161,7 @@ public class ClientRestController {
 	@RequestMapping(value = "/{id}/infos", method = RequestMethod.GET)
 	@ResponseBody
 	@RestrictedAccess(value = AccessType.TOKEN, authorized = Conducteur.class)
-	public ResponseEntity<Client> getInfos(@PathVariable int id, HttpSession session) {
-
+	public ResponseEntity<Client> getInfos(@PathVariable int id) {
 		return new ResponseEntity<Client>(clientDAO.getAndFillOnlyFieldsNotTaggedBy(id, ColumnTag.FRONT_RESTRICTED),
 				HttpStatus.OK);
 	}

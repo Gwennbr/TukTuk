@@ -45,8 +45,6 @@ public class ConducteurRestController {
 	@RestrictedAccess(value = AccessType.PUBLIC)
 	public ResponseEntity<Conducteur> login(@RequestParam String username, @RequestParam String password)
 	{
-		System.out.println("REST /conducteur/login : " + this);
-		
 		Conducteur conducteur = new Conducteur();
 
 		conducteur.setUsername(username);
@@ -58,13 +56,14 @@ public class ConducteurRestController {
 		}
 		catch (DAOException e)
 		{
+			System.out.println("excep : " + e);
 			conducteur = null;
 		}
 		
 		if (conducteur == null)
 			return new ResponseEntity<Conducteur>(HttpStatus.NOT_FOUND);
 
-		return new ResponseEntity<Conducteur>(conducteur, HttpStatus.OK);
+		return AccessTokenSecurity.buildResponseAndCreateAccess(conducteur);
 	}
 
 	@RequestMapping(value = "", method = RequestMethod.GET)
@@ -141,12 +140,14 @@ public class ConducteurRestController {
 		c.setLatitude(latitude);
 		c = conducteurDAO.save(c);
 		List<Course> courses = courseDAO.getAll();
+		//TODO enlever commentaire
+		
 		for (Course course : courses) {
-			if (cour
-					se.getConducteur() != null) {
+			if (course.getConducteur() != null) {
 				courses.remove(course);
 			}
 		}
+		
 		return AccessTokenSecurity.buildResponse(courses, token, HttpStatus.OK);
 	}
 	

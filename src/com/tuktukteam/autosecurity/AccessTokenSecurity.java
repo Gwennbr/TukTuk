@@ -17,12 +17,13 @@ import lombok.Setter;
 
 public class AccessTokenSecurity
 {
-	public static final String TOKEN_HEADER_NAME = "TokenAuth-Token";
-	public static final String TOKEN_EXPIRES_HEADER_NAME = "TokenAuth-Expires";
+	public static final String TOKEN_HEADER_NAME = "tokenauth-token";
+	public static final String TOKEN_EXPIRES_HEADER_NAME = "tokenauth-expires";
 	
-	private static final int DEFAULT_TOKEN_LENGTH = 30;
+	private static final int DEFAULT_TOKEN_LENGTH = 50;
 	private static final long DEFAULT_TOKEN_TIMEOUT = 5 * 60 * 1000; // 5 minutes
-
+	//TODO add auto timeout logic on token
+	
 	public static void setTokenLength(int _tokenLength) { tokenLength = _tokenLength; }
 	
 	public static <T> T getUser(Class<T> userClass, String token)
@@ -116,7 +117,12 @@ public class AccessTokenSecurity
 		return buildResponseAndCreateAccess(type, user, DEFAULT_TOKEN_TIMEOUT, status);
 	}
 	
-	public <T> ResponseEntity<T> buildResponseAndCreateAccess(T entity, Object user, long timeout, HttpStatus status)
+	public static <T> ResponseEntity<T> buildResponseAndCreateAccess(Class<T> type, Object user)
+	{
+		return buildResponseAndCreateAccess(type, user, DEFAULT_TOKEN_TIMEOUT, HttpStatus.OK);
+	}
+
+	public static <T> ResponseEntity<T> buildResponseAndCreateAccess(T entity, Object user, long timeout, HttpStatus status)
 	{
 		HttpHeaders headers = new HttpHeaders();
 		
@@ -126,6 +132,11 @@ public class AccessTokenSecurity
 		headers.add(TOKEN_EXPIRES_HEADER_NAME, String.valueOf(timeout));
 		
 		return new ResponseEntity<>(entity, headers, status);		
+	}
+	
+	public static <T> ResponseEntity<T> buildResponseAndCreateAccess(T entity)
+	{
+		return buildResponseAndCreateAccess(entity, entity, DEFAULT_TOKEN_TIMEOUT, HttpStatus.OK);
 	}
 	
 	public <T> ResponseEntity<T> buildResponseAndCreateAccess(T entity, Object user, HttpStatus status)
