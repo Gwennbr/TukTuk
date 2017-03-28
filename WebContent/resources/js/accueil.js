@@ -1,5 +1,3 @@
-pouet poueeeeeeeeeeeeeeeeeeeeeet
-
 $(function() {
     $('#toggle-trigger').change(function() {
     	if ($(this).prop('checked') == true) {
@@ -25,13 +23,20 @@ $(function() {
 					'</div>');
     	}
     	
+    	
+    	
+    	
     	$("#alertDiv").fadeTo(2000, 500).slideUp(500, function(){
     		$("#alertDiv").slideUp(500);
     	});
     	
     });
 });
+
+
   
+
+
   
 // <div id="alertDiv" class="alert alert-success">
 // <button type="button" class="close" data-dismiss="alert">x</button>
