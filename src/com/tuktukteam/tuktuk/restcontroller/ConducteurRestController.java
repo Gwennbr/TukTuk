@@ -141,14 +141,13 @@ public class ConducteurRestController {
 		c = conducteurDAO.save(c);
 		List<Course> courses = courseDAO.getAll();
 		//TODO enlever commentaire
-		/*
+		
 		for (Course course : courses) {
-			if (cour
-					se.getConducteur() != null) {
+			if (course.getConducteur() != null) {
 				courses.remove(course);
 			}
 		}
-		*/
+		
 		return AccessTokenSecurity.buildResponse(courses, token, HttpStatus.OK);
 	}
 	
