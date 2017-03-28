@@ -23,6 +23,9 @@ $(function() {
 					'</div>');
     	}
     	
+    	
+    	
+    	
     	$("#alertDiv").fadeTo(2000, 500).slideUp(500, function(){
     		$("#alertDiv").slideUp(500);
     	});
