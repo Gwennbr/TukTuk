@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+
+
 import com.tuktukteam.autosecurity.AccessTokenSecurity;
 import com.tuktukteam.autosecurity.AutoFilterForSpringControllers;
 import com.tuktukteam.autosecurity.RestrictedAccess;
@@ -165,5 +167,7 @@ public class ClientRestController {
 		return new ResponseEntity<Client>(clientDAO.getAndFillOnlyFieldsNotTaggedBy(id, ColumnTag.FRONT_RESTRICTED),
 				HttpStatus.OK);
 	}
+	
+
 
 }

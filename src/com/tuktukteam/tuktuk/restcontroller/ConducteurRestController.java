@@ -1,5 +1,8 @@
 package com.tuktukteam.tuktuk.restcontroller;
 
+
+
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -20,6 +23,7 @@ import com.tuktukteam.autosecurity.AccessTokenSecurity;
 import com.tuktukteam.autosecurity.AutoFilterForSpringControllers;
 import com.tuktukteam.autosecurity.RestrictedAccess;
 import com.tuktukteam.autosecurity.RestrictedAccess.AccessType;
+import com.tuktukteam.comparator.ComparatorCourse;
 import com.tuktukteam.genericdao.DAOException;
 import com.tuktukteam.genericdao.annotations.ColumnTag;
 import com.tuktukteam.tuktuk.dao.ConducteurDAO;
@@ -27,6 +31,7 @@ import com.tuktukteam.tuktuk.dao.CourseDAO;
 import com.tuktukteam.tuktuk.dao.PersonneDAO;
 import com.tuktukteam.tuktuk.model.Client;
 import com.tuktukteam.tuktuk.model.Conducteur;
+import com.tuktukteam.tuktuk.model.Coordonnee;
 import com.tuktukteam.tuktuk.model.Course;
 import com.tuktukteam.tuktuk.model.Personne;
 
@@ -143,11 +148,14 @@ public class ConducteurRestController {
 		//TODO enlever commentaire
 		
 		for (Course course : courses) {
-			if (course.getConducteur() != null) {
+			if (course.getConducteur() != null) {				
 				courses.remove(course);
 			}
 		}
 		
+		ComparatorCourse comp = new ComparatorCourse(c);
+		courses.sort(comp);
+				
 		return AccessTokenSecurity.buildResponse(courses, token, HttpStatus.OK);
 	}
 	
@@ -194,5 +202,21 @@ public class ConducteurRestController {
 		moy = somme/i;
 		return AccessTokenSecurity.buildResponse(moy, token, HttpStatus.OK);
 	}
+	
+	@RequestMapping(value="/all", method = RequestMethod.GET)
+	@ResponseBody
+	@RestrictedAccess()
+	public ResponseEntity<List<Coordonnee>> getAllNearDrivers(@RequestHeader(AccessTokenSecurity.TOKEN_HEADER_NAME) String token, @RequestParam double latitude, @RequestParam double longitude) {
+		List<Coordonnee> coordonnees = new ArrayList<>();
+		List<Conducteur> conducteurs = conducteurDAO.getAllAndFillOnlyFieldsTaggedBy("coordonnees");	
+		for(Conducteur cond : conducteurs) {
+			if(cond.getLatitude()>latitude+0.07 || cond.getLatitude()<latitude-0.07 || cond.getLongitude()>longitude+0.07 || cond.getLongitude()<longitude+0.07){
+				coordonnees.add(new Coordonnee(cond.getLatitude(), cond.getLongitude()));
+			}
+		}
+		
+		return AccessTokenSecurity.buildResponse(coordonnees, token, HttpStatus.OK);
+	}
+	
 	
 }
