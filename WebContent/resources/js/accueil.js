@@ -1,6 +1,3 @@
-
-
-
 $(function() {
     $('#toggle-trigger').change(function() {
     	if ($(this).prop('checked') == true) {
@@ -9,7 +6,10 @@ $(function() {
         		'<strong>Info! </strong>'+
         		'Vous êtes désormais disponible.'+
     			'</div>');
-    		$("#dispoVar").html('Disponible');
+    		$("#dispoVar").html('<div class="alert alert-info" role="alert">'+
+					'<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>'+
+						'<span class="sr-only">Info:</span>Vous êtes actuellement <strong>Disponible</strong>'+
+					'</div>');
     	}
     	else {
     		$("#alertZone").html('<div id="alertDiv" class="alert alert-info">'+
@@ -17,7 +17,10 @@ $(function() {
             		'<strong>Info! </strong>'+
             		'Vous êtes désormais indisponible.'+
         			'</div>');
-    		$("#dispoVar").html('Indisponible');
+    		$("#dispoVar").html('<div class="alert alert-danger" role="alert">'+
+					'<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>'+
+						'<span class="sr-only">Info:</span>Vous êtes actuellement <strong>Indisponible</strong>'+
+					'</div>');
     	}
     	
     	$("#alertDiv").fadeTo(2000, 500).slideUp(500, function(){
