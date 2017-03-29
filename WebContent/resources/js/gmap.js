@@ -3,11 +3,15 @@ var app = angular.module('myApp', ['ngMap']);
   app.controller('mapController', function($interval) {
     var vm = this;
     vm.positions = [];
+    var geocoder = new google.maps.Geocoder;
+    var lat, lng;
     var generateMarkers = function() {
       vm.positions = [];//sera egale au tableau de sortie
 	  navigator.geolocation.getCurrentPosition(foundLocation);
 
 	  function foundLocation(position) {
+		  lat = position.coords.latitude;
+		  lng = position.coords.longitude;
 		  vm.current = "[" + position.coords.latitude + "," + position.coords.longitude + "]";
 	  };
 	  
@@ -23,44 +27,24 @@ var app = angular.module('myApp', ['ngMap']);
 	  
       console.log("vm.positions", vm.positions);
       console.log("vm.current", vm.current);
-	  
+      
+//      geocodeLatLng(geocoder, lat, lng);
     };
 
     $interval(generateMarkers, 5000);//refresh position
   });
   
-//var app = angular.module('myApp', ['ngMap']);
-//
-//  app.controller('mapController', function($interval) {
-//    var vm = this;
-//    vm.positions = [];
-//	
-//    var generateMarkers = function() {
-//      
-//    };
-//
-//    $interval(generateMarkers, 2000);
-//  });
-//  
-//  app.controller('MyCtrl', function(NgMap) {
-//  var vm = this;
-//  vm.types = "['establishment']";
-//  vm.placeChanged = function() {
-//    vm.place = this.getPlace();
-//    vm.map.setCenter(vm.place.geometry.location);
-//  }
-//  NgMap.getMap().then(function(map) {
-//    vm.map = map;
-//  });
-//  
   
-  
-//  vm.addMarker = function(event) {
-//      var ll = event.latLng;
-//      vm.positions.push({lat:ll.lat(), lng: ll.lng()});
-//    }
-//    vm.deleteMarkers = function() {
-//      vm.positions = [];
-//    };
-  
-// });
+
+
+//  function geocodeLatLng(geocoder, lat, lng) {
+//  	  var latlng = {lat: parseFloat(lat), lng: parseFloat(lng)};
+//  	  geocoder.geocode({'location': latlng}, function(results, status) {
+//  	    if (status === google.maps.GeocoderStatus.OK) {
+//  	      if (results[1]) {
+//  	    	  console.log(results);
+//  	    	$("#vmadresse").val(results[0].formatted_address);
+//  	      }
+//  	    }
+//  	  });
+//  	};

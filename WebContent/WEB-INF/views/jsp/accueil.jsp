@@ -132,10 +132,10 @@
 					<div class="modal-body">
 						<!-- <label>Information chauffeur</label> -->
 						<div class="card">
-							<img class="card-img-top img-thumbnail" src="${ pageContext.request.contextPath }/resources/img/chauffeur.jpg" alt="Jean Dupont"/>
+							<img class="card-img-top" src="${ pageContext.request.contextPath }/resources/img/chauffeur.jpg" alt="Jean Dupont"/>
 							<div class="card-block">
 								<h4 class="card-title">Jean Dupont</h4>
-								<p class="card-text">Note du chauffeur :<img class="card-img-top" src="${ pageContext.request.contextPath }/resources/img/rate5.png" alt="Note"/></p>
+								<img id="rating" src="${ pageContext.request.contextPath }/resources/img/rate5.png" alt="Note"/>
 								<a id="btn-commander" href="#" class="btn btn-success">Commander</a>
 							</div>
 						</div>
@@ -183,121 +183,13 @@
 						<h4 class="modal-title">Historique des course : ${ conducteur.prenom } ${ conducteur.nom }${ client.prenom } ${ client.nom }</h4>
 					</div>
 					<div class="modal-body">
-						<table class="table table-bordered">
+						<table id="history" class="table table-bordered">
 							<tr class="warning">
 								<th>Adresse</th>
 								<th>Temps</th>
-								<th>Distance</th>
 								<th>Prix</th>
 							</tr>
-							<tr class="danger">
-								<td>1 rue de Troy - 59100 - Lille</td>
-							    <td>00:12:24</td>
-							    <td>3,7 km</td>
-							    <td>5,54 €</td>
-							</tr>
-							<tr class="success">
-								<td>1 rue de Troy - 59100 - Lille</td>
-							    <td>00:12:24</td>
-							    <td>3,7 km</td>
-							    <td>5,54 €</td>
-							</tr>
-							<tr class="danger">
-								<td>1 rue de Troy - 59100 - Lille</td>
-							    <td>00:12:24</td>
-							    <td>3,7 km</td>
-							    <td>5,54 €</td>
-							</tr>
-							<tr class="success">
-								<td>1 rue de Troy - 59100 - Lille</td>
-							    <td>00:12:24</td>
-							    <td>3,7 km</td>
-							    <td>5,54 €</td>
-							</tr>
-							<tr class="success">
-								<td>1 rue de Troy - 59100 - Lille</td>
-							    <td>00:12:24</td>
-							    <td>3,7 km</td>
-							    <td>5,54 €</td>
-							</tr>
-							<tr class="success">
-								<td>1 rue de Troy - 59100 - Lille</td>
-							    <td>00:12:24</td>
-							    <td>3,7 km</td>
-							    <td>5,54 €</td>
-							</tr>
-							<tr class="danger">
-								<td>1 rue de Troy - 59100 - Lille</td>
-							    <td>00:12:24</td>
-							    <td>3,7 km</td>
-							    <td>5,54 €</td>
-							</tr>
-							<tr class="danger">
-								<td>1 rue de Troy - 59100 - Lille</td>
-							    <td>00:12:24</td>
-							    <td>3,7 km</td>
-							    <td>5,54 €</td>
-							</tr>
-							<tr class="danger">
-								<td>1 rue de Troy - 59100 - Lille</td>
-							    <td>00:12:24</td>
-							    <td>3,7 km</td>
-							    <td>5,54 €</td>
-							</tr>
-							<tr class="danger">
-								<td>1 rue de Troy - 59100 - Lille</td>
-							    <td>00:12:24</td>
-							    <td>3,7 km</td>
-							    <td>5,54 €</td>
-							</tr>
-							<tr class="danger">
-								<td>1 rue de Troy - 59100 - Lille</td>
-							    <td>00:12:24</td>
-							    <td>3,7 km</td>
-							    <td>5,54 €</td>
-							</tr>
-							<tr class="danger">
-								<td>1 rue de Troy - 59100 - Lille</td>
-							    <td>00:12:24</td>
-							    <td>3,7 km</td>
-							    <td>5,54 €</td>
-							</tr>
-							<tr class="danger">
-								<td>1 rue de Troy - 59100 - Lille</td>
-							    <td>00:12:24</td>
-							    <td>3,7 km</td>
-							    <td>5,54 €</td>
-							</tr>
-							<tr class="danger">
-								<td>1 rue de Troy - 59100 - Lille</td>
-							    <td>00:12:24</td>
-							    <td>3,7 km</td>
-							    <td>5,54 €</td>
-							</tr>
-							<tr class="danger">
-								<td>1 rue de Troy - 59100 - Lille</td>
-							    <td>00:12:24</td>
-							    <td>3,7 km</td>
-							    <td>5,54 €</td>
-							</tr>
-							<tr class="danger">
-								<td>1 rue de Troy - 59100 - Lille</td>
-							    <td>00:12:24</td>
-							    <td>3,7 km</td>
-							    <td>5,54 €</td>
-							</tr>
-							<tr class="danger">
-								<td>1 rue de Troy - 59100 - Lille</td>
-							    <td>00:12:24</td>
-							    <td>3,7 km</td>
-							    <td>5,54 €</td>
-							</tr>
-							<tr class="danger">
-								<td>1 rue de Troy - 59100 - Lille</td>
-							    <td>00:12:24</td>
-							    <td>3,7 km</td>
-							    <td>5,54 €</td>
-							</tr>
+							
 						</table>
 					</div>
 				<div class="modal-footer">

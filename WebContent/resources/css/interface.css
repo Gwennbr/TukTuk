@@ -248,6 +248,12 @@ nav .btn-link:hover {
 	color: white;
 }
 
+#rating {
+	width: 50%;
+	heigh: 50%;
+	valign: center;
+}
+
 input[type=checkbox]{
 	width: 100%;
 }

@@ -1,4 +1,4 @@
-$(function() {
+$(function() {	
     $('#toggle-trigger').change(function() {
     	if ($(this).prop('checked') == true) {
     		$("#alertZone").html('<div id="alertDiv" class="alert alert-info">'+
@@ -31,10 +31,15 @@ $(function() {
     	});
     	
     });
+    
+    for(var i = 0; i < 10; i++) {
+    	$("#history").append('<tr class="success">'+
+				'<td>1 rue de Troy - 59100 - Lille</td>'+
+			    '<td>00:12:24</td>'+
+			    '<td>5,54 €</td>'+
+			'</tr>');
+    };
 });
-
-
-  
 
 
   
