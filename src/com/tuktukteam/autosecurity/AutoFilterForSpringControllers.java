@@ -19,6 +19,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.filter.GenericFilterBean;
 
+import com.tuktukteam.autosecurity.RestrictedAccess.AccessOptions;
+import com.tuktukteam.autosecurity.RestrictedAccess.AccessType;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -34,7 +36,11 @@ public class AutoFilterForSpringControllers extends GenericFilterBean
 	private static @AllArgsConstructor class SecurityMappingEntry
 	{
 		@Getter private String uri;
-		@Getter private RestrictedAccess access;
+		@Getter AccessType accessType;
+		@Getter Class<?> authorized[];
+		@Getter String attributesNames[];
+		@Getter String onForbidden;
+		@Getter AccessOptions options[];		
 		@Getter private RequestMethod [] methods;	
 	}
 	
@@ -98,7 +104,13 @@ public class AutoFilterForSpringControllers extends GenericFilterBean
 	
 	public static void addAllowedUri(String regex, RequestMethod requestMethods[])
 	{
-		securityMappings.add(new SecurityMappingEntry(regex, null, requestMethods));
+		securityMappings.add(new SecurityMappingEntry(regex, 
+							AccessType.PUBLIC, 
+							null,
+							null,
+							null,
+							null,
+							requestMethods));
 	}
 	
 	public static void addController(Class<?> type, String prefix)
@@ -148,10 +160,39 @@ public class AutoFilterForSpringControllers extends GenericFilterBean
 								sb.append(String.format(", %s", met.toString()));
 						System.out.println(String.format("filter add : %s (%s)", uri, sb.toString()));
 					
-						securityMappings.add(new SecurityMappingEntry(
-								uri, 
-								methodSecurityAccess != null ? methodSecurityAccess : type.getDeclaredAnnotation(RestrictedAccess.class),
-								methods));
+						if (methodSecurityAccess != null)
+							securityMappings.add(new SecurityMappingEntry(
+									uri, 
+									methodSecurityAccess.value(),
+									methodSecurityAccess.authorized(),
+									methodSecurityAccess.attributesNames(),
+									methodSecurityAccess.onForbidden(),
+									methodSecurityAccess.options(),
+									methods));
+						else
+						{
+							RestrictedAccess classSecurityAccess = type.getDeclaredAnnotation(RestrictedAccess.class);
+							if (classSecurityAccess == null)
+								securityMappings.add(new SecurityMappingEntry(
+										uri, 
+										AccessType.PUBLIC,
+										null,
+										null,
+										null,
+										null,
+										methods));
+							else
+								securityMappings.add(new SecurityMappingEntry(
+										uri, 
+										classSecurityAccess.value(),
+										classSecurityAccess.authorized(),
+										classSecurityAccess.attributesNames(),
+										classSecurityAccess.onForbidden(),
+										classSecurityAccess.options(),
+										methods));
+								
+							
+						}
 					}
 				}
 			}
@@ -222,47 +263,41 @@ public class AutoFilterForSpringControllers extends GenericFilterBean
 		for (SecurityMappingEntry sec : securityMappings)
 			if (uri.matches(sec.getUri()))
 			{
-				RestrictedAccess access = sec.getAccess();
-				if (access == null)
-					filterChain.doFilter(request, response);
-				else
+				//ResponseWrapper responseWrapper = new ResponseWrapper(response, request, access); //AccessTokenSecurity.TOKEN_HEADER_NAME, token);
+				switch (sec.accessType)
 				{
-					//ResponseWrapper responseWrapper = new ResponseWrapper(response, request, access); //AccessTokenSecurity.TOKEN_HEADER_NAME, token);
-					switch (access.value())
-					{
-						case PUBLIC:
-							filterChain.doFilter(request, response);								
-							break;
-						
-						case CLASS_IN_SESSION:
-							if (userInSessionHasValidAccess(request.getSession(), access.authorized(), access.attributesNames()))
-								filterChain.doFilter(request, response);
-							else 
-								onForbidden(response, access.onForbidden());
-							break;
+					case PUBLIC:
+						filterChain.doFilter(request, response);								
+						break;
+					
+					case CLASS_IN_SESSION:
+						if (userInSessionHasValidAccess(request.getSession(), sec.authorized, sec.attributesNames))
+							filterChain.doFilter(request, response);
+						else 
+							onForbidden(response, sec.onForbidden);
+						break;
 							
-						case TOKEN:
-							if (AccessTokenSecurity.accessIsAuthorized(request, access.authorized()))
-							{
-								//String token = request.getHeader(AccessTokenSecurity.TOKEN_HEADER_NAME);
-								//token = AccessTokenSecurity.updateToken(token);
-								//PrintWriter out = response.getWriter();
-								//AccessTokenSecurity.addUpdatedTokenInResponseHeaders(response, request.getHeader(AccessTokenSecurity.TOKEN_HEADER_NAME));
-								filterChain.doFilter(request, response); //responseWrapper);
-								//out.write(responseWrapper.toString());
-								//out.close();
-							}
-							else
-								onForbidden(response, access.onForbidden());
-							break;
+					case TOKEN:
+						if (AccessTokenSecurity.accessIsAuthorized(request, sec.authorized))
+						{
+							//String token = request.getHeader(AccessTokenSecurity.TOKEN_HEADER_NAME);
+							//token = AccessTokenSecurity.updateToken(token);
+							//PrintWriter out = response.getWriter();
+							//AccessTokenSecurity.addUpdatedTokenInResponseHeaders(response, request.getHeader(AccessTokenSecurity.TOKEN_HEADER_NAME));
+							filterChain.doFilter(request, response); //responseWrapper);
+							//out.write(responseWrapper.toString());
+							//out.close();
+						}
+						else
+							onForbidden(response, sec.onForbidden);
+						break;
 							
-						case NONE:
-						default:
-							onForbidden(response, access.onForbidden());
-							break;
-					}
-					//responseWrapper.getWriter().write(responseWrapper.toString());
+					case NONE:
+					default:
+						onForbidden(response, sec.onForbidden);
+						break;
 				}
+				//responseWrapper.getWriter().write(responseWrapper.toString());
 				return;
 			}
 		filterChain.doFilter(request, response);
