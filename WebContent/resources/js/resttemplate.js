@@ -1,31 +1,30 @@
-function RestTemplate(username, password, loginErrorCallback)
+function RestTemplate(_token, globalErrorCallback)
 {
 	this.$http = angular.injector(["ng"]).get("$http");
 	this.userType = RestTemplate.ClientType.UNKNOWN;
 	this.user = undefined;
-	this.token = undefined;
 	this.tryLoginDriver = undefined;
 	this.isRetry = false;
-
-	this.login = function(doAfter)
+	this.token = _token;
+	
+	this.login = function()
 	{
 		this.tryLoginDriver = true;
 		this.user = undefined;
 		this.token = undefined;
 		this.userType = RestTemplate.ClientType.UNKNOWN;
 		this.$http.get(RestTemplate.RESTURI_DRIVER_LOGIN + "?username=" + username + "&password=" + password)
-			.then(this.internalLoginCallback.bind(this, doAfter.bind(this)), 
-				this.internalLoginCallbackError.bind(this, doAfter.bind(this)));
+			.then(this.internalLoginCallback.bind(this), this.internalLoginCallbackError.bind(this));
 	}
 	
 	this.doAjax = function(url, method, data, callback, errorCallback)
 	{ 
-		if (this.userType === RestTemplate.ClientType.UNKNOWN)
+/*		if (this.userType === RestTemplate.ClientType.UNKNOWN)
 		{
 			this.login(function() { this.doAjax(url, method, data, callback, errorCallback); });
 			return;
 		}
-
+*/
 		if (data === undefined || data == null)
 			this.$http({
 				url: url,
@@ -74,7 +73,7 @@ function RestTemplate(username, password, loginErrorCallback)
 
 	}
 
-	this.internalLoginCallbackError = function(doAfter, response)
+	this.internalLoginCallbackError = function(response)
 	{
 		if (this.tryLoginDriver)
 		{
@@ -88,12 +87,12 @@ function RestTemplate(username, password, loginErrorCallback)
 			this.user = undefined;
 			this.token = undefined;
 			this.userType = RestTemplate.ClientType.UNKNOWN;
-			if (loginErrorCallback !== undefined && loginErrorCallback != null)
-				loginErrorCallback(response.status);
+			if (globalErrorCallback !== undefined && globalErrorCallback != null)
+				globalErrorCallback(response.status);
 		}
 	}
 
-	this.internalLoginCallback = function(doAfter, response)
+	this.internalLoginCallback = function(response)
 	{
 		if (response.status == 200)
 		{
@@ -103,8 +102,6 @@ function RestTemplate(username, password, loginErrorCallback)
 				this.userType = RestTemplate.ClientType.DRIVER;
 			else
 				this.userType = RestTemplate.ClientType.CUSTOMER;
-			if (doAfter !== undefined && doAfter != null)
-				doAfter();
 		}
 	}
 
@@ -121,8 +118,9 @@ function RestTemplate(username, password, loginErrorCallback)
 		}
 	}
 
-	this.driver_GetProfil = function(callback, errorCallback)
+	this.driver_GetMyProfil = function(callback, errorCallback)
 	{
+		console.log(this.token);
 		this.doAjax(RestTemplate.RESTURI_DRIVER_PROFIL, "GET", undefined, 
 			(function(data) { this.user = data; callback(data); }).bind(this), errorCallback);
 	}
@@ -137,6 +135,11 @@ function RestTemplate(username, password, loginErrorCallback)
 	{
 		this.doAjax(RestTemplate.RESTURI_DRIVER_RUNSHISTORY, "GET", undefined, callback, errorCallback);
 	}
+
+	this.driver_GetDriverInfos = function(driverId, callback, errorCallback)
+	{
+		this.doAjax(RestTemplate.RESTURI_DRIVER_GETINFOS + driverId, "GET", undefined, callback, errorCallback);
+	}
 }
 
 RestTemplate.ClientType = { UNKNOWN:0, CUSTOMER:1, DRIVER:2 } 
@@ -147,3 +150,4 @@ RestTemplate.RESTURI_DRIVER_LOGIN = "/TukTuk/api/driver/login";
 RestTemplate.RESTURI_DRIVER_PROFIL = "/TukTuk/api/driver";
 RestTemplate.RESTURI_DRIVER_UPDATEPROFIL = "/TukTuk/api/driver";
 RestTemplate.RESTURI_DRIVER_RUNSHISTORY = "/TukTuk/api/driver/history";
+RestTemplate.RESTURI_DRIVER_GETINFOS = "/TukTuk/api/driver/";

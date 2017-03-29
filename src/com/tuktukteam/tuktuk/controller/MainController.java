@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.tuktukteam.autosecurity.AccessTokenSecurity;
 import com.tuktukteam.autosecurity.AutoFilterForSpringControllers;
 import com.tuktukteam.autosecurity.RestrictedAccess;
 import com.tuktukteam.autosecurity.RestrictedAccess.AccessType;
@@ -60,6 +61,7 @@ public class MainController
 		if (conducteurEntity.getStatusCode() == HttpStatus.OK)
 		{
 			session.setAttribute("conducteur", conducteurEntity.getBody());		
+			session.setAttribute("token", conducteurEntity.getHeaders().getFirst(AccessTokenSecurity.TOKEN_HEADER_NAME));
 			return "redirect:/";
 		}
 
@@ -72,7 +74,7 @@ public class MainController
 		}
 		
 		session.setAttribute("client", clientEntity.getBody());
-
+		session.setAttribute("token", conducteurEntity.getHeaders().getFirst(AccessTokenSecurity.TOKEN_HEADER_NAME));
 		return "redirect:/";
 
 		/*
