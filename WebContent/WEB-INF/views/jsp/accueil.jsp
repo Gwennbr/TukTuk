@@ -11,7 +11,6 @@
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css">
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 	<script src="${ pageContext.request.contextPath }/resources/js/gmap.js"></script>
-	<script src="${ pageContext.request.contextPath }/resources/js/accueil.js"></script>
 	<link rel="stylesheet" type="text/css" href="${ pageContext.request.contextPath }/resources/css/global.css"/>
 	<link rel="stylesheet" type="text/css" href="${ pageContext.request.contextPath }/resources/css/interface.css"/>
 	<link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
@@ -21,7 +20,7 @@
 	<script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
 	<script src="https://maps.google.com/maps/api/js?libraries=placeses,visualization,drawing,geometry,places&key=AIzaSyBWK16ZhsCDITiislRiRzpb4qjPrYfXp4s"></script>
 </head>
-<body ng-app="ngMap" onload="refreshMap()">
+<body ng-app="ngMap">
 	<header>
 		<nav>
 			<a class="left btn btn-lg btn-link"><span class="glyphicon glyphicon-th"></span></a>
@@ -151,7 +150,7 @@
 				<div class="modal-content navsider">
 					<div class="sidenav-img">
 						<img class="img-profil img-circle" height="140px" width="140px" src="${ pageContext.request.contextPath }/resources/img/chauffeur.jpg"/><br><br>
-						<label>${ conducteur.prenom } ${ conducteur.nom }${ client.prenom } ${ client.nom }</label>
+						<label id="idClientNomPrenom">${ conducteur.prenom } ${ conducteur.nom }${ client.prenom } ${ client.nom }</label>
 						<hr />
 						
 						<div class="middle-sidenav">
@@ -208,5 +207,7 @@
 	<script type="text/javascript">
 		var rest = new RestTemplate("${token}");		
 	</script>
+	<script src="${ pageContext.request.contextPath }/resources/js/accueil.js"></script>
+	<script src="${ pageContext.request.contextPath }/resources/js/gmap.js"></script>
 </body>
 </html>

@@ -22,13 +22,7 @@ var app = angular.module('myApp', ['ngMap']);
         var lng = 3.1238490 + (Math.random() / 100);
         vm.positions.push({lat:lat, lng:lng});
 		
-      }
-	  
-	  
-      console.log("vm.positions", vm.positions);
-      console.log("vm.current", vm.current);
-      
-//      geocodeLatLng(geocoder, lat, lng);
+      }      
     };
 
     $interval(generateMarkers, 5000);//refresh position
