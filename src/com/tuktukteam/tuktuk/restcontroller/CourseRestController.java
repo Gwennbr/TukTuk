@@ -46,7 +46,7 @@ public class CourseRestController {
 	@RestrictedAccess(value = AccessType.TOKEN, authorized = Client.class)
 	public ResponseEntity<Course> createRun(@RequestHeader(AccessTokenSecurity.TOKEN_HEADER_NAME) String token, @RequestParam String adresseDepart) {
 
-		Client c = AccessTokenSecurity.getUser(Client.class, token);
+			Client c = AccessTokenSecurity.getUser(Client.class, token);
 			Course course = new Course();
 			course.setAdresseDepart(adresseDepart);
 			course.setClient(c);
