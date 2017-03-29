@@ -82,9 +82,9 @@ public class ClientRestController {
 			client.setId(cli.getId());
 			personneDAO.save(client);
 			cli = clientDAO.find(cli.getId());
-			return new ResponseEntity<Client>(cli, HttpStatus.OK);
+			return AccessTokenSecurity.buildResponse(cli, token, HttpStatus.OK);
 		}
-		return new ResponseEntity<Client>(HttpStatus.NOT_MODIFIED);
+		return AccessTokenSecurity.buildResponse(Client.class, token, HttpStatus.NOT_MODIFIED);
 	}
 
 	//récupère l'historique du client actuellement connecté
@@ -95,18 +95,20 @@ public class ClientRestController {
 			@RequestHeader(AccessTokenSecurity.TOKEN_HEADER_NAME) String token) {
 		Client client = AccessTokenSecurity.getUser(Client.class, token);
 		client = clientDAO.find(client.getId());
-		return new ResponseEntity<List<Course>>(client.getCourses(), HttpStatus.OK);
+		return AccessTokenSecurity.buildResponse(client.getCourses(), token, HttpStatus.OK);
 
 	}
 
-	//récupère l'historique du client demandé et le renvoie au conducteur
-	@ResponseBody
-	@RequestMapping(value = "/{id}/history", method = RequestMethod.GET)
-	@RestrictedAccess(value = AccessType.TOKEN, authorized = Conducteur.class)
-	public ResponseEntity<List<Course>> getCustomerHistory(@PathVariable int id,
-			@RequestHeader(AccessTokenSecurity.TOKEN_HEADER_NAME) String token) {
-		return new ResponseEntity<List<Course>>(clientDAO.find(id).getCourses(), HttpStatus.OK);
-	}
+	//TODO foutre ça dans le courseRestConroller
+	
+//	//récupère l'historique du client demandé et le renvoie au conducteur
+//	@ResponseBody
+//	@RequestMapping(value = "/{id}/history", method = RequestMethod.GET)
+//	@RestrictedAccess(value = AccessType.TOKEN, authorized = Conducteur.class)
+//	public ResponseEntity<List<Course>> getCustomerHistory(@PathVariable int id,
+//			@RequestHeader(AccessTokenSecurity.TOKEN_HEADER_NAME) String token) {		
+//		return new ResponseEntity<List<Course>>(clientDAO.find(id).getCourses(), HttpStatus.OK);
+//	}
 	
 	//calcul la moyenne du client actuellement connecté et lui renvoie
 	@ResponseBody
@@ -126,7 +128,7 @@ public class ClientRestController {
 		}
 		moy = somme / i;
 		
-		return new ResponseEntity<Float>(moy, HttpStatus.OK);
+		return AccessTokenSecurity.buildResponse(moy, token, HttpStatus.OK);
 	}
 
 	//calcul la moyenne du client demandé et la renvoie au conducteur
@@ -146,17 +148,15 @@ public class ClientRestController {
 			}
 		}
 		moy = somme / i;
-		
-		return new ResponseEntity<Float>(moy, HttpStatus.OK);
+		return AccessTokenSecurity.buildResponse(moy, token, HttpStatus.OK);
 	}
 
 	//récupère les informations utiles du client demandé et les renvoie au conducteur
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
 	@ResponseBody
 	@RestrictedAccess(value = AccessType.TOKEN, authorized = Conducteur.class)
-	public ResponseEntity<Client> getInfos(@PathVariable int id) {
-		return new ResponseEntity<Client>(clientDAO.getAndFillOnlyFieldsNotTaggedBy(id, ColumnTag.FRONT_RESTRICTED),
-				HttpStatus.OK);
+	public ResponseEntity<Client> getInfos(@PathVariable int id, @RequestHeader(AccessTokenSecurity.TOKEN_HEADER_NAME) String token) {
+		return AccessTokenSecurity.buildResponse(clientDAO.getAndFillOnlyFieldsNotTaggedBy(id, ColumnTag.FRONT_RESTRICTED), token, HttpStatus.OK);
 	}
 	
 
