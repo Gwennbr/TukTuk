@@ -110,11 +110,13 @@ function RestTemplate(_token, globalErrorCallback)
 		if (response.status == 200)
 		{
 			this.token = response.headers("tokenauth-token");
-			callback(response.data);
+			if (callback !== undefined && callback != null)
+				callback(response.data);
 		}
 		else
 		{
-			errorCallback(response.status);
+			if (errorCallback !== undefined && errorCallback != null)
+				errorCallback(response.status);
 		}
 	}
 
@@ -136,9 +138,19 @@ function RestTemplate(_token, globalErrorCallback)
 		this.doAjax(RestTemplate.RESTURI_DRIVER_RUNSHISTORY, "GET", undefined, callback, errorCallback);
 	}
 
-	this.driver_GetDriverInfos = function(driverId, callback, errorCallback)
+	this.driver_GetPublicInfos = function(driverId, callback, errorCallback)
 	{
 		this.doAjax(RestTemplate.RESTURI_DRIVER_GETINFOS + driverId, "GET", undefined, callback, errorCallback);
+	}
+
+	this.driver_SetUnavailable = function(callback, errorCallback)
+	{
+		this.doAjax(RestTemplate.RESTURI_DRIVER_UNAVAILABLE, "PUT", undefined, callback, errorCallback);		
+	}
+
+	this.driver_SetAvailable = function(callback, errorCallback)
+	{
+		this.doAjax(RestTemplate.RESTURI_DRIVER_AVAILABLE, "PUT", undefined, callback, errorCallback);		
 	}
 }
 
@@ -151,3 +163,5 @@ RestTemplate.RESTURI_DRIVER_PROFIL = "/TukTuk/api/driver";
 RestTemplate.RESTURI_DRIVER_UPDATEPROFIL = "/TukTuk/api/driver";
 RestTemplate.RESTURI_DRIVER_RUNSHISTORY = "/TukTuk/api/driver/history";
 RestTemplate.RESTURI_DRIVER_GETINFOS = "/TukTuk/api/driver/";
+RestTemplate.RESTURI_DRIVER_UNAVAILABLE = "/TukTuk/api/driver/unavailable";
+RestTemplate.RESTURI_DRIVER_AVAILABLE = "/TukTuk/api/driver/available";

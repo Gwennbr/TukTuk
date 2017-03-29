@@ -74,7 +74,7 @@ public class MainController
 		}
 		
 		session.setAttribute("client", clientEntity.getBody());
-		session.setAttribute("token", conducteurEntity.getHeaders().getFirst(AccessTokenSecurity.TOKEN_HEADER_NAME));
+		session.setAttribute("token", clientEntity.getHeaders().getFirst(AccessTokenSecurity.TOKEN_HEADER_NAME));
 		return "redirect:/";
 
 		/*
