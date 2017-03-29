@@ -101,13 +101,7 @@ public class ConducteurRestController {
 		return AccessTokenSecurity.buildResponse(conducteur.getCourses(), token, HttpStatus.OK);
 	}
 
-	//récupère et renvoie l'historique des courses du conducteur demandé au client.
-	@RequestMapping(value = "/{id}/history", method = RequestMethod.GET)
-	@ResponseBody
-	@RestrictedAccess(value = AccessType.TOKEN, authorized = Client.class)
-	public ResponseEntity<List<Course>> getDriverHistory(@PathVariable int id, @RequestHeader(AccessTokenSecurity.TOKEN_HEADER_NAME) String token) {
-		return AccessTokenSecurity.buildResponse(this.conducteurDAO.find(id).getCourses(), token, HttpStatus.OK);
-	}
+
 
 	//récupère et renvoie les informations utiles du conducteur demandé au client
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
