@@ -164,10 +164,10 @@ public class AutoFilterForSpringControllers extends GenericFilterBean
 							securityMappings.add(new SecurityMappingEntry(
 									uri, 
 									methodSecurityAccess.value(),
-									methodSecurityAccess.authorized(),
-									methodSecurityAccess.attributesNames(),
+									methodSecurityAccess.authorized().clone(),
+									methodSecurityAccess.attributesNames().clone(),
 									methodSecurityAccess.onForbidden(),
-									methodSecurityAccess.options(),
+									methodSecurityAccess.options().clone(),
 									methods));
 						else
 						{
@@ -185,10 +185,10 @@ public class AutoFilterForSpringControllers extends GenericFilterBean
 								securityMappings.add(new SecurityMappingEntry(
 										uri, 
 										classSecurityAccess.value(),
-										classSecurityAccess.authorized(),
-										classSecurityAccess.attributesNames(),
+										classSecurityAccess.authorized().clone(),
+										classSecurityAccess.attributesNames().clone(),
 										classSecurityAccess.onForbidden(),
-										classSecurityAccess.options(),
+										classSecurityAccess.options().clone(),
 										methods));
 								
 							
