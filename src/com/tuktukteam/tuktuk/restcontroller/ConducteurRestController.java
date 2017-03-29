@@ -147,13 +147,12 @@ public class ConducteurRestController {
 		c.setLatitude(latitude);
 		c = conducteurDAO.save(c);
 		List<Course> courses = courseDAO.getRidesWithoutDriver();
-		//TODO enlever commentaire
 		
-//		for (Course course : courses) {
-//			if (course.getConducteur() != null) {				
-//				courses.remove(course);
-//			}
-//		}
+		for (Course course : courses) {
+			if (CourseRestController.calculDistance(c, course.getAdresseDepart()) > 10000) {				
+				courses.remove(course);
+			}
+		}
 		
 		ComparatorCourse comp = new ComparatorCourse(c);
 		courses.sort(comp);
@@ -171,7 +170,8 @@ public class ConducteurRestController {
 		float moy=0;
 		float somme=0;
 		int i=0;
-		List<Course> courses = cond.getCourses();
+		
+		List<Course> courses = conducteurDAO.find(cond.getId()).getCourses();
 		for(Course course : courses)
 		{
 			if(course.getNoteConducteur()!=-1)
