@@ -120,6 +120,18 @@ function RestTemplate(_token, globalErrorCallback)
 		}
 	}
 
+	this.buildUrl = function(fmt)
+	{
+		var i = 1;
+		fmt = fmt.replace(/{.*}/g, (function(i, arguments, x) { return arguments[i++]; }).bind(this, i, arguments) );
+		return fmt;
+	}
+
+	/*
+	 * Paramètre supplémentaire : aucun
+	 * Accès restreint : seulement au CONDUCTEUR loggué en session
+	 * paramètre fonction succès : 
+	 */
 	this.driver_GetMyProfil = function(callback, errorCallback)
 	{
 		console.log(this.token);
@@ -127,17 +139,31 @@ function RestTemplate(_token, globalErrorCallback)
 			(function(data) { this.user = data; callback(data); }).bind(this), errorCallback);
 	}
 
+	/*
+	 * Paramètre supplémentaire : Object conducteur contenant les données à sauvegarder
+	 * Accès restreint : seulement au CONDUCTEUR loggué en session
+	 * paramètre fonction succès : L'objet conducteur récup depuis la base après MàJ
+	 */
 	this.driver_UpdateProfil = function(driver, callback, errorCallback)
 	{
 		this.doAjax(RestTemplate.RESTURI_DRIVER_UPDATEPROFIL, "PUT", driver, 
 			(function(data) { this.user = data; callback(data); }).bind(this), errorCallback);
 	}
 
+	/*
+	 * Paramètre supplémentaire : aucun
+	 * Accès restreint : seulement au CONDUCTEUR loggué en session
+	 * paramètre fonction succès : 
+	 */
 	this.driver_GetRunsHistory = function(callback, errorCallback)
 	{
 		this.doAjax(RestTemplate.RESTURI_DRIVER_RUNSHISTORY, "GET", undefined, callback, errorCallback);
 	}
 
+	/*
+	 * Accès restreint : seulement au CONDUCTEUR loggué en session
+	 * paramètre fonction succès : 
+	 */
 	this.driver_GetPublicInfos = function(driverId, callback, errorCallback)
 	{
 		if (driverId == undefined)
@@ -146,23 +172,54 @@ function RestTemplate(_token, globalErrorCallback)
 			this.doAjax(RestTemplate.RESTURI_DRIVER_GETINFOS + driverId, "GET", undefined, callback, errorCallback);
 	}
 
+	/*
+	 * Accès restreint : seulement au CONDUCTEUR loggué en session
+	 * paramètre fonction succès : 
+	 */
 	this.driver_SetUnavailable = function(callback, errorCallback)
 	{
 		this.doAjax(RestTemplate.RESTURI_DRIVER_UNAVAILABLE, "PUT", undefined, callback, errorCallback);		
 	}
 
+	/*
+	 * Accès restreint : seulement au CONDUCTEUR loggué en session
+	 * paramètre fonction succès : 
+	 */
 	this.driver_SetAvailable = function(callback, errorCallback)
 	{
 		this.doAjax(RestTemplate.RESTURI_DRIVER_AVAILABLE, "PUT", undefined, callback, errorCallback);		
 	}
 
-	this.driver_refreshPosAndRidesAvailable = function(lng, lat, callback, errorCallback)
+	/*
+	 * Accès restreint : seulement au CONDUCTEUR loggué en session
+	 * paramètre fonction succès : 
+	 */
+	this.driver_refreshPosAndGetAvailableRides = function(lng, lat, callback, errorCallback)
 	{
 		if (lng == undefined || lat == undefined)
 			console.log('error driver_refreshPosAndRidesAvailable: params (longitude & latitude) not present in function call');
 		else
-			this.doAjax(RestTemplate.RESTURI_DRIVER_REFRESH + "?longitude=" + lng + "&latitude=" + lat,
+			this.doAjax(this.buildUrl(RestTemplate.RESTURI_DRIVER_REFRESH, lng, lat),
 						 "PUT", undefined, callback, errorCallback);
+	}
+
+	/*
+	 * Accès restreint : seulement au CONDUCTEUR loggué en session
+	 * paramètre fonction succès : 
+	 */
+	this.driver_GetMyNote = function(callback, errorCallback)
+	{
+		this.doAjax(RestTemplate.RESTURI_DRIVER_GETMYNOTE, "GET", undefined, callback, errorCallback);		
+	}
+
+	/*
+	 * Accès restreint : seulement au CONDUCTEUR loggué en session
+	 * paramètre fonction succès : 
+	 */
+	this.driver_GetNote = function(idDriver, callback, errorCallback)
+	{
+		this.doAjax(this.buildUrl(RestTemplate.RESTURI_DRIVER_GETNOTE, idDriver), 
+			"GET", undefined, callback, errorCallback);				
 	}
 }
 
@@ -177,5 +234,8 @@ RestTemplate.RESTURI_DRIVER_RUNSHISTORY = "/TukTuk/api/driver/history";
 RestTemplate.RESTURI_DRIVER_GETINFOS = "/TukTuk/api/driver/";
 RestTemplate.RESTURI_DRIVER_UNAVAILABLE = "/TukTuk/api/driver/unavailable";
 RestTemplate.RESTURI_DRIVER_AVAILABLE = "/TukTuk/api/driver/available";
-RestTemplate.RESTURI_DRIVER_REFRESH = "/TukTuk/api/driver/refreshPos";
+RestTemplate.RESTURI_DRIVER_REFRESH = "/TukTuk/api/driver/refreshPos?longitude={lng}&latitude={lat}";
+RestTemplate.RESTURI_DRIVER_GETMYNOTE = "/TukTuk/api/driver/note";
+RestTemplate.RESTURI_DRIVER_GETNOTE = "/TukTuk/api/driver/{id}/note";
+
 

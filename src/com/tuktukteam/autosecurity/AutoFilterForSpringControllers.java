@@ -49,7 +49,7 @@ public class AutoFilterForSpringControllers extends GenericFilterBean
 	
 	private static String convertToRegex(String uri)
 	{
-		return '^' + Matcher.quoteReplacement(uri).replaceAll("\\{.*\\}", "[^/.]*") + '$';
+		return '^' + Matcher.quoteReplacement(uri).replaceAll("\\{.*\\}", "[^/]*") + '$';
 	}
 	
 	private static List<String> buildMappingsList(String prefix, String classMappings[], String methodMappings[])
