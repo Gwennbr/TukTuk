@@ -112,7 +112,7 @@ public class ConducteurRestController {
 	}
 	
 	//rend le conducteur actuellement connecté non disponible.
-	@RequestMapping(value="/pause", method = RequestMethod.PUT)
+	@RequestMapping(value="/unavailable", method = RequestMethod.PUT)
 	@ResponseBody
 	@RestrictedAccess(value=AccessType.TOKEN, authorized = Conducteur.class)
 	public ResponseEntity<Boolean> isNotAvailable(@RequestHeader(AccessTokenSecurity.TOKEN_HEADER_NAME) String token){
