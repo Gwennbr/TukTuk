@@ -20,4 +20,8 @@ public class CourseDAO extends GenericDAO<Course, Integer> {
 	public List<Course> getRidesWithoutDriver() {
 		return entityManager.createQuery("FROM Course WHERE conducteur IS NULL", Course.class).getResultList();		
 	}
+	
+	public Course getActualCustomerRide(int id) {
+		return entityManager.createQuery("FROM Course WHERE client.id = :idClient AND dateDebutCourse IS NULL", Course.class).setParameter("idClient", id).getSingleResult();
+	}
 }
