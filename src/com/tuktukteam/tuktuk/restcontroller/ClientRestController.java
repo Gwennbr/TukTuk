@@ -99,16 +99,6 @@ public class ClientRestController {
 
 	}
 
-	//TODO foutre ça dans le courseRestConroller
-	
-//	//récupère l'historique du client demandé et le renvoie au conducteur
-//	@ResponseBody
-//	@RequestMapping(value = "/{id}/history", method = RequestMethod.GET)
-//	@RestrictedAccess(value = AccessType.TOKEN, authorized = Conducteur.class)
-//	public ResponseEntity<List<Course>> getCustomerHistory(@PathVariable int id,
-//			@RequestHeader(AccessTokenSecurity.TOKEN_HEADER_NAME) String token) {		
-//		return new ResponseEntity<List<Course>>(clientDAO.find(id).getCourses(), HttpStatus.OK);
-//	}
 	
 	//calcul la moyenne du client actuellement connecté et lui renvoie
 	@ResponseBody
@@ -119,7 +109,7 @@ public class ClientRestController {
 		float moy = 0;
 		float somme = 0;
 		int i = 0;
-		List<Course> courses = cli1.getCourses();
+		List<Course> courses = clientDAO.find(cli1.getId()).getCourses();
 		for (Course course : courses) {
 			if (course.getNoteConducteur() != -1) {
 				somme = somme + course.getNoteConducteur();
