@@ -2,7 +2,7 @@ package com.tuktukteam.tuktuk.restcontroller;
 
 import java.io.IOException;
 import java.util.Date;
-
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -202,7 +202,23 @@ public class CourseRestController {
 		return AccessTokenSecurity.buildResponse(Course.class, token, HttpStatus.FORBIDDEN);
 	}
 	
-
+	@ResponseBody
+	@RequestMapping(value = "/ride/{id}/customerHistory", method = RequestMethod.GET)
+	@RestrictedAccess(value = AccessType.TOKEN, authorized = Conducteur.class)
+	public ResponseEntity<List<Course>> getCustomerHistory(@PathVariable int id ,@RequestHeader(AccessTokenSecurity.TOKEN_HEADER_NAME) String token) {
+		Client client = courseDAO.find(id).getClient();
+		return new ResponseEntity<List<Course>>(client.getCourses(), HttpStatus.OK);
+	}
+	
+	//récupère et renvoie l'historique des courses du conducteur demandé au client.
+	@RequestMapping(value = "/ride/driverHistory", method = RequestMethod.GET)
+	@ResponseBody
+	@RestrictedAccess(value = AccessType.TOKEN, authorized = Client.class)
+	public ResponseEntity<List<Course>> getDriverHistory(@RequestHeader(AccessTokenSecurity.TOKEN_HEADER_NAME) String token) {
+		Course course = courseDAO.getActualCustomerRide(AccessTokenSecurity.getUser(Client.class, token).getId());
+		Conducteur conducteur = conducteurDAO.find(course.getConducteur().getId());
+		return AccessTokenSecurity.buildResponse(conducteur.getCourses(), token, HttpStatus.OK);
+	}
 	
 	public static int calculDistance(Conducteur cond, String adresse) {
 		
@@ -227,4 +243,7 @@ public class CourseRestController {
 		return 0;
 	}
 
+	
+
+	
 }
