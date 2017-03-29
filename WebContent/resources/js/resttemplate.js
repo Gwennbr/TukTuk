@@ -140,7 +140,10 @@ function RestTemplate(_token, globalErrorCallback)
 
 	this.driver_GetPublicInfos = function(driverId, callback, errorCallback)
 	{
-		this.doAjax(RestTemplate.RESTURI_DRIVER_GETINFOS + driverId, "GET", undefined, callback, errorCallback);
+		if (driverId == undefined)
+			console.log('error driver_GetPublicInfos: no driverId in function call');
+		else
+			this.doAjax(RestTemplate.RESTURI_DRIVER_GETINFOS + driverId, "GET", undefined, callback, errorCallback);
 	}
 
 	this.driver_SetUnavailable = function(callback, errorCallback)
@@ -151,6 +154,15 @@ function RestTemplate(_token, globalErrorCallback)
 	this.driver_SetAvailable = function(callback, errorCallback)
 	{
 		this.doAjax(RestTemplate.RESTURI_DRIVER_AVAILABLE, "PUT", undefined, callback, errorCallback);		
+	}
+
+	this.driver_refreshPosAndRidesAvailable = function(lng, lat, callback, errorCallback)
+	{
+		if (lng == undefined || lat == undefined)
+			console.log('error driver_refreshPosAndRidesAvailable: params (longitude & latitude) not present in function call');
+		else
+			this.doAjax(RestTemplate.RESTURI_DRIVER_REFRESH + "?longitude=" + lng + "&latitude=" + lat,
+						 "PUT", undefined, callback, errorCallback);
 	}
 }
 
@@ -165,3 +177,5 @@ RestTemplate.RESTURI_DRIVER_RUNSHISTORY = "/TukTuk/api/driver/history";
 RestTemplate.RESTURI_DRIVER_GETINFOS = "/TukTuk/api/driver/";
 RestTemplate.RESTURI_DRIVER_UNAVAILABLE = "/TukTuk/api/driver/unavailable";
 RestTemplate.RESTURI_DRIVER_AVAILABLE = "/TukTuk/api/driver/available";
+RestTemplate.RESTURI_DRIVER_REFRESH = "/TukTuk/api/driver/refreshPos";
+
