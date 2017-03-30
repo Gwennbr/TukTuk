@@ -1,18 +1,19 @@
-$(function() {
-
+	console.log(rest);
+	console.log(rest.token);
+	
 	rest.driver_GetRunsHistory(function(course) {
 			course.forEach(historyAppend);
 	});
 	
-	rest.driver_GetMyProfil(function(profil) {
-		$('#idClientNomPrenom').html()
-		if(profil.available == true) {
-			$('#toggle-trigger').bootstrapToggle('on')
-		}
-		else {
-			$('#toggle-trigger').bootstrapToggle('off')
-		}
-});
+//	rest.driver_GetMyProfil(function(profil) {
+//		$('#idClientNomPrenom').html()
+//		if(profil.available == true) {
+//			$('#toggle-trigger').bootstrapToggle('on')
+//		}
+//		else {
+//			$('#toggle-trigger').bootstrapToggle('off')
+//		}
+//	});
 	
 	function historyAppend(item, index) {	    
 	    var time = new Date((item.dateFinCourse - item.dateDebutCourse) - 3600000);
@@ -43,7 +44,7 @@ $(function() {
 													+ '<span class="sr-only">Info:</span>Vous êtes actuellement <strong>Disponible</strong>'
 													+ '</div>');
 							
-							rest.driver_SetAvailable();
+//							rest.driver_SetAvailable();
 														
 						} else {
 							$("#alertZone")
@@ -59,7 +60,7 @@ $(function() {
 													+ '<span class="sr-only">Info:</span>Vous êtes actuellement <strong>Indisponible</strong>'
 													+ '</div>');
 							
-							rest.driver_SetUnavailable();
+//							rest.driver_SetUnavailable();
 							
 						}
 
@@ -69,4 +70,4 @@ $(function() {
 								});
 
 					});
-});
+

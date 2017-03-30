@@ -15,6 +15,7 @@ public @interface RestrictedAccess
 	String [] attributesNames() default {};
 	String onForbidden() default "status:403";
 	AccessOptions [] options() default {};
+	String mappingRegex() default "";
 	
 	enum AccessType { NONE, PUBLIC, CLASS_IN_SESSION, TOKEN };	
 	enum AccessOptions { ASSIGN_TOKEN_ON_SUCCESS };
