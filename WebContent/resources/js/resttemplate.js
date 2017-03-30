@@ -138,7 +138,7 @@ function RestTemplate(_token, globalErrorCallback)
 		
 		this.pushedCalls.shift();
 		if (this.pushedCalls.length > 0)
-			this.doAjax(pushedCalls[0].url, pushedCalls[0].method, pushedCalls[0].data, pushedCalls[0].callback, pushedCalls[0].errorCallback);			
+			this.doAjax(this.pushedCalls[0].url, this.pushedCalls[0].method, this.pushedCalls[0].data, this.pushedCalls[0].callback, this.pushedCalls[0].errorCallback);			
 	}
 
 	this.buildUrl = function(fmt)
