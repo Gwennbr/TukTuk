@@ -1,35 +1,26 @@
-<<<<<<< HEAD
-rest.driver_GetRunsHistory(function(course) {
-	course.forEach(historyAppend);
-});
-=======
-	console.log(rest);
-	console.log(rest.token);
-	
+
 	rest.driver_GetRunsHistory(function(course) {
-			course.forEach(historyAppend);
+			course.forEach(function(item, index) {	    
+			    var time = new Date((item.dateFinCourse - item.dateDebutCourse) - 3600000);
+			    $("#history")
+				.append(
+						'<tr class="success">'
+								+ '<td>' + item.adresseDepart + '</td>'
+								+ '<td>' + time.getHours().toString().replace(/^(\d)$/,'0$1') + 'h' + time.getMinutes().toString().replace(/^(\d)$/,'0$1') + '</td>'
+								+ '<td>' + item.prix + ' €</td>'
+								+ '</tr>');
+			});
 	});
 	
-//	rest.driver_GetMyProfil(function(profil) {
-//		$('#idClientNomPrenom').html()
-//		if(profil.available == true) {
-//			$('#toggle-trigger').bootstrapToggle('on')
-//		}
-//		else {
-//			$('#toggle-trigger').bootstrapToggle('off')
-//		}
-//	});
-	
-	function historyAppend(item, index) {	    
-	    var time = new Date((item.dateFinCourse - item.dateDebutCourse) - 3600000);
-	    $("#history")
-		.append(
-				'<tr class="success">'
-						+ '<td>' + item.adresseDepart + '</td>'
-						+ '<td>' + time.getHours().toString().replace(/^(\d)$/,'0$1') + 'h' + time.getMinutes().toString().replace(/^(\d)$/,'0$1') + '</td>'
-						+ '<td>' + item.prix + ' €</td>'
-						+ '</tr>');
-	};
+// rest.driver_GetMyProfil(function(profil) {
+// $('#idClientNomPrenom').html()
+// if(profil.available == true) {
+// $('#toggle-trigger').bootstrapToggle('on')
+// }
+// else {
+// $('#toggle-trigger').bootstrapToggle('off')
+// }
+// });
 	
 	
 	$('#toggle-trigger')
@@ -49,7 +40,7 @@ rest.driver_GetRunsHistory(function(course) {
 													+ '<span class="sr-only">Info:</span>Vous êtes actuellement <strong>Disponible</strong>'
 													+ '</div>');
 							
-//							rest.driver_SetAvailable();
+// rest.driver_SetAvailable();
 														
 						} else {
 							$("#alertZone")
@@ -65,10 +56,11 @@ rest.driver_GetRunsHistory(function(course) {
 													+ '<span class="sr-only">Info:</span>Vous êtes actuellement <strong>Indisponible</strong>'
 													+ '</div>');
 							
-//							rest.driver_SetUnavailable();
+// rest.driver_SetUnavailable();
 							
 						}
->>>>>>> branch 'feature/login' of https://github.com/Gwennbr/TukTuk.git
+						
+					});
 
 rest.driver_GetMyProfil(function(profil) {
 	$('#idClientNomPrenom').html()
@@ -130,7 +122,4 @@ $('#toggle-trigger')
 						$("#alertDiv").slideUp(500);
 					});
 
-<<<<<<< HEAD
 				});
-=======
->>>>>>> branch 'feature/login' of https://github.com/Gwennbr/TukTuk.git
