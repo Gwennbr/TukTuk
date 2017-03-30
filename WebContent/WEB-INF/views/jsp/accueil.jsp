@@ -96,7 +96,7 @@
 								Address = {{vm.place.formatted_address}} <br/>
 								Location: {{vm.place.geometry.location}}<br/>
 							</div>
-							<button id="btn-search" type="button" class="btn btn-primary"  data-toggle="modal" data-target=".modal-chauffeur" data-dismiss="modal">Rechercher un tuk-tuk</button>
+							<button id="btn-search" type="button" class="btn btn-primary"  data-toggle="modal" data-target=".modal-waiting" data-dismiss="modal">Rechercher un tuk-tuk</button>
 						</div>
 						<div class="modal-footer">
 							<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -211,5 +211,13 @@
 	</script>
 	<script src="${ pageContext.request.contextPath }/resources/js/accueil.js"></script>
 	<script src="${ pageContext.request.contextPath }/resources/js/gmap.js"></script>
+	<c:choose>
+		<c:when test="${not empty conducteur}">
+				<script src="${ pageContext.request.contextPath }/resources/js/conducteur.js"></script>
+			</c:when>
+			<c:otherwise>
+				<script src="${ pageContext.request.contextPath }/resources/js/client.js"></script>
+		</c:otherwise>
+	</c:choose>
 </body>
 </html>
