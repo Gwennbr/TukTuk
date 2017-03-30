@@ -4,6 +4,7 @@
 
 <html ng-app="myApp">
 <head>
+	<link rel="icon" type="image/png" href="${ pageContext.request.contextPath }/resources/img/favicon.png" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 	<script src="${ pageContext.request.contextPath }/resources/js/angular.min.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
@@ -156,7 +157,7 @@
 						<div class="middle-sidenav">
 							<label>Option :</label>
 							<button id="btn-payoption" href="#"  type="button" class="btn btn-success">Option de payement</button>
-							<button id="btn-history" type="button" class="btn btn-warning"  data-toggle="modal" data-target=".modal-history" data-dismiss="modal">Historique</button>
+							<button id="btn-history" type="button" class="btn btn-warning" data-toggle="modal" data-target=".modal-history" data-dismiss="modal">Historique</button>
 							<c:if test="${ not empty conducteur }">
 							<hr />
 							<label>Disponible :</label>

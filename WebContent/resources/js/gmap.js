@@ -24,21 +24,13 @@ var app = angular.module('myApp', ['ngMap']);
 		
       }      
     };
+    
+    var refresh = function() {
+    	   rest.driver_refreshPosAndGetAvailableRides(function(course) {
+    	   });
+    	  }; 
+
 
     $interval(generateMarkers, 5000);//refresh position
   });
   
-  
-
-
-//  function geocodeLatLng(geocoder, lat, lng) {
-//  	  var latlng = {lat: parseFloat(lat), lng: parseFloat(lng)};
-//  	  geocoder.geocode({'location': latlng}, function(results, status) {
-//  	    if (status === google.maps.GeocoderStatus.OK) {
-//  	      if (results[1]) {
-//  	    	  console.log(results);
-//  	    	$("#vmadresse").val(results[0].formatted_address);
-//  	      }
-//  	    }
-//  	  });
-//  	};
