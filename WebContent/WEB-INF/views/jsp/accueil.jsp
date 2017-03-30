@@ -206,7 +206,8 @@
 	</section>
 	<script type="text/javascript" src="${ pageContext.request.contextPath }/resources/js/resttemplate.js"></script>
 	<script type="text/javascript">
-		var rest = new RestTemplate("${token}");		
+		var rest = new RestTemplate("${token}");	
+		console.log("token : " + "${token}");
 	</script>
 	<script src="${ pageContext.request.contextPath }/resources/js/accueil.js"></script>
 	<script src="${ pageContext.request.contextPath }/resources/js/gmap.js"></script>
