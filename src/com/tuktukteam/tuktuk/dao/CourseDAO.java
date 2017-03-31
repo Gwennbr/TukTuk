@@ -14,28 +14,52 @@ public class CourseDAO extends GenericDAO<Course, Integer> {
 
 	public CourseDAO() {
 		super(Course.class);
-	}	
-	
-	
+	}
+
 	public List<Course> getRidesWithoutDriver() {
-		return entityManager.createQuery("FROM Course WHERE conducteur IS NULL", Course.class).getResultList();		
+		try {
+			return entityManager.createQuery("FROM Course WHERE conducteur IS NULL", Course.class).getResultList();
+		} catch (Exception e) {
+			return null;
+		}
+
 	}
-	
+
 	public Course getActualCustomerRide(int id) {
-		return entityManager.createQuery("FROM Course WHERE client.id = :idClient AND dateFinCourse IS NULL", Course.class).setParameter("idClient", id).getSingleResult();
+		try {
+			return entityManager
+					.createQuery("FROM Course WHERE client.id = :idClient AND dateFinCourse IS NULL", Course.class)
+					.setParameter("idClient", id).getSingleResult();
+		} catch (Exception e) {
+			return null;
+		}
 	}
-	
+
 	public Course getActualDriverRide(int id) {
-		return entityManager.createQuery("FROM Course WHERE conducteur.id = :idCond AND dateFinCourse IS NULL", Course.class).setParameter("idCond", id).getSingleResult();
+		try {
+			return entityManager
+					.createQuery("FROM Course WHERE conducteur.id = :idCond AND dateFinCourse IS NULL", Course.class)
+					.setParameter("idCond", id).getSingleResult();
+		} catch (Exception e) {
+			return null;
+		}
 	}
-	
+
 	public List<Course> getCustomerCompletedRides(int id) {
-		return entityManager.createQuery("FROM Course WHERE client.id = :idClient AND dateFinCourse IS NOT NULL", Course.class).setParameter("idClient", id).getResultList();
+		try {
+			return entityManager
+					.createQuery("FROM Course WHERE client.id = :idClient AND dateFinCourse IS NOT NULL", Course.class)
+					.setParameter("idClient", id).getResultList();
+		} catch (Exception e) {
+			return null;
+		}
 	}
-	
+
 	public List<Course> getDriverCompletedRides(int id) {
+		try{
 		return entityManager.createQuery("FROM Course WHERE conducteur.id = :idCond AND dateFinCourse IS NOT NULL", Course.class).setParameter("idCond", id).getResultList();
+		}catch(Exception e){
+			return null;
+		}
 	}
-	
-	
 }

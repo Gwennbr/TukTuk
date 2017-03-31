@@ -62,8 +62,8 @@ public class CourseRestController {
 			course.setValide(false);
 			return AccessTokenSecurity.buildResponse(courseDAO.save(course), token, HttpStatus.OK);
 		}
-		
-		return AccessTokenSecurity.buildResponse(Course.class, token, HttpStatus.UNAUTHORIZED); 
+
+		return AccessTokenSecurity.buildResponse(Course.class, token, HttpStatus.UNAUTHORIZED);
 	}
 
 	@RequestMapping(value = "/ride/{idCourse}/accept", method = RequestMethod.PUT)
@@ -95,7 +95,7 @@ public class CourseRestController {
 		Client client = AccessTokenSecurity.getUser(Client.class, token);
 		Course course = courseDAO.getActualCustomerRide(client.getId());
 
-		if (client.getId() == course.getClient().getId()) {
+		if (course != null && client.getId() == course.getClient().getId()) {
 			course.setValide(true);
 			course = courseDAO.save(course);
 			return AccessTokenSecurity.buildResponse(course, token, HttpStatus.OK);
@@ -109,7 +109,8 @@ public class CourseRestController {
 	public ResponseEntity<Course> refuseRun(@RequestHeader(AccessTokenSecurity.TOKEN_HEADER_NAME) String token) {
 		Client client = AccessTokenSecurity.getUser(Client.class, token);
 		Course course = courseDAO.getActualCustomerRide(client.getId());
-		if (client.getId() == course.getClient().getId()) {
+
+		if (course != null && client.getId() == course.getClient().getId()) {
 			Conducteur conducteur = course.getConducteur();
 			conducteur.setAvailable(true);
 			conducteurDAO.save(conducteur);
@@ -127,15 +128,17 @@ public class CourseRestController {
 		if (AccessTokenSecurity.typeOfUser(token) == Client.class) {
 			Client client = AccessTokenSecurity.getUser(Client.class, token);
 			Course course = courseDAO.getActualCustomerRide(client.getId());
-			if (course.getClient().getId() == client.getId())
+
+			if (course != null && course.getClient().getId() == client.getId())
 				return AccessTokenSecurity.buildResponse(course, token, HttpStatus.OK);
 
 		} else if (AccessTokenSecurity.typeOfUser(token) == Conducteur.class) {
 			Conducteur conducteur = AccessTokenSecurity.getUser(Conducteur.class, token);
 			Course course = courseDAO.getActualCustomerRide(conducteur.getId());
-			if (course != null && course.getConducteur() != null && course.getConducteur().getId() == conducteur.getId())
+			if (course != null && course.getConducteur() != null
+					&& course.getConducteur().getId() == conducteur.getId())
 				AccessTokenSecurity.buildResponse(course, token, HttpStatus.OK);
-			
+
 			return AccessTokenSecurity.buildResponse(Course.class, token, HttpStatus.I_AM_A_TEAPOT);
 		}
 		return AccessTokenSecurity.buildResponse(Course.class, token, HttpStatus.FORBIDDEN);
@@ -148,7 +151,7 @@ public class CourseRestController {
 		Conducteur cond = AccessTokenSecurity.getUser(Conducteur.class, token);
 		Course course = courseDAO.getActualDriverRide(cond.getId());
 
-		if (cond.getId() == course.getConducteur().getId() && course.isValide()) {
+		if (course != null && cond.getId() == course.getConducteur().getId() && course.isValide()) {
 			course.setDateDebutCourse(new Date());
 			course = courseDAO.save(course);
 			return AccessTokenSecurity.buildResponse(course, token, HttpStatus.OK);
@@ -163,7 +166,7 @@ public class CourseRestController {
 		Conducteur cond = AccessTokenSecurity.getUser(Conducteur.class, token);
 		Course course = courseDAO.getActualDriverRide(cond.getId());
 
-		if (cond.getId() == course.getConducteur().getId() && course.isValide()
+		if (course != null && cond.getId() == course.getConducteur().getId() && course.isValide()
 				&& course.getDateDebutCourse() != null) {
 			course.setDateFinCourse(new Date());
 			course.setDistance(calculDistance(cond, course.getAdresseDepart()));
@@ -180,7 +183,8 @@ public class CourseRestController {
 		Conducteur cond = AccessTokenSecurity.getUser(Conducteur.class, token);
 		Course course = courseDAO.getActualDriverRide(cond.getId());
 
-		if (cond.getDateDebutPause() == 0 && cond.getId() == course.getConducteur().getId() && course.isValide()) {
+		if (course != null && cond.getDateDebutPause() == 0 && cond.getId() == course.getConducteur().getId()
+				&& course.isValide()) {
 			cond.setDateDebutPause(System.currentTimeMillis());
 			return AccessTokenSecurity.buildResponse(true, token, HttpStatus.OK);
 		}
@@ -196,11 +200,12 @@ public class CourseRestController {
 		Conducteur cond = AccessTokenSecurity.getUser(Conducteur.class, token);
 		Course course = courseDAO.getActualDriverRide(cond.getId());
 
-		if (cond.getDateDebutPause() > 0 && cond.getId() == course.getConducteur().getId() && course.isValide()) {
+		if (course != null && cond.getDateDebutPause() > 0 && cond.getId() == course.getConducteur().getId()
+				&& course.isValide()) {
 
 			long tempsP = Math.round(((double) (System.currentTimeMillis() - cond.getDateDebutPause()) / 60));
 			course.setTempsPause(course.getTempsPause() + tempsP);
-			
+
 			return AccessTokenSecurity.buildResponse(true, token, HttpStatus.OK);
 		}
 
@@ -210,11 +215,13 @@ public class CourseRestController {
 	@RequestMapping(value = "/ride/{id}/comment", method = RequestMethod.PUT)
 	@ResponseBody
 	@RestrictedAccess(value = AccessType.TOKEN, authorized = { Conducteur.class, Client.class })
-	public ResponseEntity<Course> comment(@PathVariable int id, @RequestHeader(AccessTokenSecurity.TOKEN_HEADER_NAME) String token,
-			@RequestParam float note, @RequestParam String commentaire) {
+	public ResponseEntity<Course> comment(@PathVariable int id,
+			@RequestHeader(AccessTokenSecurity.TOKEN_HEADER_NAME) String token, @RequestParam float note,
+			@RequestParam String commentaire) {
 		Course course = courseDAO.find(id);
 		if (AccessTokenSecurity.typeOfUser(token) == Conducteur.class) {
-			if (course.getDateFinCourse() != null && course.getConducteur().getId() == AccessTokenSecurity.getUser(Conducteur.class, token).getId()) {
+			if (course.getDateFinCourse() != null
+					&& course.getConducteur().getId() == AccessTokenSecurity.getUser(Conducteur.class, token).getId()) {
 				course.setNoteConducteur(note);
 				course.setComConducteur(commentaire);
 				course = courseDAO.save(course);
@@ -222,7 +229,8 @@ public class CourseRestController {
 			}
 			return AccessTokenSecurity.buildResponse(Course.class, token, HttpStatus.FORBIDDEN);
 		} else if (AccessTokenSecurity.typeOfUser(token) == Client.class) {
-			if (course.getDateFinCourse() != null && course.getClient().getId() == AccessTokenSecurity.getUser(Client.class, token).getId()) {
+			if (course.getDateFinCourse() != null
+					&& course.getClient().getId() == AccessTokenSecurity.getUser(Client.class, token).getId()) {
 				course.setNoteConducteur(note);
 				course.setComConducteur(commentaire);
 				course = courseDAO.save(course);
@@ -240,10 +248,13 @@ public class CourseRestController {
 			@RequestHeader(AccessTokenSecurity.TOKEN_HEADER_NAME) String token) {
 		Conducteur cond = AccessTokenSecurity.getUser(Conducteur.class, token);
 		Course course = courseDAO.getActualDriverRide(cond.getId());
-		Client client = course.getClient();
-		client = clientDAO.find(client.getId());
-		return AccessTokenSecurity.buildResponse(courseDAO.getCustomerCompletedRides(client.getId()), token,
-				HttpStatus.OK);
+		if (course != null) {
+			Client client = course.getClient();
+			client = clientDAO.find(client.getId());
+			return AccessTokenSecurity.buildResponse(courseDAO.getCustomerCompletedRides(client.getId()), token,
+					HttpStatus.OK);
+		}
+		return AccessTokenSecurity.buildResponse(null, token, HttpStatus.FORBIDDEN);
 	}
 
 	// récupère et renvoie l'historique des courses du conducteur demandé au
@@ -254,9 +265,12 @@ public class CourseRestController {
 	public ResponseEntity<List<Course>> getDriverHistory(
 			@RequestHeader(AccessTokenSecurity.TOKEN_HEADER_NAME) String token) {
 		Course course = courseDAO.getActualCustomerRide(AccessTokenSecurity.getUser(Client.class, token).getId());
-		Conducteur conducteur = conducteurDAO.find(course.getConducteur().getId());
-		return AccessTokenSecurity.buildResponse(courseDAO.getDriverCompletedRides(conducteur.getId()), token,
-				HttpStatus.OK);
+		if (course != null) {
+			Conducteur conducteur = conducteurDAO.find(course.getConducteur().getId());
+			return AccessTokenSecurity.buildResponse(courseDAO.getDriverCompletedRides(conducteur.getId()), token,
+					HttpStatus.OK);
+		}
+		return AccessTokenSecurity.buildResponse(null, token, HttpStatus.FORBIDDEN);
 	}
 
 	public static int calculDistance(Conducteur cond, String adresse) {
@@ -277,10 +291,10 @@ public class CourseRestController {
 				JsonNode rootNode = objmp.readValue(jsonEntity.getBody(), JsonNode.class);
 				// return
 				// rootNode.get("routes").get(0).get("legs").get(0).get("distance").get("value").asInt();
-				try{
+				try {
 					return rootNode.get("rows").get(0).get("elements").get(0).get("distance").get("value").asInt();
-				}catch(NullPointerException e){
-					return 1000000;  
+				} catch (NullPointerException e) {
+					return 1000000;
 				}
 			} catch (IOException e) {
 			}
