@@ -39,19 +39,15 @@ public class MainController
 	public MainController() { AutoFilterForSpringControllers.addController(getClass(), ""); }
 	
 	@RequestMapping(value = "/login", method = RequestMethod.GET)
-	public String showLoginView(Model model) 
+	@RestrictedAccess(AccessType.PUBLIC)
+	public String loginView(Model model) 
 	{
 		return "login"; 
 	}
 	
-	@RequestMapping(value = "/login2", method = RequestMethod.GET)
-	public String tests(Model model) 
-	{
-		return "accueil2";  
-	}
-	
 	@RequestMapping(value = "/login", method = RequestMethod.POST)
-	public String login(@RequestParam String username, @RequestParam String password, Model model, HttpSession session)
+	@RestrictedAccess(AccessType.PUBLIC)
+	public String loginCallback(@RequestParam String username, @RequestParam String password, Model model, HttpSession session)
 	{
 		session.setAttribute("client", null);			
 		session.setAttribute("conducteur", null);			
@@ -102,9 +98,30 @@ public class MainController
 
 	@RequestMapping(value = "/", method = RequestMethod.GET)
 	@RestrictedAccess(value=AccessType.CLASS_IN_SESSION, authorized={Client.class,Conducteur.class}, onForbidden="redirect:login")
-	public String home()
+	public String homeView()
 	{
 		return "accueil";
 	}
 
+	@RequestMapping(value = "/logout", method = RequestMethod.GET)
+	@RestrictedAccess(value=AccessType.CLASS_IN_SESSION, authorized={Client.class,Conducteur.class}, onForbidden="redirect:login")
+	public String logout(HttpSession session)
+	{
+		session.invalidate();
+		return "login";
+	}
+	
+	@RequestMapping(value = "/subscribe", method = RequestMethod.GET)
+	@RestrictedAccess(value=AccessType.PUBLIC)
+	public String subscribeView()
+	{
+		return "subscribe";
+	}
+	
+	@RequestMapping(value = "/subscribe", method = RequestMethod.POST)
+	@RestrictedAccess(value=AccessType.PUBLIC)
+	public String subscribeCallback()
+	{
+		return "login";
+	}
 }
