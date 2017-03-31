@@ -24,7 +24,7 @@ import com.tuktukteam.autosecurity.RestrictedAccess.AccessType;
 import com.tuktukteam.genericdao.DAOException;
 import com.tuktukteam.genericdao.annotations.ColumnTag;
 import com.tuktukteam.tuktuk.dao.ClientDAO;
-import com.tuktukteam.tuktuk.dao.PersonneDAO;
+import com.tuktukteam.tuktuk.dao.CourseDAO;
 import com.tuktukteam.tuktuk.model.Client;
 import com.tuktukteam.tuktuk.model.Conducteur;
 import com.tuktukteam.tuktuk.model.Course;
@@ -34,9 +34,10 @@ import com.tuktukteam.tuktuk.model.Course;
 public class ClientRestController {
 	@Autowired
 	private ClientDAO clientDAO;
-
+	
 	@Autowired
-	private PersonneDAO personneDAO;
+	private CourseDAO courseDAO;
+
 
 	public ClientRestController() {
 		AutoFilterForSpringControllers.addController(this.getClass(), "/api");
@@ -80,7 +81,7 @@ public class ClientRestController {
 		Client cli = AccessTokenSecurity.getUser(Client.class, token);
 		if (!result.hasErrors()) {
 			client.setId(cli.getId());
-			personneDAO.save(client);
+			clientDAO.save(client);
 			cli = clientDAO.find(cli.getId());
 			return AccessTokenSecurity.buildResponse(cli, token, HttpStatus.OK);
 		}
@@ -103,43 +104,62 @@ public class ClientRestController {
 	//calcul la moyenne du client actuellement connecté et lui renvoie
 	@ResponseBody
 	@RequestMapping(value = "/note", method = RequestMethod.GET)
-	@RestrictedAccess(value = AccessType.TOKEN, authorized = Client.class)
+	@RestrictedAccess(value = AccessType.TOKEN, authorized = {Client.class, Conducteur.class})
 	public ResponseEntity<Float> calculAvgNote(@RequestHeader(AccessTokenSecurity.TOKEN_HEADER_NAME) String token) {
-		Client cli1 = AccessTokenSecurity.getUser(Client.class, token);
+
 		float moy = 0;
 		float somme = 0;
 		int i = 0;
-		List<Course> courses = clientDAO.find(cli1.getId()).getCourses();
-		for (Course course : courses) {
-			if (course.getNoteConducteur() != -1) {
-				somme = somme + course.getNoteConducteur();
-				i++;
-			}
-		}
-		moy = somme / i;
 		
-		return AccessTokenSecurity.buildResponse(moy, token, HttpStatus.OK);
+		if(AccessTokenSecurity.typeOfUser(token)==Client.class)
+		{
+			Client client = AccessTokenSecurity.getUser(Client.class, token);
+			List<Course> courses = clientDAO.find(client.getId()).getCourses();
+			for (Course course : courses) {
+				if (course.getNoteConducteur() != -1) {
+					somme = somme + course.getNoteConducteur();
+					i++;
+				}
+			}
+			moy = somme / i;
+			
+			return AccessTokenSecurity.buildResponse(moy, token, HttpStatus.OK);
+		} else {
+			Conducteur conducteur = AccessTokenSecurity.getUser(Conducteur.class, token);
+			Course cou = courseDAO.getActualDriverRide(conducteur.getId());
+			Client client = clientDAO.find(cou.getClient().getId());
+			List<Course> courses = client.getCourses();
+			for (Course course : courses) {
+				if (course.getNoteConducteur() != -1) {
+					somme = somme + course.getNoteConducteur();
+					i++;
+				}
+			}
+			moy = somme / i;
+			return AccessTokenSecurity.buildResponse(moy, token, HttpStatus.OK);
+		}
+		
 	}
 
-	//calcul la moyenne du client demandé et la renvoie au conducteur
-	@ResponseBody
-	@RequestMapping(value = "/{id}/note", method = RequestMethod.GET)
-	@RestrictedAccess(value = AccessType.TOKEN, authorized = Conducteur.class)
-	public ResponseEntity<Float> calculAvgNoteClient(@PathVariable int id, @RequestHeader(AccessTokenSecurity.TOKEN_HEADER_NAME) String token) {
-		Client cli1 = clientDAO.find(id);
-		float moy = 0;
-		float somme = 0;
-		int i = 0;
-		List<Course> courses = cli1.getCourses();
-		for (Course course : courses) {
-			if (course.getNoteConducteur() != -1) {
-				somme = somme + course.getNoteConducteur();
-				i++;
-			}
-		}
-		moy = somme / i;
-		return AccessTokenSecurity.buildResponse(moy, token, HttpStatus.OK);
-	}
+//	//calcul la moyenne du client demandé et la renvoie au conducteur
+//	@ResponseBody
+//	@RequestMapping(value = "/{id}/note", method = RequestMethod.GET)
+//	@RestrictedAccess(value = AccessType.TOKEN, authorized = Conducteur.class)
+//	public ResponseEntity<Float> calculAvgNoteClient(@PathVariable int id, @RequestHeader(AccessTokenSecurity.TOKEN_HEADER_NAME) String token) {
+//		Client cli1 = clientDAO.find(id);
+//		float moy = 0;
+//		float somme = 0;
+//		int i = 0;
+//		List<Course> courses = cli1.getCourses();
+//		for (Course course : courses) {
+//			if (course.getNoteConducteur() != -1) {
+//				somme = somme + course.getNoteConducteur();
+//				i++;
+//			}
+//		}
+//		moy = somme / i;
+//		return AccessTokenSecurity.buildResponse(moy, token, HttpStatus.OK);
+//	}
 
 	//récupère les informations utiles du client demandé et les renvoie au conducteur
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)

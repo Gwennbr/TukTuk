@@ -22,6 +22,20 @@ public class CourseDAO extends GenericDAO<Course, Integer> {
 	}
 	
 	public Course getActualCustomerRide(int id) {
-		return entityManager.createQuery("FROM Course WHERE client.id = :idClient AND dateDebutCourse IS NULL", Course.class).setParameter("idClient", id).getSingleResult();
+		return entityManager.createQuery("FROM Course WHERE client.id = :idClient AND dateFinCourse IS NULL", Course.class).setParameter("idClient", id).getSingleResult();
 	}
+	
+	public Course getActualDriverRide(int id) {
+		return entityManager.createQuery("FROM Course WHERE conducteur.id = :idCond AND dateFinCourse IS NULL", Course.class).setParameter("idCond", id).getSingleResult();
+	}
+	
+	public List<Course> getCustomerCompletedRides(int id) {
+		return entityManager.createQuery("FROM Course WHERE client.id = :idClient AND dateFinCourse IS NOT NULL", Course.class).setParameter("idClient", id).getResultList();
+	}
+	
+	public List<Course> getDriverCompletedRides(int id) {
+		return entityManager.createQuery("FROM Course WHERE conducteur.id = :idCond AND dateFinCourse IS NOT NULL", Course.class).setParameter("idCond", id).getResultList();
+	}
+	
+	
 }
