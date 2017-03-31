@@ -19,11 +19,8 @@ function RestTemplate(_token, globalErrorCallback)
 		});
 		if (this.pushedCalls.length == 1)
 		{
-			console.log("Add: pushedCalls == 1");
 			this.doAjax(url, method, data, callback, errorCallback);
 		}
-		else
-			console.log("Add: pushedCalls > 1 : " + this.pushedCalls.length);
 	}
 	
 	this.login = function()
@@ -103,7 +100,6 @@ function RestTemplate(_token, globalErrorCallback)
 		if (errorCallback !== undefined && errorCallback != null)
 			errorCallback(response.status);
 		
-		console.log(this.pushedCalls);
 		if (this.pushedCalls.length == 1 || this.pushedCalls.length == 0)
 			this.pushedCalls = [];
 		else
@@ -112,14 +108,8 @@ function RestTemplate(_token, globalErrorCallback)
 			if (!Array.isArray(this.pushedCalls))
 				this.pushedCalls = [ this.pushedCalls ];
 		}
-		console.log(this.pushedCalls);
 		if (this.pushedCalls.length > 0)
-		{
-			console.log("pushedCalls non vide : " + this.pushedCalls.length);
 			this.doAjax(this.pushedCalls[0].url, this.pushedCalls[0].method, this.pushedCalls[0].data, this.pushedCalls[0].callback, this.pushedCalls[0].errorCallback);			
-		}
-		else
-			console.log("pushedCalls vide");
 	}
 	
 	this.internalCallback = function(callback, errorCallback, response)
@@ -139,7 +129,6 @@ function RestTemplate(_token, globalErrorCallback)
 				errorCallback(response.status);
 		}
 		
-		console.log(this.pushedCalls);
 		if (this.pushedCalls.length == 1 || this.pushedCalls.length == 0)
 			this.pushedCalls = [];
 		else
@@ -148,14 +137,8 @@ function RestTemplate(_token, globalErrorCallback)
 			if (!Array.isArray(this.pushedCalls))
 				this.pushedCalls = [ this.pushedCalls ];
 		}
-		console.log(this.pushedCalls);
 		if (this.pushedCalls.length > 0)
-		{
-			console.log("pushedCalls non vide : " + this.pushedCalls.length);
 			this.doAjax(this.pushedCalls[0].url, this.pushedCalls[0].method, this.pushedCalls[0].data, this.pushedCalls[0].callback, this.pushedCalls[0].errorCallback);			
-		}
-		else
-			console.log("pushedCalls vide");
 	}
 
 	this.buildUrl = function(fmt)
