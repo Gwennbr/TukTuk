@@ -304,6 +304,10 @@ function RestTemplate(_token, globalErrorCallback)
 		this.addCall(this.buildUrl(RestTemplate.RESTURI_RIDE_COMMENT, rideId, note, comment), "PUT", undefined, callback, errorCallback);				
 	}
 	
+	this.ride_Delete = function(callback, errorCallback)
+	{
+		this.addCall(this.buildUrl(RestTemplate.RESTURI_RIDE_DELETE), "DELETE", undefined, callback, errorCallback);				
+	}
 }
 
 RestTemplate.ClientType = { UNKNOWN:0, CUSTOMER:1, DRIVER:2 } 
@@ -341,4 +345,5 @@ RestTemplate.RESTURI_RIDE_FINISH = "/ride/complete";
 RestTemplate.RESTURI_RIDE_PAUSE = "/ride/pause";
 RestTemplate.RESTURI_RIDE_RESUME = "/ride/resume";
 RestTemplate.RESTURI_RIDE_COMMENT = "/ride/{1}/comment?note={2}&commentaire={3}";
+RestTemplate.RESTURI_RIDE_DELETE = "/ride";
 

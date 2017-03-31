@@ -59,7 +59,7 @@
 			<button type="button" class="btn btn-primary btn-circle btn-xl" data-toggle="modal" data-target=".modal-commande"><i class="glyphicon glyphicon-menu-up"></i></button>
 		</div>
 		<!-- Modal -->
-		<div index="modal-control" class="modal fade modal-commande" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
+		<div id="commande-modal" index="modal-control" class="modal fade modal-commande" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
 			<div class="modal-dialog modal-lg" role="document">
 			
 			<c:choose>
@@ -96,7 +96,7 @@
 								Address = {{vm.place.formatted_address}} <br/>
 								Location: {{vm.place.geometry.location}}<br/>
 							</div>
-							<button id="btn-search" type="button" class="btn btn-primary"  data-toggle="modal" data-target=".modal-chauffeur" data-dismiss="modal">Rechercher un tuk-tuk</button>
+							<button id="btn-search" type="button" class="btn btn-primary"  data-toggle="modal" data-target=".modal-waiting" data-dismiss="modal">Rechercher un tuk-tuk</button>
 						</div>
 						<div class="modal-footer">
 							<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -115,6 +115,8 @@
 				<div class="modal-middle">
 					<h3>Veuillez patientez...</h3>
 					<div class="loader"></div>
+					<br>
+					<button type="button" onclick="annuleeCourseClient()" class="btn-lg btn-danger">Annulée</button>
 				</div>
 			</div>
 		</div>
@@ -126,20 +128,20 @@
 			
 				<div class="modal-content">
 					<div class="modal-header">
-						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						<button type="button" onclick="refuseCourseClient()" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 						<h4 class="modal-title">Commander un tuk-tuk :</h4>
 					</div>
 					<div class="modal-body">
 						<!-- <label>Information chauffeur</label> -->
 						<div class="card">
 <%-- 							<img class="card-img-top" src="${ pageContext.request.contextPath }/resources/img/chauffeur.jpg" alt="Jean Dupont"/> --%>
-							<div class="card-block">
-									<h4 class="card-title">Jean Dupont</h4>
-									<br>
-									<img id="rating" src="${ pageContext.request.contextPath }/resources/img/rate5.png" alt="Note"/>
-									<hr />
-									<a id="btn-commandée" onclick="accepteCourseClient()" class="btn btn-success">Commandée</a>
-									<a id="btn-annulée" onclick="refuseCourseClient()" class="btn btn-danger">Annulée</a>
+							<div id="card-block" class="card-block">
+<!-- 									<h4 class="card-title">Jean Dupont</h4> -->
+<!-- 									<br> -->
+<%-- 									<img id="rating" src="${ pageContext.request.contextPath }/resources/img/rate5.png" alt="Note"/> --%>
+<!-- 									<hr /> -->
+<!-- 									<a id="btn-commandée" onclick="accepteCourseClient()" class="btn btn-success">Commandée</a> -->
+<!-- 									<a id="btn-annulée" onclick="refuseCourseClient()" class="btn btn-danger">Annulée</a> -->
 							</div>
 						</div>
 					</div>
@@ -169,13 +171,14 @@
 						</div>
 						
 						<div class="bottom-sidenav">
-							<button id="btn-disconnect" href="logout"  type="button" class="btn btn-danger">Deconnexion</button>
+							<button id="btn-disconnect" href="/logout"  type="button" class="btn btn-danger">Deconnexion</button>
 						</div>
 					</div>				
 				</div>
 			</div>
 		</div>
-		
+	
+	
 		
 		<div index="modal-control" class="modal fade modal-history" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
 			<div class="modal-dialog history modal-lg" role="document">
@@ -210,7 +213,7 @@
 	<script type="text/javascript" src="${ pageContext.request.contextPath }/resources/js/resttemplate.js"></script>
 	<script type="text/javascript">
 		var rest = new RestTemplate("${token}");	
-		console.log("token : " + "${token}");
+		var host = "${ pageContext.request.contextPath }";
 	</script>
 	<script src="${ pageContext.request.contextPath }/resources/js/accueil.js"></script>
 	<script src="${ pageContext.request.contextPath }/resources/js/gmap.js"></script>
