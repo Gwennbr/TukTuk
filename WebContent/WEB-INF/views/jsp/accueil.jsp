@@ -171,7 +171,7 @@
 						</div>
 						
 						<div class="bottom-sidenav">
-							<button id="btn-disconnect" href="logout"  type="button" class="btn btn-danger">Deconnexion</button>
+							<button id="btn-disconnect" href="/logout"  type="button" class="btn btn-danger">Deconnexion</button>
 						</div>
 					</div>				
 				</div>
