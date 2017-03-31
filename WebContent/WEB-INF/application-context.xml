@@ -19,9 +19,9 @@
 	<!-- On crée le DataSource -->
 	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
 		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
-		<property name="url" value="jdbc:mysql://172.16.162.105:3306/tuktuk" />
-		<property name="username" value="tuktuk" />
-		<property name="password" value="velotaxi" />
+		<property name="url" value="jdbc:mysql://127.0.0.1:3306/tuktuk" />
+		<property name="username" value="root" />
+		<property name="password" value="" />
 		<property name="maxActive" value="10" />
 	</bean>
 

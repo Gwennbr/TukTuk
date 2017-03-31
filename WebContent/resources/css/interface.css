@@ -143,9 +143,10 @@ nav .left {
 .modal.fade .modal-dialog.navcourse {
 	margin: 0px;
 	top: 0px;
-	width: 180px;
+	width: 280px;
 	transform: translate3d(0, 0, 0);
 	float: left;
+	overflow-y: auto;
 }
 .modal-dialog{
     overflow-y: initial;
@@ -273,6 +274,12 @@ nav .btn-link:hover {
 
 .colorWhite {
 	color: white;
+}
+
+.label-pill {
+  padding-right: .6em;
+  padding-left: .6em;
+  border-radius: 10rem;
 }
 
 #rating {

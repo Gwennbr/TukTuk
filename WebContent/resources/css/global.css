@@ -15,6 +15,16 @@ body{
 	border-radius: 0px;
 }
 
+#btn-accept {
+	width: 100%;
+}
+
+.panel {
+	text-align: center;
+	border-radius: 0px;
+	width: 100%;
+}
+
 .alert {
 	border-radius: 0px;
 	text-align: center;

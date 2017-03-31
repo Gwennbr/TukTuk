@@ -25,7 +25,8 @@
 	<header>
 		<nav>
 			<c:if test="${ not empty conducteur }">
-				<a class="left btn btn-lg btn-link" data-toggle="modal" data-target=".nav-course" data-dismiss="modal"><span class="glyphicon glyphicon-th"></span></a>
+<!-- 				<a class="left btn btn-lg btn-link" data-toggle="modal" data-target=".nav-course" data-dismiss="modal"><span class="glyphicon glyphicon-th"></span><span id="puceBadge" class="badge"></span></a> -->
+				<a class="left btn btn-lg btn-link" data-toggle="modal" data-target=".nav-course" data-dismiss="modal"><span class="glyphicon glyphicon-road"></span> <span id="btn-course-dispo"></span></a>
 			</c:if>
 				<label class="btn-lg" id="titleNav"><b class="colorWhite">ADOPTE</b>UN<b class="colorWhite">TUK-TUK.COM</b></label>
 			<a class="right btn btn-lg btn-link" data-toggle="modal" data-target=".nav-side" data-dismiss="modal"><span class="glyphicon glyphicon-cog"></span></a>
@@ -40,11 +41,19 @@
 			<c:choose>
 				<c:when test="${not empty conducteur}">
 					<marker position="{{vm.current}}" animation="Animation.NONE" icon=${ pageContext.request.contextPath }/resources/img/trishawColor.png></marker>			
-					<marker ng-repeat="pos in vm.positions" position="{{pos.lat}},{{pos.lng}}" icon=${ pageContext.request.contextPath }/resources/img/userColor.png></marker>
+<!-- 					<div id="directionMap"> -->
+<!-- 						<directions -->
+<!--           					draggable="false" -->
+<!--           					travel-mode="DRIVING" -->
+<!--           					origin="current-location" -->
+<!--           					destination="lille grand palais"> -->
+<!--         				</directions> -->
+<!--         			</div> -->
+<%-- 					<marker ng-repeat="pos in vm.positions" position="{{pos.lat}},{{pos.lng}}" icon=${ pageContext.request.contextPath }/resources/img/userColor.png></marker> --%>
 				</c:when>
 				<c:otherwise>
 					<marker position="{{vm.current}}" animation="Animation.NONE" icon=${ pageContext.request.contextPath }/resources/img/userColor.png></marker>			
-					<marker ng-repeat="pos in vm.positions" position="{{pos.lat}},{{pos.lng}}" icon=${ pageContext.request.contextPath }/resources/img/trishawColor.png></marker>
+<%-- 					<marker ng-repeat="pos in vm.positions" position="{{pos.lat}},{{pos.lng}}" icon=${ pageContext.request.contextPath }/resources/img/trishawColor.png></marker> --%>
 				</c:otherwise>
 			</c:choose>
 		</ng-map>
@@ -190,12 +199,16 @@
 						<label>Liste des course dispo</label>
 						<hr />
 						<div id="listeCourse">
-							<div class="panel panel-info">
-								<div class="panel-body">
-    								Panel content
-  								</div>
-  								<div class="panel-footer">Panel footer</div>
-							</div>
+<!-- 							<div class="panel panel-primary"> -->
+<!-- 								<div class="alert alert-success">Doge LeChien</div>				 -->
+<!-- 								<div class="panel-body"> -->
+<%-- 									<img id="rating" src="${ pageContext.request.contextPath }/resources/img/rate3.png" alt="Note"/> --%>
+<!--     							</div> -->
+<!--     							<div class="panel-footer"> -->
+<!--     								<button id="btn-accept" type="button" class="btn btn-success">Accpeter</button> -->
+<!--     								<button id="btn-reject" type="button" class="btn btn-danger">Refuser</button> -->
+<!--   								</div> -->
+<!-- 							</div> -->
 						</div>
 					</div>				
 				</div>

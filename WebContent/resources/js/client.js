@@ -28,12 +28,12 @@ $('#btn-search').click(function(){
 	console.log("j'envoie l'adresse " + $('#vmadresse').val() + " au rest ctrl");
 	rest.ride_Request($('#vmadresse').val(), function(){
 		console.log("il trouve l'adresse");
+		inter = setInterval(checkRider, 2000);// refresh position
 	}, function() {
-		alert("adresse non trouve");
+		alert("adresse incorrecte");
 	});
-	console.log("il appelle la function checkRider() tout les 2sec");
 	
-	inter = setInterval(checkRider, 2000);// refresh position
+	
 
 });
 
@@ -96,8 +96,8 @@ rest.ride_Infos(function(data){
 function accepteCourseClient() {
 	rest.ride_Validate(function(data){
 		$("#driverInfo-modal").modal("hide");
-		$('#btn-search').prop('disabled', true);
-		$('#vmadresse').prop('disabled', true);
+		$('#btn-search').addClass("disabled")
+		$('#vmadresse').addClass("disabled")
 		$("#alertZone")
 		.html(
 				'<div id="alertDiv" class="alert alert-info">'
@@ -117,8 +117,8 @@ function refuseCourseClient() {
 	rest.ride_Decline(function(data){
 		console.log(data);
 		$("#driverInfo-modal").modal("hide");
-		$('#btn-search').prop('disabled', true);
-		$('#vmadresse').prop('disabled', true);
+		$('#btn-search').addClass("disabled")
+		$('#vmadresse').addClass("disabled")
 		$("#alertZone")
 		.html(
 				'<div id="alertDiv" class="alert alert-info">'
@@ -140,8 +140,8 @@ function refuseCourseClient() {
 function annuleeCourseClient() {
 	rest.ride_Delete(function(data){
 		$("#modal-waiting").modal("hide");
-		$('#btn-search').prop('disabled', false);
-		$('#vmadresse').prop('disabled', false);
+		$('#btn-search').removeClass("disabled")
+		$('#vmadresse').removeClass("disabled")
 		$("#alertZone")
 		.html(
 				'<div id="alertDiv" class="alert alert-info">'
