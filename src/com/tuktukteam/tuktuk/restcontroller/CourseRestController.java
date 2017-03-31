@@ -53,7 +53,7 @@ public class CourseRestController {
 			@RequestParam String adresseDepart) {
 
 		Client c = AccessTokenSecurity.getUser(Client.class, token);
-		if (courseDAO.getActualCustomerRide(c.getId()) != null) {
+		if (courseDAO.getActualCustomerRide(c.getId()) == null) {
 			Course course = new Course();
 			course.setAdresseDepart(adresseDepart);
 			course.setClient(c);
