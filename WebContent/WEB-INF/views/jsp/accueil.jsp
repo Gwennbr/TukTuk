@@ -4,6 +4,7 @@
 
 <html ng-app="myApp">
 <head>
+	<link rel="icon" type="image/png" href="${ pageContext.request.contextPath }/resources/img/favicon.png" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 	<script src="${ pageContext.request.contextPath }/resources/js/angular.min.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
@@ -109,7 +110,7 @@
 		
 		
 		
-		<div index="modal-control" class="modal fade modal-waiting" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" data-backdrop="static">
+		<div id="waiting-modal" index="modal-control" class="modal fade modal-waiting" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" data-backdrop="static">
 			<div id="modal-waiting" role="document">
 				<div class="modal-middle">
 					<h3>Veuillez patientez...</h3>
@@ -120,7 +121,7 @@
 		
 		
 		
-		<div index="modal-control" class="modal fade modal-chauffeur" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
+		<div id="driverInfo-modal" index="modal-control" class="modal fade modal-chauffeur" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
 			<div class="modal-dialog modal-sm" role="document">
 			
 				<div class="modal-content">
@@ -131,11 +132,14 @@
 					<div class="modal-body">
 						<!-- <label>Information chauffeur</label> -->
 						<div class="card">
-							<img class="card-img-top" src="${ pageContext.request.contextPath }/resources/img/chauffeur.jpg" alt="Jean Dupont"/>
+<%-- 							<img class="card-img-top" src="${ pageContext.request.contextPath }/resources/img/chauffeur.jpg" alt="Jean Dupont"/> --%>
 							<div class="card-block">
-								<h4 class="card-title">Jean Dupont</h4>
-								<img id="rating" src="${ pageContext.request.contextPath }/resources/img/rate5.png" alt="Note"/>
-								<a id="btn-commander" href="#" class="btn btn-success">Commander</a>
+									<h4 class="card-title">Jean Dupont</h4>
+									<br>
+									<img id="rating" src="${ pageContext.request.contextPath }/resources/img/rate5.png" alt="Note"/>
+									<hr />
+									<a id="btn-commandée" onclick="accepteCourseClient()" class="btn btn-success">Commandée</a>
+									<a id="btn-annulée" onclick="refuseCourseClient()" class="btn btn-danger">Annulée</a>
 							</div>
 						</div>
 					</div>
@@ -156,7 +160,7 @@
 						<div class="middle-sidenav">
 							<label>Option :</label>
 							<button id="btn-payoption" href="#"  type="button" class="btn btn-success">Option de payement</button>
-							<button id="btn-history" type="button" class="btn btn-warning"  data-toggle="modal" data-target=".modal-history" data-dismiss="modal">Historique</button>
+							<button id="btn-history" type="button" class="btn btn-warning" data-toggle="modal" data-target=".modal-history" data-dismiss="modal">Historique</button>
 							<c:if test="${ not empty conducteur }">
 							<hr />
 							<label>Disponible :</label>
@@ -205,9 +209,18 @@
 	</section>
 	<script type="text/javascript" src="${ pageContext.request.contextPath }/resources/js/resttemplate.js"></script>
 	<script type="text/javascript">
-		var rest = new RestTemplate("${token}");		
+		var rest = new RestTemplate("${token}");	
+		console.log("token : " + "${token}");
 	</script>
 	<script src="${ pageContext.request.contextPath }/resources/js/accueil.js"></script>
 	<script src="${ pageContext.request.contextPath }/resources/js/gmap.js"></script>
+	<c:choose>
+		<c:when test="${not empty conducteur}">
+				<script src="${ pageContext.request.contextPath }/resources/js/conducteur.js"></script>
+			</c:when>
+			<c:otherwise>
+				<script src="${ pageContext.request.contextPath }/resources/js/client.js"></script>
+		</c:otherwise>
+	</c:choose>
 </body>
 </html>

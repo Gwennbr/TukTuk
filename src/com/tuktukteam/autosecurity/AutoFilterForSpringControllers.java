@@ -40,34 +40,37 @@ public class AutoFilterForSpringControllers extends GenericFilterBean
 		@Getter Class<?> authorized[];
 		@Getter String attributesNames[];
 		@Getter String onForbidden;
-		@Getter AccessOptions options[];		
+		@Getter AccessOptions options[];	
 		@Getter private RequestMethod [] methods;	
 	}
 	
 	private static List<SecurityMappingEntry> securityMappings = new ArrayList<>();
 	private static List<Class<?>> controllersAdded = new ArrayList<>();
 	
-	private static String convertToRegex(String uri)
+	private static String convertToRegex(String uri, String mappingRegex)
 	{
-		return '^' + Matcher.quoteReplacement(uri).replaceAll("\\{.*\\}", "[^/]*") + '$';
+		if (mappingRegex == null || mappingRegex.length() == 0)
+			return '^' + Matcher.quoteReplacement(uri).replaceAll("\\{.*\\}", "\\\\d*") + '$';
+		else
+			return '^' + mappingRegex + '$';
 	}
 	
-	private static List<String> buildMappingsList(String prefix, String classMappings[], String methodMappings[])
+	private static List<String> buildMappingsList(String prefix, String classMappings[], String methodMappings[], String mappingRegex)
 	{
 		List<String> mappings = new ArrayList<>();
 		
 		if (classMappings.length == 0)
 		{
 			for (String url : methodMappings)
-				mappings.add(convertToRegex(prefix + url));
+				mappings.add(convertToRegex(prefix + url, mappingRegex));
 		}
 		else
 			for (String classUrl : classMappings)
 				if (methodMappings.length == 0)
-					mappings.add(convertToRegex(prefix + classUrl));
+					mappings.add(convertToRegex(prefix + classUrl, mappingRegex));
 				else
 					for (String methodUrl : methodMappings)
-						mappings.add(convertToRegex(prefix + classUrl + methodUrl));
+						mappings.add(convertToRegex(prefix + classUrl + methodUrl, mappingRegex));
 		return mappings;
 	}
 	
@@ -140,7 +143,7 @@ public class AutoFilterForSpringControllers extends GenericFilterBean
 
 				String [] methodMappings = methodRequestMapping.value();
 
-				for (String uri : buildMappingsList(prefix, classMappings, methodMappings))
+				for (String uri : buildMappingsList(prefix, classMappings, methodMappings, methodSecurityAccess == null ? null : methodSecurityAccess.mappingRegex()))
 				{
 					RequestMethod classMethods[] = {};
 					if (classRequestMapping != null)
@@ -263,6 +266,7 @@ public class AutoFilterForSpringControllers extends GenericFilterBean
 		for (SecurityMappingEntry sec : securityMappings)
 			if (uri.matches(sec.getUri()))
 			{
+				//System.out.println(uri + " -> " + sec.getUri());
 				//ResponseWrapper responseWrapper = new ResponseWrapper(response, request, access); //AccessTokenSecurity.TOKEN_HEADER_NAME, token);
 				switch (sec.accessType)
 				{

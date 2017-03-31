@@ -6,6 +6,22 @@ function RestTemplate(_token, globalErrorCallback)
 	this.tryLoginDriver = undefined;
 	this.isRetry = false;
 	this.token = _token;
+	this.pushedCalls = [];
+	
+	this.addCall = function(url, method, data, callback, errorCallback)
+	{
+		this.pushedCalls.push({
+			url: url,
+			method: method,
+			data: data,
+			callback: callback,
+			errorCallback: errorCallback
+		});
+		if (this.pushedCalls.length == 1)
+		{
+			this.doAjax(url, method, data, callback, errorCallback);
+		}
+	}
 	
 	this.login = function()
 	{
@@ -13,7 +29,7 @@ function RestTemplate(_token, globalErrorCallback)
 		this.user = undefined;
 		this.token = undefined;
 		this.userType = RestTemplate.ClientType.UNKNOWN;
-		this.$http.get(RestTemplate.RESTURI_DRIVER_LOGIN + "?username=" + username + "&password=" + password)
+		this.$http.get(this.buildUrl(RestTemplate.RESTURI_DRIVER_LOGIN, username, password))
 			.then(this.internalLoginCallback.bind(this), this.internalLoginCallbackError.bind(this));
 	}
 	
@@ -25,6 +41,8 @@ function RestTemplate(_token, globalErrorCallback)
 			return;
 		}
 */
+		console.log(method + " " + url);
+		
 		if (data === undefined || data == null)
 			this.$http({
 				url: url,
@@ -32,21 +50,7 @@ function RestTemplate(_token, globalErrorCallback)
 				headers: {
 					"tokenauth-token" : this.token
 				}
-			}).then(this.internalCallback.bind(this, callback, errorCallback),
-						(function(response) { 
-							if (this.isRetry == false)
-							{
-								if (response.status == 403)
-								{
-									this.isRetry = true;
-									this.doAjax(url, method, data, callback, errorCallback);
-								}
-							}
-							else
-							{
-								this.isRetry = false;
-							}
-						}).bind(this)); 	
+			}).then(this.internalCallback.bind(this, callback, errorCallback), this.internalErrorCallback.bind(this, callback, errorCallback)); 	
 		else
 			this.$http({
 				url: url,
@@ -55,22 +59,7 @@ function RestTemplate(_token, globalErrorCallback)
 					"tokenauth-token" : this.token
 				},
 				data: data
-			}).then(this.internalCallback.bind(this, callback, errorCallback),
-						(function(response) { 
-							if (this.isRetry == false)
-							{
-								if (response.status == 403)
-								{
-									this.isRetry = true;
-									this.doAjax(url, method, data, callback, errorCallback);
-								}
-							}
-							else
-							{
-								this.isRetry = false;
-							}
-						}).bind(this)); 	
-
+			}).then(this.internalCallback.bind(this, callback, errorCallback), this.internalErrorCallback.bind(this, callback, errorCallback)); 	
 	}
 
 	this.internalLoginCallbackError = function(response)
@@ -104,12 +93,35 @@ function RestTemplate(_token, globalErrorCallback)
 				this.userType = RestTemplate.ClientType.CUSTOMER;
 		}
 	}
-
+	this.internalErrorCallback = function(callback, errorCallback, response)
+	{
+		var tok = response.headers("tokenauth-token");
+		if (tok != undefined && tok != null && tok != "")
+			this.token = tok;
+		
+		if (errorCallback !== undefined && errorCallback != null)
+			errorCallback(response.status);
+		
+		if (this.pushedCalls.length == 1 || this.pushedCalls.length == 0)
+			this.pushedCalls = [];
+		else
+		{
+			this.pushedCalls = this.pushedCalls.shift();
+			if (!Array.isArray(this.pushedCalls))
+				this.pushedCalls = [ this.pushedCalls ];
+		}
+		if (this.pushedCalls.length > 0)
+			this.doAjax(this.pushedCalls[0].url, this.pushedCalls[0].method, this.pushedCalls[0].data, this.pushedCalls[0].callback, this.pushedCalls[0].errorCallback);			
+	}
+	
 	this.internalCallback = function(callback, errorCallback, response)
 	{
+		var tok = response.headers("tokenauth-token");
+		if (tok != undefined && tok != null && tok != "")
+			this.token = tok;
+			
 		if (response.status == 200)
 		{
-			this.token = response.headers("tokenauth-token");
 			if (callback !== undefined && callback != null)
 				callback(response.data);
 		}
@@ -118,13 +130,26 @@ function RestTemplate(_token, globalErrorCallback)
 			if (errorCallback !== undefined && errorCallback != null)
 				errorCallback(response.status);
 		}
+		
+		if (this.pushedCalls.length == 1 || this.pushedCalls.length == 0)
+			this.pushedCalls = [];
+		else
+		{
+			this.pushedCalls = this.pushedCalls.shift();
+			if (!Array.isArray(this.pushedCalls))
+				this.pushedCalls = [ this.pushedCalls ];
+		}
+		if (this.pushedCalls.length > 0)
+			this.doAjax(this.pushedCalls[0].url, this.pushedCalls[0].method, this.pushedCalls[0].data, this.pushedCalls[0].callback, this.pushedCalls[0].errorCallback);			
 	}
 
 	this.buildUrl = function(fmt)
 	{
-		var i = 1;
-		fmt = fmt.replace(/{.*}/g, (function(i, arguments, x) { return arguments[i++]; }).bind(this, i, arguments) );
-		return fmt;
+		fmt = fmt.replace(/{[^{}]*}/g, (function(arguments, match) {
+			match = match.slice(1, match.length-1);
+			return arguments[Number(match)];
+		}).bind(this, arguments) );
+		return RestTemplate.RESTURI_API_PREFIX + fmt;
 	}
 
 	/*
@@ -134,8 +159,7 @@ function RestTemplate(_token, globalErrorCallback)
 	 */
 	this.driver_GetMyProfil = function(callback, errorCallback)
 	{
-		console.log(this.token);
-		this.doAjax(RestTemplate.RESTURI_DRIVER_PROFIL, "GET", undefined, 
+		this.addCall(this.buildUrl(RestTemplate.RESTURI_DRIVER_PROFIL), "GET", undefined, 
 			(function(data) { this.user = data; callback(data); }).bind(this), errorCallback);
 	}
 
@@ -146,30 +170,28 @@ function RestTemplate(_token, globalErrorCallback)
 	 */
 	this.driver_UpdateProfil = function(driver, callback, errorCallback)
 	{
-		this.doAjax(RestTemplate.RESTURI_DRIVER_UPDATEPROFIL, "PUT", driver, 
-			(function(data) { this.user = data; callback(data); }).bind(this), errorCallback);
+		this.addCall(this.buildUrl(RestTemplate.RESTURI_DRIVER_UPDATEPROFIL), "PUT", driver, 
+				(function(data) { this.user = data; callback(data); }).bind(this), errorCallback);
 	}
 
 	/*
 	 * Paramètre supplémentaire : aucun
 	 * Accès restreint : seulement au CONDUCTEUR loggué en session
-	 * paramètre fonction succès : 
+	 * paramètre fonction succès : Tableau de 'Course'
 	 */
 	this.driver_GetRunsHistory = function(callback, errorCallback)
 	{
-		this.doAjax(RestTemplate.RESTURI_DRIVER_RUNSHISTORY, "GET", undefined, callback, errorCallback);
+		this.addCall(this.buildUrl(RestTemplate.RESTURI_DRIVER_RUNSHISTORY), "GET", undefined, callback, errorCallback);
 	}
 
 	/*
-	 * Accès restreint : seulement au CONDUCTEUR loggué en session
-	 * paramètre fonction succès : 
+	 * Paramètre supplémentaire : l'id du driver dont on veut les infos
+	 * Accès restreint : seulement au CLIENT loggué en session
+	 * paramètre fonction succès : objet Driver rempli avec seulement les champs "public"
 	 */
 	this.driver_GetPublicInfos = function(driverId, callback, errorCallback)
 	{
-		if (driverId == undefined)
-			console.log('error driver_GetPublicInfos: no driverId in function call');
-		else
-			this.doAjax(RestTemplate.RESTURI_DRIVER_GETINFOS + driverId, "GET", undefined, callback, errorCallback);
+		this.addCall(this.buildUrl(RestTemplate.RESTURI_DRIVER_GETINFOS, driverId), "GET", undefined, callback, errorCallback);
 	}
 
 	/*
@@ -178,7 +200,8 @@ function RestTemplate(_token, globalErrorCallback)
 	 */
 	this.driver_SetUnavailable = function(callback, errorCallback)
 	{
-		this.doAjax(RestTemplate.RESTURI_DRIVER_UNAVAILABLE, "PUT", undefined, callback, errorCallback);		
+		console.log("driver_SetUnAvailable");
+		this.addCall(this.buildUrl(RestTemplate.RESTURI_DRIVER_UNAVAILABLE), "PUT", undefined, callback, errorCallback);		
 	}
 
 	/*
@@ -187,7 +210,8 @@ function RestTemplate(_token, globalErrorCallback)
 	 */
 	this.driver_SetAvailable = function(callback, errorCallback)
 	{
-		this.doAjax(RestTemplate.RESTURI_DRIVER_AVAILABLE, "PUT", undefined, callback, errorCallback);		
+		console.log("driver_SetAvailable");
+		this.addCall(this.buildUrl(RestTemplate.RESTURI_DRIVER_AVAILABLE), "PUT", undefined, callback, errorCallback);		
 	}
 
 	/*
@@ -196,11 +220,9 @@ function RestTemplate(_token, globalErrorCallback)
 	 */
 	this.driver_refreshPosAndGetAvailableRides = function(lng, lat, callback, errorCallback)
 	{
-		if (lng == undefined || lat == undefined)
-			console.log('error driver_refreshPosAndRidesAvailable: params (longitude & latitude) not present in function call');
-		else
-			this.doAjax(this.buildUrl(RestTemplate.RESTURI_DRIVER_REFRESH, lng, lat),
-						 "PUT", undefined, callback, errorCallback);
+		console.log("driver_refreshPosAndGetAvailableRides");
+		this.addCall(this.buildUrl(RestTemplate.RESTURI_DRIVER_REFRESH, lng, lat),
+					 "PUT", undefined, callback, errorCallback);
 	}
 
 	/*
@@ -209,7 +231,7 @@ function RestTemplate(_token, globalErrorCallback)
 	 */
 	this.driver_GetMyNote = function(callback, errorCallback)
 	{
-		this.doAjax(RestTemplate.RESTURI_DRIVER_GETMYNOTE, "GET", undefined, callback, errorCallback);		
+		this.addCall(this.buildUrl(RestTemplate.RESTURI_DRIVER_GETMYNOTE), "GET", undefined, callback, errorCallback);		
 	}
 
 	/*
@@ -218,24 +240,131 @@ function RestTemplate(_token, globalErrorCallback)
 	 */
 	this.driver_GetNote = function(idDriver, callback, errorCallback)
 	{
-		this.doAjax(this.buildUrl(RestTemplate.RESTURI_DRIVER_GETNOTE, idDriver), 
-			"GET", undefined, callback, errorCallback);				
+		this.addCall(this.buildUrl(RestTemplate.RESTURI_DRIVER_GETNOTE, idDriver), 
+				"GET", undefined, callback, errorCallback);				
 	}
+	
+	this.driver_AllAround = function(callback, errorCallback)
+	{
+		this.addCall(this.buildUrl(RestTemplate.RESTURI_DRIVER_ALLAROUND), "GET", undefined, callback, errorCallback);				
+	}
+	
+	this.customer_GetMyProfil = function(callback, errorCallback)
+	{
+		this.addCall(this.buildUrl(RestTemplate.RESTURI_CUSTOMER_PROFIL), "GET", undefined, callback, errorCallback);				
+	}
+	
+	this.customer_UpdateProfil = function(customer, callback, errorCallback)
+	{
+		this.addCall(this.buildUrl(RestTemplate.RESTURI_CUSTOMER_UPDATEPROFIL), "PUT", customer, callback, errorCallback);				
+	}
+	
+	this.customer_GetRunsHistory = function(callback, errorCallback)
+	{
+		this.addCall(this.buildUrl(RestTemplate.RESTURI_CUSTOMER_RUNSHISTORY), "GET", undefined, callback, errorCallback);				
+	}
+	
+	this.customer_GetMyNote = function(callback, errorCallback)
+	{
+		this.addCall(this.buildUrl(RestTemplate.RESTURI_CUSTOMER_GETMYNOTE), "GET", undefined, callback, errorCallback);				
+	}
+	
+	this.customer_GetNote = function(customerId, callback, errorCallback)
+	{
+		this.addCall(this.buildUrl(RestTemplate.RESTURI_CUSTOMER_GETNOTE, customerId), "GET", undefined, callback, errorCallback);				
+	}
+	
+	this.customer_GetPublicInfos = function(customerId, callback, errorCallback)
+	{
+		this.addCall(this.buildUrl(RestTemplate.RESTURI_CUSTOMER_GETINFOS, customerId), "GET", undefined, callback, errorCallback);				
+	}
+	
+	this.ride_Request = function(address, callback, errorCallback)
+	{
+		address = address.replace(/ /g, "+");
+		this.addCall(this.buildUrl(RestTemplate.RESTURI_RIDE_REQUEST, address), "POST", undefined, callback, errorCallback);				
+	}
+	
+	this.ride_Accept = function(rideId, callback, errorCallback)
+	{
+		this.addCall(this.buildUrl(RestTemplate.RESTURI_RIDE_ACCEPT, rideId), "PUT", undefined, callback, errorCallback);				
+	}
+	
+	this.ride_Validate = function(rideId, callback, errorCallback)
+	{
+		this.addCall(this.buildUrl(RestTemplate.RESTURI_RIDE_VALIDATE, rideId), "PUT", undefined, callback, errorCallback);				
+	}
+	
+	this.ride_Decline = function(rideId, callback, errorCallback)
+	{
+		this.addCall(this.buildUrl(RestTemplate.RESTURI_RIDE_DECLINE, rideId), "PUT", undefined, callback, errorCallback);				
+	}
+	
+	this.ride_Infos = function(rideId, callback, errorCallback)
+	{
+		this.addCall(this.buildUrl(RestTemplate.RESTURI_RIDE_INFOS, rideId), "GET", undefined, callback, errorCallback);				
+	}
+	
+	this.ride_Start = function(rideId, callback, errorCallback)
+	{
+		this.addCall(this.buildUrl(RestTemplate.RESTURI_RIDE_START, rideId), "PUT", undefined, callback, errorCallback);				
+	}
+	
+	this.ride_Finish = function(rideId, callback, errorCallback)
+	{
+		this.addCall(this.buildUrl(RestTemplate.RESTURI_RIDE_FINISH, rideId), "PUT", undefined, callback, errorCallback);				
+	}
+	
+	this.ride_Pause = function(rideId, callback, errorCallback)
+	{
+		this.addCall(this.buildUrl(RestTemplate.RESTURI_RIDE_PAUSE, rideId), "PUT", undefined, callback, errorCallback);				
+	}
+	
+	this.ride_Resume = function(rideId, callback, errorCallback)
+	{
+		this.addCall(this.buildUrl(RestTemplate.RESTURI_RIDE_RESUME, rideId), "PUT", undefined, callback, errorCallback);				
+	}
+	
+	this.ride_Comment = function(rideId, callback, errorCallback)
+	{
+		this.addCall(this.buildUrl(RestTemplate.RESTURI_RIDE_COMMENT, rideId), "PUT", undefined, callback, errorCallback);				
+	}
+	
 }
 
 RestTemplate.ClientType = { UNKNOWN:0, CUSTOMER:1, DRIVER:2 } 
 RestTemplate.HEADER_TOKEN_NAME = "tokenauth-token";
 
-RestTemplate.RESTURI_CUSTOMER_LOGIN = "/TukTuk/api/customer/login";
-RestTemplate.RESTURI_DRIVER_LOGIN = "/TukTuk/api/driver/login";
-RestTemplate.RESTURI_DRIVER_PROFIL = "/TukTuk/api/driver";
-RestTemplate.RESTURI_DRIVER_UPDATEPROFIL = "/TukTuk/api/driver";
-RestTemplate.RESTURI_DRIVER_RUNSHISTORY = "/TukTuk/api/driver/history";
-RestTemplate.RESTURI_DRIVER_GETINFOS = "/TukTuk/api/driver/";
-RestTemplate.RESTURI_DRIVER_UNAVAILABLE = "/TukTuk/api/driver/unavailable";
-RestTemplate.RESTURI_DRIVER_AVAILABLE = "/TukTuk/api/driver/available";
-RestTemplate.RESTURI_DRIVER_REFRESH = "/TukTuk/api/driver/refreshPos?longitude={lng}&latitude={lat}";
-RestTemplate.RESTURI_DRIVER_GETMYNOTE = "/TukTuk/api/driver/note";
-RestTemplate.RESTURI_DRIVER_GETNOTE = "/TukTuk/api/driver/{id}/note";
+RestTemplate.RESTURI_API_PREFIX = "/TukTuk/api";
 
+RestTemplate.RESTURI_DRIVER_LOGIN = "/driver/login?username={1}&password={2}";
+RestTemplate.RESTURI_DRIVER_PROFIL = "/driver";
+RestTemplate.RESTURI_DRIVER_UPDATEPROFIL = "/driver";
+RestTemplate.RESTURI_DRIVER_RUNSHISTORY = "/driver/history";
+RestTemplate.RESTURI_DRIVER_GETINFOS = "/driver/{1}";
+RestTemplate.RESTURI_DRIVER_UNAVAILABLE = "/driver/unavailable";
+RestTemplate.RESTURI_DRIVER_AVAILABLE = "/driver/available";
+RestTemplate.RESTURI_DRIVER_REFRESH = "/driver/refreshPos?longitude={1}&latitude={2}";
+RestTemplate.RESTURI_DRIVER_GETMYNOTE = "/driver/note";
+RestTemplate.RESTURI_DRIVER_GETNOTE = "/driver/{1}/note";
+RestTemplate.RESTURI_DRIVER_ALLAROUND = "/drivers";
+
+RestTemplate.RESTURI_CUSTOMER_LOGIN = "/customer/login?username={1}&password={2}";
+RestTemplate.RESTURI_CUSTOMER_PROFIL = "/customer";
+RestTemplate.RESTURI_CUSTOMER_UPDATEPROFIL = "/customer";
+RestTemplate.RESTURI_CUSTOMER_RUNSHISTORY = "/customer/history";
+RestTemplate.RESTURI_CUSTOMER_GETMYNOTE = "/customer/note";
+RestTemplate.RESTURI_CUSTOMER_GETNOTE = "/customer/{1}/note";
+RestTemplate.RESTURI_CUSTOMER_GETINFOS = "/customer/{1}";
+
+RestTemplate.RESTURI_RIDE_REQUEST = "/ride/request?adresseDepart={1}";
+RestTemplate.RESTURI_RIDE_ACCEPT = "/ride/{1}/accept";
+RestTemplate.RESTURI_RIDE_VALIDATE = "/ride/{1}/validate";
+RestTemplate.RESTURI_RIDE_DECLINE = "/ride/{1}/decline";
+RestTemplate.RESTURI_RIDE_INFOS = "/ride/{1}";
+RestTemplate.RESTURI_RIDE_START = "/ride/{1}/start";
+RestTemplate.RESTURI_RIDE_FINISH = "/ride/{1}/complete";
+RestTemplate.RESTURI_RIDE_PAUSE = "/ride/{1}/pause";
+RestTemplate.RESTURI_RIDE_RESUME = "/ride/{1}/resume";
+RestTemplate.RESTURI_RIDE_COMMENT = "/ride/{1}/comment";
 

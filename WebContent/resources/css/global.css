@@ -27,3 +27,7 @@ body{
 .alert .glyphicon {
 	color: inherit;
 }
+
+.card-block{
+	test-align: center;
+}
