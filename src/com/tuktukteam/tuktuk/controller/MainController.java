@@ -111,16 +111,16 @@ public class MainController
 		return "login";
 	}
 	
-	@RequestMapping(value = "/subscribe", method = RequestMethod.GET)
+	@RequestMapping(value = "/register", method = RequestMethod.GET)
 	@RestrictedAccess(value=AccessType.PUBLIC)
-	public String subscribeView()
+	public String registerView()
 	{
-		return "subscribe";
+		return "register";
 	}
 	
-	@RequestMapping(value = "/subscribe", method = RequestMethod.POST)
+	@RequestMapping(value = "/register", method = RequestMethod.POST)
 	@RestrictedAccess(value=AccessType.PUBLIC)
-	public String subscribeCallback()
+	public String registerCallback()
 	{
 		return "login";
 	}
