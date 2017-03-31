@@ -266,7 +266,7 @@ public class AutoFilterForSpringControllers extends GenericFilterBean
 		for (SecurityMappingEntry sec : securityMappings)
 			if (uri.matches(sec.getUri()))
 			{
-				System.out.println(uri + " -> " + sec.getUri());
+				//System.out.println(uri + " -> " + sec.getUri());
 				//ResponseWrapper responseWrapper = new ResponseWrapper(response, request, access); //AccessTokenSecurity.TOKEN_HEADER_NAME, token);
 				switch (sec.accessType)
 				{

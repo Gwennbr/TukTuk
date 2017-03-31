@@ -143,8 +143,10 @@ function RestTemplate(_token, globalErrorCallback)
 
 	this.buildUrl = function(fmt)
 	{
-		var i = 1;
-		fmt = fmt.replace(/{.*}/g, (function(arguments, x) { return arguments[i++]; }).bind(this, arguments) );
+		fmt = fmt.replace(/{[^{}]*}/g, (function(arguments, match) {
+			match = match.slice(1, match.length-1);
+			return arguments[Number(match)];
+		}).bind(this, arguments) );
 		return RestTemplate.RESTURI_API_PREFIX + fmt;
 	}
 
@@ -329,34 +331,34 @@ RestTemplate.HEADER_TOKEN_NAME = "tokenauth-token";
 
 RestTemplate.RESTURI_API_PREFIX = "/TukTuk/api";
 
-RestTemplate.RESTURI_DRIVER_LOGIN = "/driver/login?username={u}&password={p}";
+RestTemplate.RESTURI_DRIVER_LOGIN = "/driver/login?username={1}&password={2}";
 RestTemplate.RESTURI_DRIVER_PROFIL = "/driver";
 RestTemplate.RESTURI_DRIVER_UPDATEPROFIL = "/driver";
 RestTemplate.RESTURI_DRIVER_RUNSHISTORY = "/driver/history";
-RestTemplate.RESTURI_DRIVER_GETINFOS = "/driver/{id}";
+RestTemplate.RESTURI_DRIVER_GETINFOS = "/driver/{1}";
 RestTemplate.RESTURI_DRIVER_UNAVAILABLE = "/driver/unavailable";
 RestTemplate.RESTURI_DRIVER_AVAILABLE = "/driver/available";
-RestTemplate.RESTURI_DRIVER_REFRESH = "/driver/refreshPos?longitude={lng}&latitude={lat}";
+RestTemplate.RESTURI_DRIVER_REFRESH = "/driver/refreshPos?longitude={1}&latitude={2}";
 RestTemplate.RESTURI_DRIVER_GETMYNOTE = "/driver/note";
-RestTemplate.RESTURI_DRIVER_GETNOTE = "/driver/{id}/note";
+RestTemplate.RESTURI_DRIVER_GETNOTE = "/driver/{1}/note";
 RestTemplate.RESTURI_DRIVER_ALLAROUND = "/drivers";
 
-RestTemplate.RESTURI_CUSTOMER_LOGIN = "/customer/login?username={u}&password={p}";
+RestTemplate.RESTURI_CUSTOMER_LOGIN = "/customer/login?username={1}&password={2}";
 RestTemplate.RESTURI_CUSTOMER_PROFIL = "/customer";
 RestTemplate.RESTURI_CUSTOMER_UPDATEPROFIL = "/customer";
 RestTemplate.RESTURI_CUSTOMER_RUNSHISTORY = "/customer/history";
 RestTemplate.RESTURI_CUSTOMER_GETMYNOTE = "/customer/note";
-RestTemplate.RESTURI_CUSTOMER_GETNOTE = "/customer/{id}/note";
-RestTemplate.RESTURI_CUSTOMER_GETINFOS = "/customer/{id}";
+RestTemplate.RESTURI_CUSTOMER_GETNOTE = "/customer/{1}/note";
+RestTemplate.RESTURI_CUSTOMER_GETINFOS = "/customer/{1}";
 
 RestTemplate.RESTURI_RIDE_REQUEST = "/ride/request";
-RestTemplate.RESTURI_RIDE_ACCEPT = "/ride/{id}/accept";
-RestTemplate.RESTURI_RIDE_VALIDATE = "/ride/{id}/validate";
-RestTemplate.RESTURI_RIDE_DECLINE = "/ride/{id}/decline";
-RestTemplate.RESTURI_RIDE_INFOS = "/ride/{id}";
-RestTemplate.RESTURI_RIDE_START = "/ride/{id}/start";
-RestTemplate.RESTURI_RIDE_FINISH = "/ride/{id}/complete";
-RestTemplate.RESTURI_RIDE_PAUSE = "/ride/{id}/pause";
-RestTemplate.RESTURI_RIDE_RESUME = "/ride/{id}/resume";
-RestTemplate.RESTURI_RIDE_COMMENT = "/ride/{id}/comment";
+RestTemplate.RESTURI_RIDE_ACCEPT = "/ride/{1}/accept";
+RestTemplate.RESTURI_RIDE_VALIDATE = "/ride/{1}/validate";
+RestTemplate.RESTURI_RIDE_DECLINE = "/ride/{1}/decline";
+RestTemplate.RESTURI_RIDE_INFOS = "/ride/{1}";
+RestTemplate.RESTURI_RIDE_START = "/ride/{1}/start";
+RestTemplate.RESTURI_RIDE_FINISH = "/ride/{1}/complete";
+RestTemplate.RESTURI_RIDE_PAUSE = "/ride/{1}/pause";
+RestTemplate.RESTURI_RIDE_RESUME = "/ride/{1}/resume";
+RestTemplate.RESTURI_RIDE_COMMENT = "/ride/{1}/comment";
 
