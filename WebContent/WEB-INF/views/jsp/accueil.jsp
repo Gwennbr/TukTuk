@@ -177,7 +177,8 @@
 				</div>
 			</div>
 		</div>
-		
+	
+	
 		
 		<div index="modal-control" class="modal fade modal-history" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
 			<div class="modal-dialog history modal-lg" role="document">
