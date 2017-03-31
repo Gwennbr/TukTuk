@@ -10,8 +10,6 @@ function RestTemplate(_token, globalErrorCallback)
 	
 	this.addCall = function(url, method, data, callback, errorCallback)
 	{
-		var s = ">>> addCall: " + method + " " + url;
-		console.log(s);
 		this.pushedCalls.push({
 			url: url,
 			method: method,
@@ -20,10 +18,7 @@ function RestTemplate(_token, globalErrorCallback)
 			errorCallback: errorCallback
 		});
 		if (this.pushedCalls.length == 1)
-		{
-			console.log(s + " -> immediate execution");
 			this.doAjax(url, method, data, callback, errorCallback);
-		}
 	}
 	
 	this.login = function()
@@ -38,29 +33,17 @@ function RestTemplate(_token, globalErrorCallback)
 	
 	this.doAjax = function(url, method, data, callback, errorCallback)
 	{ 
-/*		if (this.userType === RestTemplate.ClientType.UNKNOWN)
-		{
-			this.login(function() { this.doAjax(url, method, data, callback, errorCallback); });
-			return;
-		}
-*/
-		console.log("doAjax: " + method + " " + url);
-		
 		if (data === undefined || data == null)
 			this.$http({
 				url: url,
 				method: method,
-				headers: {
-					"tokenauth-token" : this.token
-				}
+				headers: { "tokenauth-token" : this.token }
 			}).then(this.internalCallback.bind(this, callback, errorCallback), this.internalErrorCallback.bind(this, callback, errorCallback)); 	
 		else
 			this.$http({
 				url: url,
 				method: method,
-				headers: {
-					"tokenauth-token" : this.token
-				},
+				headers: { "tokenauth-token" : this.token },
 				data: data
 			}).then(this.internalCallback.bind(this, callback, errorCallback), this.internalErrorCallback.bind(this, callback, errorCallback)); 	
 	}
@@ -105,33 +88,10 @@ function RestTemplate(_token, globalErrorCallback)
 		if (errorCallback !== undefined && errorCallback != null)
 			errorCallback(response.status);
 		
-		var s = "<-- errorCallback: pushedCalls=";
-		console.log(s + this.debugPushedCalls(this.pushedCalls) + " (1)");
 		this.pushedCalls = this.pushedCalls.slice(1);
-		/*
-		if (this.pushedCalls.length == 1 || this.pushedCalls.length == 0)
-			this.pushedCalls = [];
-		else
-		{
-			this.pushedCalls = this.pushedCalls.shift();
-			if (!Array.isArray(this.pushedCalls))
-				this.pushedCalls = [ this.pushedCalls ];
-		}
-		*/
-		console.log(s + this.debugPushedCalls(this.pushedCalls) + " (2)");
+
 		if (this.pushedCalls.length > 0)
 			this.doAjax(this.pushedCalls[0].url, this.pushedCalls[0].method, this.pushedCalls[0].data, this.pushedCalls[0].callback, this.pushedCalls[0].errorCallback);			
-	}
-	
-	this.debugPushedCalls = function(tab)
-	{
-		var s = "";
-		
-		if (!Array.isArray(tab))
-			return s;
-		for (var i = 0 ; i < tab.length ; ++i)
-			s = s + tab[i].url + ", ";
-		return s;
 	}
 	
 	this.internalCallback = function(callback, errorCallback, response)
@@ -151,20 +111,8 @@ function RestTemplate(_token, globalErrorCallback)
 				errorCallback(response.status);
 		}
 		
-		var s = "<-- Callback: pushedCalls=";
-		console.log(s + this.debugPushedCalls(this.pushedCalls) + " (1)");
 		this.pushedCalls = this.pushedCalls.slice(1);
-		/*
-		if (this.pushedCalls.length == 1 || this.pushedCalls.length == 0)
-			this.pushedCalls = [];
-		else
-		{
-			this.pushedCalls = this.pushedCalls.shift();
-			if (!Array.isArray(this.pushedCalls))
-				this.pushedCalls = [ this.pushedCalls ];
-		}
-		*/
-		console.log(s + this.debugPushedCalls(this.pushedCalls) + " (2)");
+
 		if (this.pushedCalls.length > 0)
 			this.doAjax(this.pushedCalls[0].url, this.pushedCalls[0].method, this.pushedCalls[0].data, this.pushedCalls[0].callback, this.pushedCalls[0].errorCallback);			
 	}
