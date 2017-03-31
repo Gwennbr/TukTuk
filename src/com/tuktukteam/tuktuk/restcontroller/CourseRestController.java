@@ -128,13 +128,13 @@ public class CourseRestController {
 			Client client = AccessTokenSecurity.getUser(Client.class, token);
 			Course course = courseDAO.getActualCustomerRide(client.getId());
 			if (course.getClient().getId() == client.getId())
-				return new ResponseEntity<Course>(course, HttpStatus.OK);
+				return AccessTokenSecurity.buildResponse(course, token, HttpStatus.OK);
 
 		} else if (AccessTokenSecurity.typeOfUser(token) == Conducteur.class) {
 			Conducteur conducteur = AccessTokenSecurity.getUser(Conducteur.class, token);
 			Course course = courseDAO.getActualCustomerRide(conducteur.getId());
 			if (course != null && course.getConducteur() != null && course.getConducteur().getId() == conducteur.getId())
-				return new ResponseEntity<Course>(course, HttpStatus.OK);
+				AccessTokenSecurity.buildResponse(course, token, HttpStatus.OK);
 			
 			return AccessTokenSecurity.buildResponse(Course.class, token, HttpStatus.I_AM_A_TEAPOT);
 		}
