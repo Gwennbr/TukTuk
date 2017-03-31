@@ -161,7 +161,7 @@ public class AutoFilterForSpringControllers extends GenericFilterBean
 								sb.append(met.toString());
 							else
 								sb.append(String.format(", %s", met.toString()));
-						System.out.println(String.format("filter add : %s (%s)", uri, sb.toString()));
+						System.out.println(String.format("filter add : %s (%s) -> %s.%s()", uri, sb.toString(), type.getSimpleName(), method.getName()));
 					
 						if (methodSecurityAccess != null)
 							securityMappings.add(new SecurityMappingEntry(
