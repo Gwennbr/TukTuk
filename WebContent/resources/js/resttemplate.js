@@ -18,7 +18,12 @@ function RestTemplate(_token, globalErrorCallback)
 			errorCallback: errorCallback
 		});
 		if (this.pushedCalls.length == 1)
-			this.doAjax(url, method, data, callback, errorCallback); 		
+		{
+			console.log("Add: pushedCalls == 1");
+			this.doAjax(url, method, data, callback, errorCallback);
+		}
+		else
+			console.log("Add: pushedCalls > 1 : " + this.pushedCalls.length);
 	}
 	
 	this.login = function()
@@ -46,21 +51,7 @@ function RestTemplate(_token, globalErrorCallback)
 				headers: {
 					"tokenauth-token" : this.token
 				}
-			}).then(this.internalCallback.bind(this, callback, errorCallback),
-						(function(response) { 
-							if (this.isRetry == false)
-							{
-								if (response.status == 403)
-								{
-									this.isRetry = true;
-									this.doAjax(url, method, data, callback, errorCallback);
-								}
-							}
-							else
-							{
-								this.isRetry = false;
-							}
-						}).bind(this)); 	
+			}).then(this.internalCallback.bind(this, callback, errorCallback), this.internalErrorCallback.bind(this, callback, errorCallback)); 	
 		else
 			this.$http({
 				url: url,
@@ -69,22 +60,7 @@ function RestTemplate(_token, globalErrorCallback)
 					"tokenauth-token" : this.token
 				},
 				data: data
-			}).then(this.internalCallback.bind(this, callback, errorCallback),
-						(function(response) { 
-							if (this.isRetry == false)
-							{
-								if (response.status == 403)
-								{
-									this.isRetry = true;
-									this.doAjax(url, method, data, callback, errorCallback);
-								}
-							}
-							else
-							{
-								this.isRetry = false;
-							}
-						}).bind(this)); 	
-
+			}).then(this.internalCallback.bind(this, callback, errorCallback), this.internalErrorCallback.bind(this, callback, errorCallback)); 	
 	}
 
 	this.internalLoginCallbackError = function(response)
@@ -118,7 +94,34 @@ function RestTemplate(_token, globalErrorCallback)
 				this.userType = RestTemplate.ClientType.CUSTOMER;
 		}
 	}
-
+	this.internalErrorCallback = function(callback, errorCallback, response)
+	{
+		var tok = response.headers("tokenauth-token");
+		if (tok != undefined && tok != null && tok != "")
+			this.token = tok;
+		
+		if (errorCallback !== undefined && errorCallback != null)
+			errorCallback(response.status);
+		
+		console.log(this.pushedCalls);
+		if (this.pushedCalls.length == 1 || this.pushedCalls.length == 0)
+			this.pushedCalls = [];
+		else
+		{
+			this.pushedCalls = this.pushedCalls.shift();
+			if (!Array.isArray(this.pushedCalls))
+				this.pushedCalls = [ this.pushedCalls ];
+		}
+		console.log(this.pushedCalls);
+		if (this.pushedCalls.length > 0)
+		{
+			console.log("pushedCalls non vide : " + this.pushedCalls.length);
+			this.doAjax(this.pushedCalls[0].url, this.pushedCalls[0].method, this.pushedCalls[0].data, this.pushedCalls[0].callback, this.pushedCalls[0].errorCallback);			
+		}
+		else
+			console.log("pushedCalls vide");
+	}
+	
 	this.internalCallback = function(callback, errorCallback, response)
 	{
 		var tok = response.headers("tokenauth-token");
@@ -136,9 +139,23 @@ function RestTemplate(_token, globalErrorCallback)
 				errorCallback(response.status);
 		}
 		
-		this.pushedCalls.shift();
+		console.log(this.pushedCalls);
+		if (this.pushedCalls.length == 1 || this.pushedCalls.length == 0)
+			this.pushedCalls = [];
+		else
+		{
+			this.pushedCalls = this.pushedCalls.shift();
+			if (!Array.isArray(this.pushedCalls))
+				this.pushedCalls = [ this.pushedCalls ];
+		}
+		console.log(this.pushedCalls);
 		if (this.pushedCalls.length > 0)
+		{
+			console.log("pushedCalls non vide : " + this.pushedCalls.length);
 			this.doAjax(this.pushedCalls[0].url, this.pushedCalls[0].method, this.pushedCalls[0].data, this.pushedCalls[0].callback, this.pushedCalls[0].errorCallback);			
+		}
+		else
+			console.log("pushedCalls vide");
 	}
 
 	this.buildUrl = function(fmt)
@@ -274,9 +291,10 @@ function RestTemplate(_token, globalErrorCallback)
 		this.addCall(this.buildUrl(RestTemplate.RESTURI_CUSTOMER_GETINFOS, customerId), "GET", undefined, callback, errorCallback);				
 	}
 	
-	this.ride_Request = function(callback, errorCallback)
+	this.ride_Request = function(address, callback, errorCallback)
 	{
-		this.addCall(this.buildUrl(RestTemplate.RESTURI_RIDE_REQUEST), "POST", undefined, callback, errorCallback);				
+		address = address.replace(/ /g, "+");
+		this.addCall(this.buildUrl(RestTemplate.RESTURI_RIDE_REQUEST, address), "POST", undefined, callback, errorCallback);				
 	}
 	
 	this.ride_Accept = function(rideId, callback, errorCallback)
@@ -351,7 +369,7 @@ RestTemplate.RESTURI_CUSTOMER_GETMYNOTE = "/customer/note";
 RestTemplate.RESTURI_CUSTOMER_GETNOTE = "/customer/{1}/note";
 RestTemplate.RESTURI_CUSTOMER_GETINFOS = "/customer/{1}";
 
-RestTemplate.RESTURI_RIDE_REQUEST = "/ride/request";
+RestTemplate.RESTURI_RIDE_REQUEST = "/ride/request?adresseDepart={1}";
 RestTemplate.RESTURI_RIDE_ACCEPT = "/ride/{1}/accept";
 RestTemplate.RESTURI_RIDE_VALIDATE = "/ride/{1}/validate";
 RestTemplate.RESTURI_RIDE_DECLINE = "/ride/{1}/decline";
