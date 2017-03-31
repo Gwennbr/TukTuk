@@ -16,7 +16,6 @@ $('#toggle-trigger')
 												+ '<span class="sr-only">Info:</span>Vous êtes actuellement <strong>Disponible</strong>'
 												+ '</div>');
 
-						console.log("--------------------------------------------");
 						rest.driver_SetAvailable();
 
 					} else {
@@ -36,9 +35,10 @@ $('#toggle-trigger')
 						rest.driver_SetUnavailable();
 
 					}
-
-					$("#alertDiv").fadeTo(2000, 500).slideUp(500, function() {
-						$("#alertDiv").slideUp(500);
+					
+					//EFFET ZONE ALERTE
+					$("#alertDiv").fadeTo(5000, 1000).slideUp(1000, function() {
+						$("#alertDiv").slideUp(1000);
 					});
 
 				});
@@ -63,31 +63,35 @@ rest.driver_GetRunsHistory(function(course) {
 
 //TOGGLE BOUTON DISPO, INDISPO
 rest.driver_GetMyProfil(function(profil) {
-$('#idClientNomPrenom').html()
-if (profil.available == true) {
-$('#toggle-trigger').bootstrapToggle('on')
-} else {
-$('#toggle-trigger').bootstrapToggle('off')
-}
+	if (profil.available == true) {
+			$('#toggle-trigger').bootstrapToggle('on')
+	} else {
+			$('#toggle-trigger').bootstrapToggle('off')
+	}
 });
 
 
 //REFRESH LAT LNG + COURSE DISPO
 var refreshCourse = function() {
-	function foundLocation(position) {
-		var lat = position.coords.latitude;
-		var lng = position.coords.longitude;
-		rest.driver_refreshPosAndGetAvailableRides(lat, lng, function(course) {
-			console.log(course);
-			if (course.length != 0) {
-				console.log(course);
-				alert('OUWWWI UN CLIENT !!!!!');
-			} else {
-				console.log("nope");
-			}
-		});
-	};
-	navigator.geolocation.getCurrentPosition(foundLocation);
+	rest.driver_GetMyProfil(function(profil) {
+			function foundLocation(position) {
+				var lat = position.coords.latitude;
+				var lng = position.coords.longitude;
+				rest.driver_refreshPosAndGetAvailableRides(lat, lng, function(course) {
+					console.log(course);
+					if (course.length != 0) {
+						if (profil.available == true) {
+							console.log(course);
+							console.log("client ok");
+						};
+					} else {
+						console.log("nope");
+					}
+				});
+			};
+			navigator.geolocation.getCurrentPosition(foundLocation);
+
+	});
 };
 
 
