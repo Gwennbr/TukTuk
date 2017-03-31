@@ -143,6 +143,23 @@ public class CourseRestController {
 		}
 		return AccessTokenSecurity.buildResponse(Course.class, token, HttpStatus.FORBIDDEN);
 	}
+	
+	@RequestMapping(value = "/ride", method = RequestMethod.DELETE)
+	@ResponseBody
+	@RestrictedAccess(value = AccessType.TOKEN, authorized = Client.class)
+	public ResponseEntity<String> cancelRide(@RequestHeader(AccessTokenSecurity.TOKEN_HEADER_NAME) String token)
+	{
+		Client client = AccessTokenSecurity.getUser(Client.class, token);
+		Course course = courseDAO.getActualCustomerRide(client.getId());
+		
+		if(course != null && course.getClient().getId() == client.getId())
+		{
+			courseDAO.delete(course);
+			return AccessTokenSecurity.buildResponse("Delete successful", token, HttpStatus.OK);
+		}
+		
+		return AccessTokenSecurity.buildResponse("Delete Failed", token, HttpStatus.FORBIDDEN);
+	}
 
 	@RequestMapping(value = "/ride/start", method = RequestMethod.PUT)
 	@ResponseBody
