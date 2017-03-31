@@ -140,7 +140,7 @@ function RestTemplate(_token, globalErrorCallback)
 		if (tok != undefined && tok != null && tok != "")
 			this.token = tok;
 			
-		if (response.status == 200)
+		if (response.status >= 200 && response.status <= 299)
 		{
 			if (callback !== undefined && callback != null)
 				callback(response.data);
