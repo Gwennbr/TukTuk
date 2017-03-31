@@ -41,6 +41,8 @@ function RestTemplate(_token, globalErrorCallback)
 			return;
 		}
 */
+		console.log(method + " " + url);
+		
 		if (data === undefined || data == null)
 			this.$http({
 				url: url,
@@ -198,6 +200,7 @@ function RestTemplate(_token, globalErrorCallback)
 	 */
 	this.driver_SetUnavailable = function(callback, errorCallback)
 	{
+		console.log("driver_SetUnAvailable");
 		this.addCall(this.buildUrl(RestTemplate.RESTURI_DRIVER_UNAVAILABLE), "PUT", undefined, callback, errorCallback);		
 	}
 
@@ -207,6 +210,7 @@ function RestTemplate(_token, globalErrorCallback)
 	 */
 	this.driver_SetAvailable = function(callback, errorCallback)
 	{
+		console.log("driver_SetAvailable");
 		this.addCall(this.buildUrl(RestTemplate.RESTURI_DRIVER_AVAILABLE), "PUT", undefined, callback, errorCallback);		
 	}
 
@@ -216,6 +220,7 @@ function RestTemplate(_token, globalErrorCallback)
 	 */
 	this.driver_refreshPosAndGetAvailableRides = function(lng, lat, callback, errorCallback)
 	{
+		console.log("driver_refreshPosAndGetAvailableRides");
 		this.addCall(this.buildUrl(RestTemplate.RESTURI_DRIVER_REFRESH, lng, lat),
 					 "PUT", undefined, callback, errorCallback);
 	}

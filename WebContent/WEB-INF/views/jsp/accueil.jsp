@@ -96,7 +96,7 @@
 								Address = {{vm.place.formatted_address}} <br/>
 								Location: {{vm.place.geometry.location}}<br/>
 							</div>
-							<button id="btn-search" type="button" class="btn btn-primary"  data-toggle="modal" data-target=".modal-waiting" data-dismiss="modal">Rechercher un tuk-tuk</button>
+							<button id="btn-search" type="button" class="btn btn-primary"  data-toggle="modal" data-target=".modal-chauffeur" data-dismiss="modal">Rechercher un tuk-tuk</button>
 						</div>
 						<div class="modal-footer">
 							<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -110,7 +110,7 @@
 		
 		
 		
-		<div index="modal-control" class="modal fade modal-waiting" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" data-backdrop="static">
+		<div id="waiting-modal" index="modal-control" class="modal fade modal-waiting" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" data-backdrop="static">
 			<div id="modal-waiting" role="document">
 				<div class="modal-middle">
 					<h3>Veuillez patientez...</h3>
@@ -121,7 +121,7 @@
 		
 		
 		
-		<div index="modal-control" class="modal fade modal-chauffeur" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
+		<div id="driverInfo-modal" index="modal-control" class="modal fade modal-chauffeur" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
 			<div class="modal-dialog modal-sm" role="document">
 			
 				<div class="modal-content">
@@ -132,11 +132,14 @@
 					<div class="modal-body">
 						<!-- <label>Information chauffeur</label> -->
 						<div class="card">
-							<img class="card-img-top" src="${ pageContext.request.contextPath }/resources/img/chauffeur.jpg" alt="Jean Dupont"/>
+<%-- 							<img class="card-img-top" src="${ pageContext.request.contextPath }/resources/img/chauffeur.jpg" alt="Jean Dupont"/> --%>
 							<div class="card-block">
-								<h4 class="card-title">Jean Dupont</h4>
-								<img id="rating" src="${ pageContext.request.contextPath }/resources/img/rate5.png" alt="Note"/>
-								<a id="btn-commander" href="#" class="btn btn-success">Commander</a>
+									<h4 class="card-title">Jean Dupont</h4>
+									<br>
+									<img id="rating" src="${ pageContext.request.contextPath }/resources/img/rate5.png" alt="Note"/>
+									<hr />
+									<a id="btn-commandée" onclick="accepteCourseClient()" class="btn btn-success">Commandée</a>
+									<a id="btn-annulée" onclick="refuseCourseClient()" class="btn btn-danger">Annulée</a>
 							</div>
 						</div>
 					</div>

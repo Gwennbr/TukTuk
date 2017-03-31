@@ -16,6 +16,7 @@ $('#toggle-trigger')
 												+ '<span class="sr-only">Info:</span>Vous êtes actuellement <strong>Disponible</strong>'
 												+ '</div>');
 
+						console.log("--------------------------------------------");
 						rest.driver_SetAvailable();
 
 					} else {
@@ -76,12 +77,13 @@ var refreshCourse = function() {
 	function foundLocation(position) {
 		var lat = position.coords.latitude;
 		var lng = position.coords.longitude;
-		
 		rest.driver_refreshPosAndGetAvailableRides(lat, lng, function(course) {
-			if (course != null) {
-				console.log('ta une course nigo !');
+			console.log(course);
+			if (course.length != 0) {
+				console.log(course);
+				alert('OUWWWI UN CLIENT !!!!!');
 			} else {
-				console.log('ya quedal ici');
+				console.log("nope");
 			}
 		});
 	};
@@ -89,4 +91,4 @@ var refreshCourse = function() {
 };
 
 
-//setInterval(refreshCourse, 1000);
+setInterval(refreshCourse, 1000);
