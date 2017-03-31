@@ -158,14 +158,14 @@ public class CourseRestController {
 	@RequestMapping(value = "/ride/complete", method = RequestMethod.PUT)
 	@ResponseBody
 	@RestrictedAccess(value = AccessType.TOKEN, authorized = Conducteur.class)
-	public ResponseEntity<Course> endRun(@RequestHeader(AccessTokenSecurity.TOKEN_HEADER_NAME) String token,
-			@RequestParam double latitude, @RequestParam double longitude) {
+	public ResponseEntity<Course> endRun(@RequestHeader(AccessTokenSecurity.TOKEN_HEADER_NAME) String token) {
 		Conducteur cond = AccessTokenSecurity.getUser(Conducteur.class, token);
 		Course course = courseDAO.getActualDriverRide(cond.getId());
 
 		if (cond.getId() == course.getConducteur().getId() && course.isValide()
 				&& course.getDateDebutCourse() != null) {
 			course.setDateFinCourse(new Date());
+			course.setDistance(calculDistance(cond, course.getAdresseDepart()));
 			course = courseDAO.save(course);
 			return AccessTokenSecurity.buildResponse(course, token, HttpStatus.OK);
 		}
@@ -199,7 +199,7 @@ public class CourseRestController {
 
 			long tempsP = Math.round(((double) (System.currentTimeMillis() - cond.getDateDebutPause()) / 60));
 			course.setTempsPause(course.getTempsPause() + tempsP);
-			course.setDistance(calculDistance(cond, course.getAdresseDepart()));
+			
 			return AccessTokenSecurity.buildResponse(true, token, HttpStatus.OK);
 		}
 
