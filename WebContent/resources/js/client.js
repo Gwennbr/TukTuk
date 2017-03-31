@@ -139,7 +139,7 @@ function refuseCourseClient() {
 //ANNULEE COURSE
 function annuleeCourseClient() {
 	rest.ride_Delete(function(data){
-		$("#driverInfo-modal").modal("hide");
+		$("#modal-waiting").modal("hide");
 		$('#btn-search').prop('disabled', false);
 		$('#vmadresse').prop('disabled', false);
 		$("#alertZone")

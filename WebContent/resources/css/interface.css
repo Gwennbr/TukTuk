@@ -139,6 +139,14 @@ nav .left {
 	transform: translate3d(0, 0, 0);
 	float: right;
 }
+
+.modal.fade .modal-dialog.navcourse {
+	margin: 0px;
+	top: 0px;
+	width: 180px;
+	transform: translate3d(0, 0, 0);
+	float: left;
+}
 .modal-dialog{
     overflow-y: initial;
 }
@@ -163,6 +171,14 @@ nav .left {
 }
 
 .modal-content.navsider{ 
+	border-radius: 0px;
+	background-color: rgba(255, 255, 255, 0.3);
+	color: white;
+	text-align: center;
+	height: 100%;
+}
+	   
+.modal-content.coursesider{ 
 	border-radius: 0px;
 	background-color: rgba(255, 255, 255, 0.3);
 	color: white;
@@ -216,14 +232,25 @@ nav .left {
 	width: 100%;
 }
 
+.bottom-coursenav {
+	padding-bottom: 10px;
+	position: absolute;
+	bottom: 0;
+	width: 100%;
+}
+
 input[data-toggle=toggle] {
 	padding: 20px;
 }
 
-.middle-sidenav {
+.middle-coursenav {
 	padding-bottom: 10px;
 	position: absolute;
 	width: 100%;
+}
+
+#listeCourse {
+	color: black;
 }
 
 nav .btn-link {

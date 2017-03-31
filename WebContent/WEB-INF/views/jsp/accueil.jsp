@@ -24,7 +24,9 @@
 <body ng-app="ngMap">
 	<header>
 		<nav>
-			<a class="left btn btn-lg btn-link"><span class="glyphicon glyphicon-th"></span></a>
+			<c:if test="${ not empty conducteur }">
+				<a class="left btn btn-lg btn-link" data-toggle="modal" data-target=".nav-course" data-dismiss="modal"><span class="glyphicon glyphicon-th"></span></a>
+			</c:if>
 				<label class="btn-lg" id="titleNav"><b class="colorWhite">ADOPTE</b>UN<b class="colorWhite">TUK-TUK.COM</b></label>
 			<a class="right btn btn-lg btn-link" data-toggle="modal" data-target=".nav-side" data-dismiss="modal"><span class="glyphicon glyphicon-cog"></span></a>
 		</nav>
@@ -116,7 +118,7 @@
 					<h3>Veuillez patientez...</h3>
 					<div class="loader"></div>
 					<br>
-					<button type="button" onclick="annuleeCourseClient()" class="btn-lg btn-danger">Annulée</button>
+					<button type="button" onclick="annuleeCourseClient()" class="btn-lg btn-danger" data-dismiss="modal">Annulée</button>
 				</div>
 			</div>
 		</div>
@@ -172,6 +174,28 @@
 						
 						<div class="bottom-sidenav">
 							<button id="btn-disconnect" href="/logout"  type="button" class="btn btn-danger">Deconnexion</button>
+						</div>
+					</div>				
+				</div>
+			</div>
+		</div>
+		
+		
+		<div index="modal-control" class="modal fade nav-course" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
+			<div class="modal-dialog navcourse modal-sm" role="document">
+				<div class="modal-content coursesider">
+					
+					<div class="coursenav-img">
+					<br>
+						<label>Liste des course dispo</label>
+						<hr />
+						<div id="listeCourse">
+							<div class="panel panel-info">
+								<div class="panel-body">
+    								Panel content
+  								</div>
+  								<div class="panel-footer">Panel footer</div>
+							</div>
 						</div>
 					</div>				
 				</div>

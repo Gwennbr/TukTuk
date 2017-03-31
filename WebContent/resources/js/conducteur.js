@@ -84,7 +84,7 @@ var refreshCourse = function() {
 							console.log(course);
 							console.log("client ok");
 						};
-					} else {
+					} else  {
 						console.log("nope");
 					}
 				});
