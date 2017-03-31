@@ -151,20 +151,22 @@ public class ConducteurRestController {
 		c.setLongitude(longitude);
 		c.setLatitude(latitude);
 		c = conducteurDAO.save(c);
+		
 
 		if (courseDAO.getActualDriverRide(c.getId()) == null) {
 			List<Course> courses = courseDAO.getRidesWithoutDriver();
-
+			List<Course> cou2 = new ArrayList<>();
+			
 			for (Course course : courses) {
-				if (CourseRestController.calculDistance(c, course.getAdresseDepart()) > 10000) {
-					courses.remove(course);
+				if (CourseRestController.calculDistance(c, course.getAdresseDepart()) <= 10000) {
+					cou2.add(course);
 				}
 			}
 
 			ComparatorCourse comp = new ComparatorCourse(c);
-			courses.sort(comp);
+			cou2.sort(comp);
 
-			return AccessTokenSecurity.buildResponse(courses, token, HttpStatus.OK);
+			return AccessTokenSecurity.buildResponse(cou2, token, HttpStatus.OK);
 		}
 		//TODO vérif retour
 		return AccessTokenSecurity.buildResponse(null, token, HttpStatus.OK);
