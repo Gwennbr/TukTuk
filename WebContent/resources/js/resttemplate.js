@@ -10,6 +10,8 @@ function RestTemplate(_token, globalErrorCallback)
 	
 	this.addCall = function(url, method, data, callback, errorCallback)
 	{
+		var s = ">>> addCall: " + method + " " + url;
+		console.log(s);
 		this.pushedCalls.push({
 			url: url,
 			method: method,
@@ -19,6 +21,7 @@ function RestTemplate(_token, globalErrorCallback)
 		});
 		if (this.pushedCalls.length == 1)
 		{
+			console.log(s + " -> immediate execution");
 			this.doAjax(url, method, data, callback, errorCallback);
 		}
 	}
@@ -41,7 +44,7 @@ function RestTemplate(_token, globalErrorCallback)
 			return;
 		}
 */
-		console.log(method + " " + url);
+		console.log("doAjax: " + method + " " + url);
 		
 		if (data === undefined || data == null)
 			this.$http({
@@ -102,6 +105,10 @@ function RestTemplate(_token, globalErrorCallback)
 		if (errorCallback !== undefined && errorCallback != null)
 			errorCallback(response.status);
 		
+		var s = "<-- errorCallback: pushedCalls=";
+		console.log(s + this.debugPushedCalls(this.pushedCalls) + " (1)");
+		this.pushedCalls = this.pushedCalls.slice(1);
+		/*
 		if (this.pushedCalls.length == 1 || this.pushedCalls.length == 0)
 			this.pushedCalls = [];
 		else
@@ -110,8 +117,21 @@ function RestTemplate(_token, globalErrorCallback)
 			if (!Array.isArray(this.pushedCalls))
 				this.pushedCalls = [ this.pushedCalls ];
 		}
+		*/
+		console.log(s + this.debugPushedCalls(this.pushedCalls) + " (2)");
 		if (this.pushedCalls.length > 0)
 			this.doAjax(this.pushedCalls[0].url, this.pushedCalls[0].method, this.pushedCalls[0].data, this.pushedCalls[0].callback, this.pushedCalls[0].errorCallback);			
+	}
+	
+	this.debugPushedCalls = function(tab)
+	{
+		var s = "";
+		
+		if (!Array.isArray(tab))
+			return s;
+		for (var i = 0 ; i < tab.length ; ++i)
+			s = s + tab[i].url + ", ";
+		return s;
 	}
 	
 	this.internalCallback = function(callback, errorCallback, response)
@@ -131,6 +151,10 @@ function RestTemplate(_token, globalErrorCallback)
 				errorCallback(response.status);
 		}
 		
+		var s = "<-- Callback: pushedCalls=";
+		console.log(s + this.debugPushedCalls(this.pushedCalls) + " (1)");
+		this.pushedCalls = this.pushedCalls.slice(1);
+		/*
 		if (this.pushedCalls.length == 1 || this.pushedCalls.length == 0)
 			this.pushedCalls = [];
 		else
@@ -139,6 +163,8 @@ function RestTemplate(_token, globalErrorCallback)
 			if (!Array.isArray(this.pushedCalls))
 				this.pushedCalls = [ this.pushedCalls ];
 		}
+		*/
+		console.log(s + this.debugPushedCalls(this.pushedCalls) + " (2)");
 		if (this.pushedCalls.length > 0)
 			this.doAjax(this.pushedCalls[0].url, this.pushedCalls[0].method, this.pushedCalls[0].data, this.pushedCalls[0].callback, this.pushedCalls[0].errorCallback);			
 	}
@@ -290,44 +316,44 @@ function RestTemplate(_token, globalErrorCallback)
 		this.addCall(this.buildUrl(RestTemplate.RESTURI_RIDE_ACCEPT, rideId), "PUT", undefined, callback, errorCallback);				
 	}
 	
-	this.ride_Validate = function(rideId, callback, errorCallback)
+	this.ride_Validate = function(callback, errorCallback)
 	{
-		this.addCall(this.buildUrl(RestTemplate.RESTURI_RIDE_VALIDATE, rideId), "PUT", undefined, callback, errorCallback);				
+		this.addCall(this.buildUrl(RestTemplate.RESTURI_RIDE_VALIDATE), "PUT", undefined, callback, errorCallback);				
 	}
 	
-	this.ride_Decline = function(rideId, callback, errorCallback)
+	this.ride_Decline = function(callback, errorCallback)
 	{
-		this.addCall(this.buildUrl(RestTemplate.RESTURI_RIDE_DECLINE, rideId), "PUT", undefined, callback, errorCallback);				
+		this.addCall(this.buildUrl(RestTemplate.RESTURI_RIDE_DECLINE), "PUT", undefined, callback, errorCallback);				
 	}
 	
-	this.ride_Infos = function(rideId, callback, errorCallback)
+	this.ride_Infos = function(callback, errorCallback)
 	{
-		this.addCall(this.buildUrl(RestTemplate.RESTURI_RIDE_INFOS, rideId), "GET", undefined, callback, errorCallback);				
+		this.addCall(this.buildUrl(RestTemplate.RESTURI_RIDE_INFOS), "GET", undefined, callback, errorCallback);				
 	}
 	
-	this.ride_Start = function(rideId, callback, errorCallback)
+	this.ride_Start = function(callback, errorCallback)
 	{
-		this.addCall(this.buildUrl(RestTemplate.RESTURI_RIDE_START, rideId), "PUT", undefined, callback, errorCallback);				
+		this.addCall(this.buildUrl(RestTemplate.RESTURI_RIDE_START), "PUT", undefined, callback, errorCallback);				
 	}
 	
-	this.ride_Finish = function(rideId, callback, errorCallback)
+	this.ride_Finish = function(callback, errorCallback)
 	{
-		this.addCall(this.buildUrl(RestTemplate.RESTURI_RIDE_FINISH, rideId), "PUT", undefined, callback, errorCallback);				
+		this.addCall(this.buildUrl(RestTemplate.RESTURI_RIDE_FINISH), "PUT", undefined, callback, errorCallback);				
 	}
 	
-	this.ride_Pause = function(rideId, callback, errorCallback)
+	this.ride_Pause = function(callback, errorCallback)
 	{
-		this.addCall(this.buildUrl(RestTemplate.RESTURI_RIDE_PAUSE, rideId), "PUT", undefined, callback, errorCallback);				
+		this.addCall(this.buildUrl(RestTemplate.RESTURI_RIDE_PAUSE), "PUT", undefined, callback, errorCallback);				
 	}
 	
-	this.ride_Resume = function(rideId, callback, errorCallback)
+	this.ride_Resume = function(callback, errorCallback)
 	{
-		this.addCall(this.buildUrl(RestTemplate.RESTURI_RIDE_RESUME, rideId), "PUT", undefined, callback, errorCallback);				
+		this.addCall(this.buildUrl(RestTemplate.RESTURI_RIDE_RESUME), "PUT", undefined, callback, errorCallback);				
 	}
 	
-	this.ride_Comment = function(rideId, callback, errorCallback)
+	this.ride_Comment = function(rideId, note, comment, callback, errorCallback)
 	{
-		this.addCall(this.buildUrl(RestTemplate.RESTURI_RIDE_COMMENT, rideId), "PUT", undefined, callback, errorCallback);				
+		this.addCall(this.buildUrl(RestTemplate.RESTURI_RIDE_COMMENT, rideId, note, comment), "PUT", undefined, callback, errorCallback);				
 	}
 	
 }
@@ -359,12 +385,12 @@ RestTemplate.RESTURI_CUSTOMER_GETINFOS = "/customer/{1}";
 
 RestTemplate.RESTURI_RIDE_REQUEST = "/ride/request?adresseDepart={1}";
 RestTemplate.RESTURI_RIDE_ACCEPT = "/ride/{1}/accept";
-RestTemplate.RESTURI_RIDE_VALIDATE = "/ride/{1}/validate";
-RestTemplate.RESTURI_RIDE_DECLINE = "/ride/{1}/decline";
-RestTemplate.RESTURI_RIDE_INFOS = "/ride/{1}";
-RestTemplate.RESTURI_RIDE_START = "/ride/{1}/start";
-RestTemplate.RESTURI_RIDE_FINISH = "/ride/{1}/complete";
-RestTemplate.RESTURI_RIDE_PAUSE = "/ride/{1}/pause";
-RestTemplate.RESTURI_RIDE_RESUME = "/ride/{1}/resume";
-RestTemplate.RESTURI_RIDE_COMMENT = "/ride/{1}/comment";
+RestTemplate.RESTURI_RIDE_VALIDATE = "/ride/validate";
+RestTemplate.RESTURI_RIDE_DECLINE = "/ride/decline";
+RestTemplate.RESTURI_RIDE_INFOS = "/ride";
+RestTemplate.RESTURI_RIDE_START = "/ride/start";
+RestTemplate.RESTURI_RIDE_FINISH = "/ride/complete";
+RestTemplate.RESTURI_RIDE_PAUSE = "/ride/pause";
+RestTemplate.RESTURI_RIDE_RESUME = "/ride/resume";
+RestTemplate.RESTURI_RIDE_COMMENT = "/ride/{1}/comment?note={2}&commentaire={3}";
 
