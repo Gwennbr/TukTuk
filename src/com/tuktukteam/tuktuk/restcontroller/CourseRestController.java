@@ -134,7 +134,7 @@ public class CourseRestController {
 
 		} else if (AccessTokenSecurity.typeOfUser(token) == Conducteur.class) {
 			Conducteur conducteur = AccessTokenSecurity.getUser(Conducteur.class, token);
-			Course course = courseDAO.getActualCustomerRide(conducteur.getId());
+			Course course = courseDAO.getActualDriverRide(conducteur.getId());
 			if (course != null && course.getConducteur() != null
 					&& course.getConducteur().getId() == conducteur.getId())
 				AccessTokenSecurity.buildResponse(course, token, HttpStatus.OK);
