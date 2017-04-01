@@ -137,7 +137,7 @@ public class CourseRestController {
 			Course course = courseDAO.getActualDriverRide(conducteur.getId());
 			if (course != null && course.getConducteur() != null
 					&& course.getConducteur().getId() == conducteur.getId())
-				AccessTokenSecurity.buildResponse(course, token, HttpStatus.OK);
+				return AccessTokenSecurity.buildResponse(course, token, HttpStatus.OK);
 
 			return AccessTokenSecurity.buildResponse(Course.class, token, HttpStatus.I_AM_A_TEAPOT);
 		}

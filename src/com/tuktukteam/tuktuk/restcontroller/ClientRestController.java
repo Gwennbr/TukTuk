@@ -68,7 +68,7 @@ public class ClientRestController {
 	@RequestMapping(value = "", method = RequestMethod.GET)
 	@RestrictedAccess(value = AccessType.TOKEN, authorized = Client.class)
 	public ResponseEntity<Client> getProfile(@RequestHeader(AccessTokenSecurity.TOKEN_HEADER_NAME) String token) {
-		return new ResponseEntity<Client>(AccessTokenSecurity.getUser(Client.class, token), HttpStatus.OK);
+		return AccessTokenSecurity.buildResponse(AccessTokenSecurity.getUser(Client.class, token), token, HttpStatus.OK);
 	}
 
 	//met à jour les infos du client et lui renvoie
