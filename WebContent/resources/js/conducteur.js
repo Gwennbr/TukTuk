@@ -83,7 +83,7 @@ function acceptClient(id) {
 
 var checkRide = function() {
 	rest.ride_Infos(function(data){
-			alert('coucou');
+//			alert('coucou');
 			console.log('avant boucle');
 				console.log('boucle');
 				if (data.valide == 1) {

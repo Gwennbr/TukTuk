@@ -1,8 +1,10 @@
 package com.tuktukteam.autosecurity;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 
@@ -263,9 +265,21 @@ public class AutoFilterForSpringControllers extends GenericFilterBean
 		HttpServletResponse response = (HttpServletResponse)resp;
 		String uri = request.getRequestURI().replaceFirst(request.getContextPath(), "");
 
+		
 		for (SecurityMappingEntry sec : securityMappings)
 			if (uri.matches(sec.getUri()))
 			{
+				boolean bHttpMethodMatches = false;
+				for (RequestMethod httpMethod : sec.methods)
+					if (httpMethod.toString().equalsIgnoreCase(request.getMethod()))
+					{
+						bHttpMethodMatches = true;
+						break;
+					}
+					
+				if (!bHttpMethodMatches)
+					continue;
+				
 				//System.out.println(uri + " -> " + sec.getUri());
 				//ResponseWrapper responseWrapper = new ResponseWrapper(response, request, access); //AccessTokenSecurity.TOKEN_HEADER_NAME, token);
 				switch (sec.accessType)
