@@ -16,9 +16,13 @@ import com.tuktukteam.genericdao.annotations.ColumnTag;
 import com.tuktukteam.genericdao.annotations.FindByValues;
 import com.tuktukteam.genericdao.annotations.HashedValue;
 
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 @Entity
 @Table(name="personne")
 @Inheritance(strategy=InheritanceType.JOINED)
+@Data @NoArgsConstructor
 public class Personne implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
@@ -32,6 +36,9 @@ public class Personne implements Serializable {
 	
 	@Column(name="PER_PRENOM") 
 	private String prenom;
+	
+	@Column(name="PER_TEL")
+	private String tel;
 	
 	@Column(name="PER_MAIL")
 	@ColumnTag(ColumnTag.FRONT_RESTRICTED)
@@ -55,79 +62,10 @@ public class Personne implements Serializable {
 	@Column(name="PER_DATE_INSCRIPTION")
 	private Date date_inscription;
 	
-	public Personne() {
-		
-	}
-	
 	public Personne(String username, String password) {
 		super();
 		this.password = password;
 		this.username = username;
 	}
 
-	public int getId() {
-		return id;
-	}
-
-	public void setId(int id) {
-		this.id = id;
-	}
-
-	public String getNom() {
-		return nom;
-	}
-
-	public void setNom(String nom) {
-		this.nom = nom;
-	}
-
-	public String getPrenom() {
-		return prenom;
-	}
-
-	public void setPrenom(String prenom) {
-		this.prenom = prenom;
-	}
-
-	public String getMail() {
-		return mail;
-	}
-
-	public void setMail(String mail) {
-		this.mail = mail;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
-	/*
-	public Blob getImage() {
-		return image;
-	}
-
-	public void setImage(Blob image) {
-		this.image = image;
-	}
-	*/
-	
-	public String getUsername() {
-		return username;
-	}
-
-	public void setUsername(String username) {
-		this.username = username;
-	}
-
-	public Date getDate_inscription() {
-		return date_inscription;
-	}
-
-	public void setDate_inscription(Date date_inscription) {
-		this.date_inscription = date_inscription;
-	}
 }

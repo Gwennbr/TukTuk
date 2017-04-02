@@ -1,5 +1,6 @@
 package com.tuktukteam.tuktuk.restcontroller;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,6 +70,21 @@ public class ClientRestController {
 	@RestrictedAccess(value = AccessType.TOKEN, authorized = Client.class)
 	public ResponseEntity<Client> getProfile(@RequestHeader(AccessTokenSecurity.TOKEN_HEADER_NAME) String token) {
 		return AccessTokenSecurity.buildResponse(AccessTokenSecurity.getUser(Client.class, token), token, HttpStatus.OK);
+	}
+
+	// création d'un nouveau client (register)
+	@RequestMapping(value = "", method = RequestMethod.POST)
+	@ResponseBody
+	@RestrictedAccess(value = AccessType.PUBLIC)
+	public ResponseEntity<Client> register(@RequestBody Client client, BindingResult result) 
+	{
+		if (!result.hasErrors())
+		{
+			client.setDate_inscription(new Date());
+			clientDAO.hashFieldsAndSave(client);
+			return new ResponseEntity<Client>(client, HttpStatus.OK);
+		}
+		return new ResponseEntity<Client>(HttpStatus.BAD_REQUEST);
 	}
 
 	//met à jour les infos du client et lui renvoie

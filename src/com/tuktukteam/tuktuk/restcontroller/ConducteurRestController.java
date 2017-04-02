@@ -1,6 +1,7 @@
 package com.tuktukteam.tuktuk.restcontroller;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,6 +74,21 @@ public class ConducteurRestController {
 	public ResponseEntity<Conducteur> getProfile(@RequestHeader(AccessTokenSecurity.TOKEN_HEADER_NAME) String token) {
 		return AccessTokenSecurity.buildResponse(AccessTokenSecurity.getUser(Conducteur.class, token), token,
 				HttpStatus.OK);
+	}
+
+	// création d'un nouveau conducteur (register)
+	@RequestMapping(value = "", method = RequestMethod.POST)
+	@ResponseBody
+	@RestrictedAccess(value = AccessType.PUBLIC)
+	public ResponseEntity<Conducteur> register(@RequestBody Conducteur conducteur, BindingResult result) 
+	{
+		if (!result.hasErrors())
+		{
+			conducteur.setDate_inscription(new Date());
+			conducteurDAO.hashFieldsAndSave(conducteur);
+			return new ResponseEntity<Conducteur>(conducteur, HttpStatus.OK);
+		}
+		return new ResponseEntity<Conducteur>(HttpStatus.BAD_REQUEST);
 	}
 
 	// met à jour les informations du conducteur

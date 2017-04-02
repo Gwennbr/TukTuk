@@ -11,9 +11,14 @@ import javax.persistence.Table;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.tuktukteam.genericdao.annotations.ColumnTag;
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+
 @Entity
 @Table(name="conducteur")
 @PrimaryKeyJoinColumn(name="COND_ID", referencedColumnName="PER_ID")
+@Data @NoArgsConstructor @EqualsAndHashCode(callSuper=true)
 public class Conducteur extends Personne {
 	private static final long serialVersionUID = 1L;
 
@@ -47,70 +52,5 @@ public class Conducteur extends Personne {
 	@ColumnTag(ColumnTag.FRONT_RESTRICTED)
 	@JsonIgnore
 	private List<Course> courses;
-	
-	public Long getDateDebutPause() {
-		return dateDebutPause;
-	}
-
-	public void setDateDebutPause(Long dateDebutPause) {
-		this.dateDebutPause = dateDebutPause;
-	}
-
-	public String getIban() {
-		return iban;
-	}
-
-	public void setIban(String iban) {
-		this.iban = iban;
-	}
-
-	public String getBic() {
-		return bic;
-	}
-
-	public void setBic(String bic) {
-		this.bic = bic;
-	}
-
-	public double getLatitude() {
-		return latitude;
-	}
-
-	public void setLatitude(double latitude) {
-		this.latitude = latitude;
-	}
-
-	public double getLongitude() {
-		return longitude;
-	}
-
-	public void setLongitude(double longitude) {
-		this.longitude = longitude;
-	}
-
-	public boolean isAvailable() {
-		return available;
-	}
-
-	public void setAvailable(boolean available) {
-		this.available = available;
-	}
-
-	public List<Course> getCourses() {
-		return courses;
-	}
-
-	public void setCourses(List<Course> courses) {
-		this.courses = courses;
-	}
-	
-	public String getNumImmat() {
-		return numImmat;
-	}
-
-	public void setNumImmat(String numImmat) {
-		this.numImmat = numImmat;
-	}
-
 	
 }
