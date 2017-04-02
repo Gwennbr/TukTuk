@@ -35,6 +35,14 @@ public class AccessTokenSecurity
 		return userClass.cast(accessEntry.user);
 	}
 	
+	public static <T> String findUserToken(Class<T> userType, ATSUserComparator<T> comparator)
+	{
+		for (AccessEntry access : accesses.values())
+			if (comparator.sameUser(userType.cast(access.getUser())))
+				return access.token;
+		return null;
+	}
+	
 	public static  boolean tokenIsAssociatedWithUserType(String token, Class<?> userClass)
 	{
 		AccessEntry accessEntry = accesses.get(token);

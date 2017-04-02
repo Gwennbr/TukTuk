@@ -18,7 +18,9 @@ import com.tuktukteam.autosecurity.RestrictedAccess;
 import com.tuktukteam.autosecurity.RestrictedAccess.AccessType;
 import com.tuktukteam.tuktuk.model.Client;
 import com.tuktukteam.tuktuk.model.Conducteur;
+import com.tuktukteam.tuktuk.model.Personne;
 import com.tuktukteam.tuktuk.restapi.TukTukRestServices;
+import com.tuktukteam.tuktuk.security.UserComparator;
 
 @Controller
 public class MainController
@@ -67,7 +69,7 @@ public class MainController
 		if (conducteurEntity != null)
 		{
 			session.setAttribute("conducteur", conducteurEntity.getBody());		
-			session.setAttribute("token", conducteurEntity.getHeaders().getFirst(AccessTokenSecurity.TOKEN_HEADER_NAME));
+			//session.setAttribute("token", conducteurEntity.getHeaders().getFirst(AccessTokenSecurity.TOKEN_HEADER_NAME));
 			return "redirect:/";
 		}
 
@@ -80,7 +82,7 @@ public class MainController
 		}
 		
 		session.setAttribute("client", clientEntity.getBody());
-		session.setAttribute("token", clientEntity.getHeaders().getFirst(AccessTokenSecurity.TOKEN_HEADER_NAME));
+		//session.setAttribute("token", clientEntity.getHeaders().getFirst(AccessTokenSecurity.TOKEN_HEADER_NAME));
 
 		return "redirect:/";
 		
@@ -88,8 +90,16 @@ public class MainController
 
 	@RequestMapping(value = "/", method = RequestMethod.GET)
 	@RestrictedAccess(value=AccessType.CLASS_IN_SESSION, authorized={Client.class,Conducteur.class}, onForbidden="redirect:login")
-	public String homeView()
+	public String homeView(HttpSession session)
 	{
+		Personne user = (Personne) session.getAttribute("conducteur");
+		
+		if (user == null)
+			user = (Personne) session.getAttribute("client");
+		
+		if (user != null)
+			session.setAttribute("token", AccessTokenSecurity.findUserToken(Personne.class, new UserComparator(user)));
+		
 		return "accueil";
 	}
 
