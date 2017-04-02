@@ -36,19 +36,20 @@
 		</div>
 	</header>
 	<section id="map" >
+		
 		<div id="gmap" ng-controller="mapController as vm">
     	<ng-map id="currentMap" zoom="15" center="current" map-type-id="MapTypeId.ROADMAP">
 			<c:choose>
 				<c:when test="${not empty conducteur}">
 					<marker position="{{vm.current}}" animation="Animation.NONE" icon=${ pageContext.request.contextPath }/resources/img/trishawColor.png></marker>			
-<!-- 					<div id="directionMap"> -->
+					<div id="directionMap">
 <!-- 						<directions -->
 <!--           					draggable="false" -->
 <!--           					travel-mode="DRIVING" -->
 <!--           					origin="current-location" -->
 <!--           					destination="lille grand palais"> -->
 <!--         				</directions> -->
-<!--         			</div> -->
+        			</div>
 <%-- 					<marker ng-repeat="pos in vm.positions" position="{{pos.lat}},{{pos.lng}}" icon=${ pageContext.request.contextPath }/resources/img/userColor.png></marker> --%>
 				</c:when>
 				<c:otherwise>

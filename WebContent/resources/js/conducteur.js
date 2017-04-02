@@ -83,21 +83,17 @@ function acceptClient(id) {
 
 var checkRide = function() {
 	rest.ride_Infos(function(data){
-//			alert('coucou');
-			console.log('avant boucle');
-				console.log('boucle');
+			console.log('boucle');
+				console.log(data.valide);
+				console.log(data.conducteur);
 				if (data.valide == 1) {
-					$('#directionMap').html('<div id="directionMap">'+
-						'<directions'+
-      					'draggable="false"'+
-      					'travel-mode="DRIVING"'+
-      					'origin="current-location"'+
-      					'destination="lille grand palais">'+
-      				'</directions>'+
-    					'</div>');
+					console.log(data);
+					
+//					var mapDest = '<div id="gmap" ng-controller="mapController as vm"><ng-map id="currentMap" zoom="15" center="current" map-type-id="MapTypeId.ROADMAP"><directions draggable="false" travel-mode="DRIVING" origin="current-location" destination="' + data.adresseDepart + '"></directions></ng-map></div>';
+//					console.log(mapDest);
+//					$('#map').html(mapDest);
 				
-					$("#alertZone")
-					.html(
+					$("#alertZone").html(
 							'<div id="alertDiv" class="alert alert-info">'
 									+ '<strong>Info! </strong>'
 									+ 'Course valider par le client'
@@ -112,6 +108,8 @@ var checkRide = function() {
 				};
 			
 				if (data.conducteur == null) {
+					console.log('client nul');
+					alert('client nul');
 					$("#alertZone")
 					.html(
 							'<div id="alertDiv" class="alert alert-info">'
