@@ -218,9 +218,9 @@ function RestTemplate(_token, globalErrorCallback)
 				"GET", undefined, callback, errorCallback);				
 	}
 	
-	this.driver_AllAround = function(callback, errorCallback)
+	this.driver_AllAround = function(longitude, latitude, callback, errorCallback)
 	{
-		this.addCall(this.buildUrl(RestTemplate.RESTURI_DRIVER_ALLAROUND), "GET", undefined, callback, errorCallback);				
+		this.addCall(this.buildUrl(RestTemplate.RESTURI_DRIVER_ALLAROUND, longitude, latitude), "GET", undefined, callback, errorCallback);				
 	}
 	
 	this.customer_GetMyProfil = function(callback, errorCallback)
@@ -325,7 +325,7 @@ RestTemplate.RESTURI_DRIVER_AVAILABLE = "/driver/available";
 RestTemplate.RESTURI_DRIVER_REFRESH = "/driver/refreshPos?longitude={1}&latitude={2}";
 RestTemplate.RESTURI_DRIVER_GETMYNOTE = "/driver/note";
 RestTemplate.RESTURI_DRIVER_GETNOTE = "/driver/{1}/note";
-RestTemplate.RESTURI_DRIVER_ALLAROUND = "/drivers";
+RestTemplate.RESTURI_DRIVER_ALLAROUND = "/drivers?longitude={1}&latitude={2}";
 
 RestTemplate.RESTURI_CUSTOMER_LOGIN = "/customer/login?username={1}&password={2}";
 RestTemplate.RESTURI_CUSTOMER_PROFIL = "/customer";
