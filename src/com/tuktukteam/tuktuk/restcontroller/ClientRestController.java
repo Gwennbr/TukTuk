@@ -157,25 +157,26 @@ public class ClientRestController {
 		
 	}
 
-//	//calcul la moyenne du client demandé et la renvoie au conducteur
-//	@ResponseBody
-//	@RequestMapping(value = "/{id}/note", method = RequestMethod.GET)
-//	@RestrictedAccess(value = AccessType.TOKEN, authorized = Conducteur.class)
-//	public ResponseEntity<Float> calculAvgNoteClient(@PathVariable int id, @RequestHeader(AccessTokenSecurity.TOKEN_HEADER_NAME) String token) {
-//		Client cli1 = clientDAO.find(id);
-//		float moy = 0;
-//		float somme = 0;
-//		int i = 0;
-//		List<Course> courses = cli1.getCourses();
-//		for (Course course : courses) {
-//			if (course.getNoteConducteur() != -1) {
-//				somme = somme + course.getNoteConducteur();
-//				i++;
-//			}
-//		}
-//		moy = somme / i;
-//		return AccessTokenSecurity.buildResponse(moy, token, HttpStatus.OK);
-//	}
+
+	//calcul la moyenne du client demandé et la renvoie au conducteur
+	@ResponseBody
+	@RequestMapping(value = "/{id}/note", method = RequestMethod.GET)
+	@RestrictedAccess(value = AccessType.TOKEN, authorized = Conducteur.class)
+	public ResponseEntity<Integer> calculAvgNoteClient(@PathVariable int id, @RequestHeader(AccessTokenSecurity.TOKEN_HEADER_NAME) String token) {
+		Client cli1 = clientDAO.find(id);
+		float moy = 0;
+		float somme = 0;
+		int i = 0;
+		List<Course> courses = cli1.getCourses();
+		for (Course course : courses) {
+			if (course.getNoteConducteur() != -1) {
+				somme = somme + course.getNoteConducteur();
+				i++;
+			}
+		}
+		moy = somme / i;
+		return AccessTokenSecurity.buildResponse(Math.round(moy), token, HttpStatus.OK);
+	}
 
 	//récupère les informations utiles du client demandé et les renvoie au conducteur
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)

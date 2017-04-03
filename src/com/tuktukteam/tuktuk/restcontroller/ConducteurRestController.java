@@ -28,7 +28,6 @@ import com.tuktukteam.tuktuk.dao.ConducteurDAO;
 import com.tuktukteam.tuktuk.dao.CourseDAO;
 import com.tuktukteam.tuktuk.model.Client;
 import com.tuktukteam.tuktuk.model.Conducteur;
-import com.tuktukteam.tuktuk.model.Coordonnee;
 import com.tuktukteam.tuktuk.model.Course;
 
 @RestController
@@ -225,43 +224,45 @@ public class ConducteurRestController {
 		}
 	}
 
-//	// calcul la moyenne des notes du conducteur demandé et la renvoie au client
-//	@RequestMapping(value = "/{id}/note", method = RequestMethod.GET)
-//	@ResponseBody
-//	@RestrictedAccess(value = AccessType.TOKEN, authorized = Client.class)
-//	public ResponseEntity<Float> calculAvgNoteDriver(@PathVariable int id, @RequestHeader(AccessTokenSecurity.TOKEN_HEADER_NAME) String token) {
-//		Conducteur cond = conducteurDAO.find(id);
-//		float moy = 0;
-//		float somme = 0;
-//		int i = 0;
-//		List<Course> courses = cond.getCourses();
-//		for (Course course : courses) {
-//			if (course.getNoteConducteur() != -1) {
-//				somme = somme + course.getNoteConducteur();
-//				i++;
-//			}
-//		}
-//		moy = somme / i;
-//		return AccessTokenSecurity.buildResponse(moy, token, HttpStatus.OK);
-//	}
+	// calcul la moyenne des notes du conducteur demandé et la renvoie au client
+	@RequestMapping(value = "/{id}/note", method = RequestMethod.GET)
+	@ResponseBody
+	@RestrictedAccess(value = AccessType.TOKEN, authorized = Client.class)
+	public ResponseEntity<Integer> calculAvgNoteDriver(@PathVariable int id, @RequestHeader(AccessTokenSecurity.TOKEN_HEADER_NAME) String token) {
+		Conducteur cond = conducteurDAO.find(id);
+		float moy = 0;
+		float somme = 0;
+		int i = 0;
+		List<Course> courses = cond.getCourses();
+		for (Course course : courses) {
+			if (course.getNoteConducteur() != -1) {
+				somme = somme + course.getNoteConducteur();
+				i++;
+			}
+		}
+		moy = somme / i;
+		return AccessTokenSecurity.buildResponse(Math.round(moy), token, HttpStatus.OK);
+	}
 
 	// récupère tout les conducteurs à +/- 5 km et les renvoie au client
 	@RequestMapping(value = "s", method = RequestMethod.GET)
 	@ResponseBody
 	@RestrictedAccess()
-	public ResponseEntity<List<Coordonnee>> getAllNearDrivers(
+	public ResponseEntity<List<Conducteur>> getAllNearDrivers(
 			@RequestHeader(AccessTokenSecurity.TOKEN_HEADER_NAME) String token, @RequestParam double latitude,
 			@RequestParam double longitude) {
-		List<Coordonnee> coordonnees = new ArrayList<>();
+		//List<Coordonnee> coordonnees = new ArrayList<>();
+		List<Conducteur> returnList = new ArrayList<>();
 		List<Conducteur> conducteurs = conducteurDAO.getAllAndFillOnlyFieldsTaggedBy("coordonnees");
 		for (Conducteur cond : conducteurs) {
-			if (cond.getLatitude() > latitude + 0.07 || cond.getLatitude() < latitude - 0.07
-					|| cond.getLongitude() > longitude + 0.07 || cond.getLongitude() < longitude + 0.07) {
-				coordonnees.add(new Coordonnee(cond.getLatitude(), cond.getLongitude()));
+			if (cond.getLatitude() <= latitude + 0.07 && cond.getLatitude() >= latitude - 0.07
+					&& cond.getLongitude() <= longitude + 0.07 && cond.getLongitude() <= longitude + 0.07) {
+				returnList.add(cond);
+				//coordonnees.add(new Coordonnee(cond.getLatitude(), cond.getLongitude()));
 			}
 		}
 
-		return AccessTokenSecurity.buildResponse(coordonnees, token, HttpStatus.OK);
+		return AccessTokenSecurity.buildResponse(returnList, token, HttpStatus.OK);
 	}
 
 }

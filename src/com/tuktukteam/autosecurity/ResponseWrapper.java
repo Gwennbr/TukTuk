@@ -23,7 +23,7 @@ public class ResponseWrapper extends HttpServletResponseWrapper
 	private CharArrayWriter output;
 	private boolean bHeaderAdded = false;
 	private HttpServletRequest request;
-	private RestrictedAccess accessInfos;
+	protected RestrictedAccess accessInfos;
 	
 //	private boolean usingWriter = false;
 	

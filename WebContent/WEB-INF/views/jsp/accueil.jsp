@@ -2,7 +2,7 @@
     pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
-<html ng-app="myApp">
+<html data-ng-app="myApp">
 <head>
 	<link rel="icon" type="image/png" href="${ pageContext.request.contextPath }/resources/img/favicon.png" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -21,7 +21,7 @@
 	<script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
 	<script src="https://maps.google.com/maps/api/js?libraries=placeses,visualization,drawing,geometry,places&key=AIzaSyBWK16ZhsCDITiislRiRzpb4qjPrYfXp4s"></script>
 </head>
-<body ng-app="ngMap">
+<body data-ng-app="ngMap">
 	<header>
 		<nav>
 			<c:if test="${ not empty conducteur }">
@@ -88,9 +88,9 @@
   									<span class="sr-only">Info:</span>Vous êtes actuellement <strong>Disponible</strong>
   								</div>
   							</div>
-							<button id="btn-pause" href="#"  type="button" class="btn btn-primary chauffeur">Activer mode pause</button>
-							<button id="btn-endCourse" href="#"  type="button" class="btn btn-success">Course terminer</button>
-							<button id="btn-cancelCourse" href="#"  type="button" class="btn btn-danger">Course annulee</button>
+							<button id="btn-pause" type="button" class="btn btn-primary chauffeur">Activer mode pause</button>
+							<button id="btn-StartStopCourse" type="button" class="btn btn-success">Démarrer course</button>
+<!-- 							<button id="btn-cancelCourse" type="button" class="btn btn-danger">Course annulée</button> -->
 						</div>
 					</div>	
   				</c:when>
@@ -102,9 +102,9 @@
 						</div>
 						<div class="modal-body">
 							<label>Entrer l'adresse de départ</label>
-							<input id="vmadresse" places-auto-complete ng-model="vm.address" component-restrictions="{country:'fr'}" types="{{types}}" on-place-changed="vm.placeChanged()" />
+							<input id="vmadresse" data-places-auto-complete data-ng-model="vm.address" data-component-restrictions="{country:'fr'}" data-types="{{types}}" data-on-place-changed="vm.placeChanged()" />
 							<br/>
-							<div ng-show="vm.place">
+							<div data-ng-show="vm.place">
 								Address = {{vm.place.formatted_address}} <br/>
 								Location: {{vm.place.geometry.location}}<br/>
 							</div>
@@ -132,7 +132,26 @@
 				</div>
 			</div>
 		</div>
+
 		
+		<div id="rideInfos-modal" index="modal-control" class="modal fade modal-ride" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
+			<div class="modal-dialog modal-sm" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						<h4 class="modal-title">Course</h4>
+					</div>
+					<div class="modal-body">
+						<!-- <label>Information chauffeur</label> -->
+						<div class="card">
+							<div id="card-block-rideInfos" class="card-block">
+							</div>
+						</div>
+					</div>
+				</div>
+				
+			</div>
+		</div>
 		
 		
 		<div id="driverInfo-modal" index="modal-control" class="modal fade modal-chauffeur" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
@@ -141,7 +160,7 @@
 				<div class="modal-content">
 					<div class="modal-header">
 						<button type="button" onclick="refuseCourseClient()" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-						<h4 class="modal-title">Commander un tuk-tuk :</h4>
+						<h4 class="modal-title">Un chauffeur a accepté la course</h4>
 					</div>
 					<div class="modal-body">
 						<!-- <label>Information chauffeur</label> -->
@@ -173,7 +192,7 @@
 						
 						<div class="middle-sidenav">
 							<label>Option :</label>
-							<button id="btn-payoption" href="#"  type="button" class="btn btn-success">Option de payement</button>
+							<button id="btn-payoption" type="button" class="btn btn-success">Option de payement</button>
 							<button id="btn-history" type="button" class="btn btn-warning" data-toggle="modal" data-target=".modal-history" data-dismiss="modal">Historique</button>
 							<c:if test="${ not empty conducteur }">
 							<hr />

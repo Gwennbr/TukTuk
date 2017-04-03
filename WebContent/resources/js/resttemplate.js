@@ -278,7 +278,12 @@ function RestTemplate(_token, globalErrorCallback)
 	{
 		this.addCall(this.buildUrl(RestTemplate.RESTURI_RIDE_INFOS), "GET", undefined, callback, errorCallback);				
 	}
-	
+
+	this.ride_InfosWithId = function(rideId, callback, errorCallback)
+	{
+		this.addCall(this.buildUrl(RestTemplate.RESTURI_RIDE_INFOS_WITH_ID, rideId), "GET", undefined, callback, errorCallback);				
+	}
+
 	this.ride_Start = function(callback, errorCallback)
 	{
 		this.addCall(this.buildUrl(RestTemplate.RESTURI_RIDE_START), "PUT", undefined, callback, errorCallback);				
@@ -340,6 +345,7 @@ RestTemplate.RESTURI_RIDE_ACCEPT = "/ride/{1}/accept";
 RestTemplate.RESTURI_RIDE_VALIDATE = "/ride/validate";
 RestTemplate.RESTURI_RIDE_DECLINE = "/ride/decline";
 RestTemplate.RESTURI_RIDE_INFOS = "/ride";
+RestTemplate.RESTURI_RIDE_INFOS_WITH_ID = "/ride/{1}";
 RestTemplate.RESTURI_RIDE_START = "/ride/start";
 RestTemplate.RESTURI_RIDE_FINISH = "/ride/complete";
 RestTemplate.RESTURI_RIDE_PAUSE = "/ride/pause";

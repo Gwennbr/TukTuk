@@ -1,6 +1,7 @@
 //HISTORIQUE DES COURSE
 $("#btn-history").click(function(){
 	rest.customer_GetRunsHistory(function(course) {
+		$("#history").html('<tr class="warning"><th>Adresse</th><th>Temps</th><th>Prix</th></tr>');
 		course.forEach(function(item, index) {	    
 		    var time = new Date((item.dateFinCourse - item.dateDebutCourse) - 3600000);
 		    $("#history")
@@ -37,23 +38,51 @@ $('#btn-search').click(function(){
 
 });
 
+var checkEndRideIntervalToken = undefined;
+var rideId = undefined;
+var bRideStarted = false;
+
+var checkEndRide = function()
+{
+	rest.ride_InfosWithId(rideId, function(course){
+		if (course.dateFinCourse != null)
+		{
+			clearInterval(checkEndRideIntervalToken);
+			var time = new Date((course.dateFinCourse - course.dateDebutCourse - course.tempsPause) - 3600000);
+			$("#card-block-rideInfos").html('La course est terminée<br /><hr />' + 
+					'durée : ' + time.getHours().toString().replace(/^(\d)$/,'0$1') + 'h' + time.getMinutes().toString().replace(/^(\d)$/,'0$1') +
+					'<br />prix : ' + course.prix + ' €');		
+			$("#rideInfos-modal").modal("show");
+			
+		}
+		else
+			if (!bRideStarted && course.dateDebutCourse != null)
+			{
+				bRideStarted = true;
+				$("#card-block-rideInfos").html('Le conducteur a démarré la course');		
+				$("#rideInfos-modal").modal("show");				
+			}
+	});
+}
+
 var checkRider = function() {
 	rest.ride_Infos(function(checkCourse){
-		console.log(checkCourse.conducteur);
 		if(checkCourse.conducteur != null){
-			var noteConducteur = checkCourse.noteConducteur;
-			if (noteConducteur == -1) {
-				noteConducteur = 0;
-			};
-			clearInterval(inter);
-			$("#waiting-modal").modal("hide");
-			$("#card-block").html('<h4 class="card-title">' + checkCourse.conducteur.prenom + ' ' + checkCourse.conducteur.nom + '</h4>'+
-					'<br>'+
-					'<img id="rating" src="'+ host +'/resources/img/rate' + noteConducteur + '.png" alt="Note"/>'+
-					'<hr />'+
-					'<a id="btn-commandée" onclick="accepteCourseClient();" class="btn btn-success">Commandée</a>'+
-					'<a id="btn-annulée" onclick="refuseCourseClient()" class="btn btn-danger">Annulée</a>');		
-			$("#driverInfo-modal").modal("show");
+			rest.driver_GetNote(checkCourse.conducteur.id, function(noteConducteur){
+				if (noteConducteur == -1) {
+					noteConducteur = 0;
+				};
+				clearInterval(inter);
+				$("#waiting-modal").modal("hide");
+				$("#card-block").html('<h4 class="card-title">' + checkCourse.conducteur.prenom + ' ' + checkCourse.conducteur.nom + '</h4>'+
+						'<br>'+
+						'<img id="rating" src="'+ host +'/resources/img/rate' + noteConducteur + '.png" alt="Note"/>'+
+						'<hr />'+
+						'<a id="btn-commandée" onclick="accepteCourseClient();" class="btn btn-success">Accepter</a>'+
+						'<a id="btn-annulée" onclick="refuseCourseClient()" class="btn btn-danger">Refuser</a>');		
+				$("#driverInfo-modal").modal("show");
+				
+			});
 		}
 	});
 };
@@ -102,12 +131,16 @@ function accepteCourseClient() {
 		.html(
 				'<div id="alertDiv" class="alert alert-info">'
 						+ '<strong>Info! </strong>'
-						+ 'Vous avez accepter le chauffeur <strong>'+ data.conducteur.prenom + ' ' + data.conducteur.nom +'</strong> , le conducteur arrive.'
+						+ 'Vous avez accepté le chauffeur <strong>'+ data.conducteur.prenom + ' ' + data.conducteur.nom +'</strong> , le conducteur arrive.'
 						+ '</div>');
 		
 		$("#alertDiv").fadeTo(5000, 500).slideUp(500, function() {
 			$("#alertDiv").slideUp(500);
 		});
+		
+		bRideStarted = false;
+		rideId = data.id;
+		checkEndRideIntervalToken = setInterval(checkEndRide, 1000);
 	});
 	
 };
@@ -115,7 +148,6 @@ function accepteCourseClient() {
 //REFUSER COURSE
 function refuseCourseClient() {
 	rest.ride_Decline(function(data){
-		console.log(data);
 		$("#driverInfo-modal").modal("hide");
 		$('#btn-search').addClass("disabled")
 		$('#vmadresse').addClass("disabled")
@@ -123,9 +155,8 @@ function refuseCourseClient() {
 		.html(
 				'<div id="alertDiv" class="alert alert-info">'
 						+ '<strong>Info! </strong>'
-						+ 'Vous avez refuser le chauffeur !'
+						+ 'Vous avez refusé le chauffeur !'
 						+ '</div>');
-		console.log('test');
 		$("#waiting-modal").modal("show");
 		inter = setInterval(checkRider, 2000);
 		
@@ -146,7 +177,7 @@ function annuleeCourseClient() {
 		.html(
 				'<div id="alertDiv" class="alert alert-info">'
 						+ '<strong>Info! </strong>'
-						+ 'Vous annulée la recherche !'
+						+ 'Vous annulez la recherche !'
 						+ '</div>');
 		console.log('test');
 		$("#waiting-modal").modal("show");

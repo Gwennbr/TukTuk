@@ -47,6 +47,7 @@ $('#toggle-trigger')
 //HISTORIQUE DES COURSE
 $("#btn-history").click(function(){
 rest.driver_GetRunsHistory(function(course) {
+	$("#history").html('<tr class="warning"><th>Adresse</th><th>Temps</th><th>Prix</th></tr>');
 	course.forEach(function(item, index) {	    
 	    var time = new Date((item.dateFinCourse - item.dateDebutCourse) - 3600000);
 	    $("#history")
@@ -64,9 +65,9 @@ rest.driver_GetRunsHistory(function(course) {
 //TOGGLE BOUTON DISPO, INDISPO
 rest.driver_GetMyProfil(function(profil) {
 	if (profil.available == true) {
-			$('#toggle-trigger').bootstrapToggle('on');
+		$('#toggle-trigger').bootstrapToggle('on');
 	} else {
-			$('#toggle-trigger').bootstrapToggle('off');
+		$('#toggle-trigger').bootstrapToggle('off');
 	}
 });
 
@@ -83,12 +84,7 @@ function acceptClient(id) {
 
 var checkRide = function() {
 	rest.ride_Infos(function(data){
-			console.log('boucle');
-				console.log(data.valide);
-				console.log(data.conducteur);
 				if (data.valide == 1) {
-					console.log(data);
-					
 //					var mapDest = '<div id="gmap" ng-controller="mapController as vm"><ng-map id="currentMap" zoom="15" center="current" map-type-id="MapTypeId.ROADMAP"><directions draggable="false" travel-mode="DRIVING" origin="current-location" destination="' + data.adresseDepart + '"></directions></ng-map></div>';
 //					console.log(mapDest);
 //					$('#map').html(mapDest);
@@ -96,25 +92,26 @@ var checkRide = function() {
 					$("#alertZone").html(
 							'<div id="alertDiv" class="alert alert-info">'
 									+ '<strong>Info! </strong>'
-									+ 'Course valider par le client'
+									+ 'Course validée par le client'
 									+ '</div>');
 				
 					$("#alertDiv").fadeTo(5000, 1000).slideUp(1000, function() {
 						$("#alertDiv").slideUp(1000);
 					});
-				
+					$("#btn-StartStopCourse").show();
+					$("#btn-StartStopCourse").attr("data-buttonState", "start");
+					$("#btn-pause").show();
+					
 					valid = true;
 					clearInterval(interCheckRide);
 				};
 			
 				if (data.conducteur == null) {
-					console.log('client nul');
-					alert('client nul');
 					$("#alertZone")
 					.html(
 							'<div id="alertDiv" class="alert alert-info">'
 									+ '<strong>Info! </strong>'
-									+ 'Le client a refuser la course.'
+									+ 'Le client a refusé la course.'
 									+ '</div>');
 				
 					$("#alertDiv").fadeTo(5000, 1000).slideUp(1000, function() {
@@ -124,7 +121,6 @@ var checkRide = function() {
 					valid = true;
 					clearInterval(interCheckRide);
 				};
-		console.log('apres boucle');
 	});
 };
 
@@ -136,38 +132,38 @@ var refreshCourse = function() {
 				var lng = position.coords.longitude;
 				
 				rest.driver_refreshPosAndGetAvailableRides(lat, lng, function(course) {
-					var liste = "";
+					$('#listeCourse').html("");
 					$('#btn-course-dispo').html('<span class="label label-pill label-success" id="puceBadge">' + course.length + ' course(s) disponnible</span>');
 					if (course.length != 0) {
 						if (profil.available == true) {
 							course.forEach(function(data) {
-								var noteClient = data.noteClient;
-								if (noteClient == -1) {
-									noteClient = 0;
-								};
-								liste += '<div class="panel panel-primary">'+
-								'<div class="alert alert-success">Doge LeChien</div>'+			
-								'<div class="panel-body">'+
-								'<img id="rating" src="'+ host +'/resources/img/rate' + noteClient + '.png" alt="Note"/>'+
-    							'</div>'+
-    							'<div class="panel-footer">'+
-    							'<button id="btn-accept" onclick="acceptClient(' + data.id + ')" type="button" class="btn btn-success">Accpeter</button>'+
-//    							'<button id="btn-reject" type="button" class="btn btn-danger">Refuser</button>'+
-  								'</div>'+
-							'</div>';
+								rest.customer_GetNote(data.client.id, function(noteClient){
+									if (noteClient == -1) {
+										noteClient = 0;
+									};
+									$('#listeCourse').append('<div class="panel panel-primary">'+
+									'<div class="alert alert-success">' + data.client.prenom + ' ' + data.client.nom + '</div>'+			
+									'<div class="panel-body">'+
+									'<img id="rating" src="'+ host +'/resources/img/rate' + noteClient + '.png" alt="Note"/>'+
+	    							'</div>'+
+	    							'<div class="panel-footer">'+
+	    							'<button id="btn-accept" onclick="acceptClient(' + data.id + ')" type="button" class="btn btn-success">Accpeter</button>'+
+//	    							'<button id="btn-reject" type="button" class="btn btn-danger">Refuser</button>'+
+	  								'</div>'+
+	  								'</div>');
+								});
 							});
 						}
 						else {
-							$('#btn-course-dispo').html('<span class="label label-pill label-danger" id="puceBadge">Vous n\'êtes pas disponnible</span>');
+							$('#btn-course-dispo').html('<span class="label label-pill label-danger" id="puceBadge">Vous n\'êtes pas disponible</span>');
 						};
 					}
 					else {
 						if(profil.available == false) {
-							$('#btn-course-dispo').html('<span class="label label-pill label-danger" id="puceBadge">Vous n\'êtes pas disponnible</span>');
+							$('#btn-course-dispo').html('<span class="label label-pill label-danger" id="puceBadge">Vous n\'êtes pas disponible</span>');
 					
 						};
 					};
-					$('#listeCourse').html(liste);
 				});
 			};
 			navigator.geolocation.getCurrentPosition(foundLocation);
@@ -177,3 +173,29 @@ var refreshCourse = function() {
 
 
 setInterval(refreshCourse, 1000);
+
+$("#btn-StartStopCourse").hide();
+$("#btn-pause").hide();
+
+
+$("#btn-StartStopCourse").click(function(){
+	var state = $("#btn-StartStopCourse").attr("data-buttonState");
+	if (state === "start")
+	{
+		rest.ride_Start(function(course){
+			$("#btn-StartStopCourse").html("Fin de course");
+			$("#btn-StartStopCourse").attr("data-buttonState", "stop");
+		});
+	}
+	else
+	{
+		rest.ride_Finish(function(course){
+			$("#btn-StartStopCourse").html("Démarrer course");
+			$("#btn-StartStopCourse").attr("data-buttonState", "start");
+			$("#btn-StartStopCourse").hide();
+			console.log(course);
+			console.log(course.prix);
+		});
+		
+	}
+});
