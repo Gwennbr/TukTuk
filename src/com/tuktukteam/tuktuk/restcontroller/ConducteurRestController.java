@@ -283,7 +283,7 @@ public class ConducteurRestController
 		List<Conducteur> conducteurs = conducteurDAO.getAllAndFillOnlyFieldsNotTaggedBy(ColumnTag.FRONT_RESTRICTED);
 		for (Conducteur cond : conducteurs)
 		{
-			if (cond.getLatitude() <= latitude + 0.07 && cond.getLatitude() >= latitude - 0.07
+			if (cond.isAvailable() && cond.getLatitude() <= latitude + 0.07 && cond.getLatitude() >= latitude - 0.07
 					&& cond.getLongitude() <= longitude + 0.07 && cond.getLongitude() >= longitude - 0.07)
 			{
 				returnList.add(cond);
