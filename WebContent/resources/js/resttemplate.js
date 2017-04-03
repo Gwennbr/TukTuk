@@ -135,8 +135,6 @@ function RestTemplate(_token, globalErrorCallback)
 				callback(driver);
 		}).bind(this), (function(status) {
 			this.customer_GetMyProfil((function(customer){
-				console.log("ok customer");
-				console.log(this);
 				this.user = customer; 
 				this.userType = RestTemplate.ClientType.CUSTOMER; 
 				if (callback !== undefined && callback != null)
@@ -195,7 +193,6 @@ function RestTemplate(_token, globalErrorCallback)
 	 */
 	this.driver_SetUnavailable = function(callback, errorCallback)
 	{
-		console.log("driver_SetUnAvailable");
 		this.addCall(this.buildUrl(RestTemplate.RESTURI_DRIVER_UNAVAILABLE), "PUT", undefined, callback, errorCallback);		
 	}
 
@@ -205,7 +202,6 @@ function RestTemplate(_token, globalErrorCallback)
 	 */
 	this.driver_SetAvailable = function(callback, errorCallback)
 	{
-		console.log("driver_SetAvailable");
 		this.addCall(this.buildUrl(RestTemplate.RESTURI_DRIVER_AVAILABLE), "PUT", undefined, callback, errorCallback);		
 	}
 
@@ -215,7 +211,6 @@ function RestTemplate(_token, globalErrorCallback)
 	 */
 	this.driver_refreshPosAndGetAvailableRides = function(lng, lat, callback, errorCallback)
 	{
-		console.log("driver_refreshPosAndGetAvailableRides");
 		this.addCall(this.buildUrl(RestTemplate.RESTURI_DRIVER_REFRESH, lng, lat),
 					 "PUT", undefined, callback, errorCallback);
 	}
