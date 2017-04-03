@@ -54,7 +54,7 @@
 				</c:when>
 				<c:otherwise>
 					<marker position="{{vm.current}}" animation="Animation.NONE" icon=${ pageContext.request.contextPath }/resources/img/userColor.png></marker>			
-<%-- 					<marker ng-repeat="pos in vm.positions" position="{{pos.lat}},{{pos.lng}}" icon=${ pageContext.request.contextPath }/resources/img/trishawColor.png></marker> --%>
+					<marker ng-repeat="pos in vm.positions" position="{{pos.lat}},{{pos.lng}}" icon=${ pageContext.request.contextPath }/resources/img/trishawColor.png></marker>
 				</c:otherwise>
 			</c:choose>
 		</ng-map>

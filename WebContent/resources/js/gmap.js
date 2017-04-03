@@ -17,7 +17,11 @@ app.controller('mapController', function($interval) {
 		};
 
 		var numMarkers = Math.floor(Math.random() * 4) + 4; // between 4 to 8
-															// markers
+		rest.driver_AllAround(function(data) {
+			console.log("////////////TABLEAU DATA////////////");
+			console.log(data);
+		});
+		
 		for (i = 0; i < numMarkers; i++) {
 			var lat = 50.6231830 + (Math.random() / 100);
 			var lng = 3.1238490 + (Math.random() / 100);
