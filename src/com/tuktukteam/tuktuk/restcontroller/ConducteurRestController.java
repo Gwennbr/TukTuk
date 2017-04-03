@@ -247,7 +247,7 @@ public class ConducteurRestController {
 	// récupère tout les conducteurs à +/- 5 km et les renvoie au client
 	@RequestMapping(value = "s", method = RequestMethod.GET)
 	@ResponseBody
-	@RestrictedAccess()
+	@RestrictedAccess(value = AccessType.TOKEN, authorized = Client.class)
 	public ResponseEntity<List<Conducteur>> getAllNearDrivers(
 			@RequestHeader(AccessTokenSecurity.TOKEN_HEADER_NAME) String token, @RequestParam double latitude,
 			@RequestParam double longitude) {
