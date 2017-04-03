@@ -253,7 +253,7 @@ public class ConducteurRestController {
 			@RequestParam double longitude) {
 		//List<Coordonnee> coordonnees = new ArrayList<>();
 		List<Conducteur> returnList = new ArrayList<>();
-		List<Conducteur> conducteurs = conducteurDAO.getAllAndFillOnlyFieldsTaggedBy("coordonnees");
+		List<Conducteur> conducteurs = conducteurDAO.getAllAndFillOnlyFieldsNotTaggedBy(ColumnTag.FRONT_RESTRICTED);
 		for (Conducteur cond : conducteurs) {
 			if (cond.getLatitude() <= latitude + 0.07 && cond.getLatitude() >= latitude - 0.07
 					&& cond.getLongitude() <= longitude + 0.07 && cond.getLongitude() <= longitude + 0.07) {
