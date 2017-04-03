@@ -35,11 +35,11 @@ public class Conducteur extends Personne {
 	private String numImmat;
 
 	@Column(name="COND_LATITUDE")
-	@ColumnTag({ColumnTag.FRONT_RESTRICTED, "coordonnees"})
+	@ColumnTag({"coordonnees"})
 	private double latitude;
 	
 	@Column(name="COND_LONGITUDE")
-	@ColumnTag({ColumnTag.FRONT_RESTRICTED, "coordonnees"})
+	@ColumnTag({"coordonnees"})
 	private double longitude;
 	
 	@Column(name="COND_AVAILABLE")

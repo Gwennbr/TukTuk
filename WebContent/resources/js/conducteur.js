@@ -131,7 +131,7 @@ var refreshCourse = function() {
 				var lat = position.coords.latitude;
 				var lng = position.coords.longitude;
 				
-				rest.driver_refreshPosAndGetAvailableRides(lat, lng, function(course) {
+				rest.driver_refreshPosAndGetAvailableRides(lng, lat, function(course) {
 					$('#listeCourse').html("");
 					$('#btn-course-dispo').html('<span class="label label-pill label-success" id="puceBadge">' + course.length + ' course(s) disponnible</span>');
 					if (course.length != 0) {

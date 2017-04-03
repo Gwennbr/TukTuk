@@ -31,30 +31,35 @@ import com.tuktukteam.tuktuk.model.Conducteur;
 import com.tuktukteam.tuktuk.model.Course;
 
 @RestController
-@RequestMapping(value = "/driver")
-public class ConducteurRestController {
+public class ConducteurRestController
+{
 
 	@Autowired
 	private ConducteurDAO conducteurDAO;
 	@Autowired
 	private CourseDAO courseDAO;
 
-	public ConducteurRestController() {
+	public ConducteurRestController()
+	{
 		AutoFilterForSpringControllers.addController(getClass(), "/api");
 	}
 
-	@RequestMapping(value = "/login", method = RequestMethod.GET)
+	@RequestMapping(value = "/driver/login", method = RequestMethod.GET)
 	@ResponseBody
 	@RestrictedAccess(value = AccessType.PUBLIC)
-	public ResponseEntity<Conducteur> login(@RequestParam String username, @RequestParam String password) {
+	public ResponseEntity<Conducteur> login(@RequestParam String username, @RequestParam String password)
+	{
 		Conducteur conducteur = new Conducteur();
 
 		conducteur.setUsername(username);
 		conducteur.setPassword(password);
 
-		try {
+		try
+		{
 			conducteur = conducteurDAO.findByValues(conducteur);
-		} catch (DAOException e) {
+		}
+		catch (DAOException e)
+		{
 			System.out.println("excep : " + e);
 			conducteur = null;
 		}
@@ -67,19 +72,20 @@ public class ConducteurRestController {
 
 	// récupère et renvoie toutes les données du conducteur actuellement
 	// connecté.
-	@RequestMapping(value = "", method = RequestMethod.GET)
+	@RequestMapping(value = "/driver", method = RequestMethod.GET)
 	@ResponseBody
 	@RestrictedAccess(value = AccessType.TOKEN, authorized = Conducteur.class)
-	public ResponseEntity<Conducteur> getProfile(@RequestHeader(AccessTokenSecurity.TOKEN_HEADER_NAME) String token) {
+	public ResponseEntity<Conducteur> getProfile(@RequestHeader(AccessTokenSecurity.TOKEN_HEADER_NAME) String token)
+	{
 		return AccessTokenSecurity.buildResponse(AccessTokenSecurity.getUser(Conducteur.class, token), token,
 				HttpStatus.OK);
 	}
 
 	// création d'un nouveau conducteur (register)
-	@RequestMapping(value = "", method = RequestMethod.POST)
+	@RequestMapping(value = "/driver", method = RequestMethod.POST)
 	@ResponseBody
 	@RestrictedAccess(value = AccessType.PUBLIC)
-	public ResponseEntity<Conducteur> register(@RequestBody Conducteur conducteur, BindingResult result) 
+	public ResponseEntity<Conducteur> register(@RequestBody Conducteur conducteur, BindingResult result)
 	{
 		if (!result.hasErrors())
 		{
@@ -91,13 +97,15 @@ public class ConducteurRestController {
 	}
 
 	// met à jour les informations du conducteur
-	@RequestMapping(value = "", method = RequestMethod.PUT)
+	@RequestMapping(value = "/driver", method = RequestMethod.PUT)
 	@ResponseBody
 	@RestrictedAccess(value = AccessType.TOKEN, authorized = Conducteur.class)
 	public ResponseEntity<Conducteur> updateProfile(@RequestHeader(AccessTokenSecurity.TOKEN_HEADER_NAME) String token,
-			@RequestBody Conducteur conducteur, BindingResult result) {
+			@RequestBody Conducteur conducteur, BindingResult result)
+	{
 		Conducteur cond = AccessTokenSecurity.getUser(Conducteur.class, token);
-		if (!result.hasErrors()) {
+		if (!result.hasErrors())
+		{
 			conducteur.setId(cond.getId());
 			conducteurDAO.save(conducteur);
 			cond = conducteurDAO.find(cond.getId());
@@ -108,11 +116,12 @@ public class ConducteurRestController {
 
 	// récupère et renvoie l'historique des courses du conducteur actuemllement
 	// connecté
-	@RequestMapping(value = "/history", method = RequestMethod.GET)
+	@RequestMapping(value = "/driver/history", method = RequestMethod.GET)
 	@ResponseBody
 	@RestrictedAccess(value = AccessType.TOKEN, authorized = Conducteur.class)
 	public ResponseEntity<List<Course>> getRunsHistory(
-			@RequestHeader(AccessTokenSecurity.TOKEN_HEADER_NAME) String token) {
+			@RequestHeader(AccessTokenSecurity.TOKEN_HEADER_NAME) String token)
+	{
 		Conducteur conducteur = AccessTokenSecurity.getUser(Conducteur.class, token);
 		conducteur = conducteurDAO.find(conducteur.getId());
 		return AccessTokenSecurity.buildResponse(conducteur.getCourses(), token, HttpStatus.OK);
@@ -120,20 +129,22 @@ public class ConducteurRestController {
 
 	// récupère et renvoie les informations utiles du conducteur demandé au
 	// client
-	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
+	@RequestMapping(value = "/driver/{id}", method = RequestMethod.GET)
 	@ResponseBody
 	@RestrictedAccess(value = AccessType.TOKEN, authorized = Client.class)
 	public ResponseEntity<Conducteur> getInfos(@PathVariable int id,
-			@RequestHeader(AccessTokenSecurity.TOKEN_HEADER_NAME) String token) {
+			@RequestHeader(AccessTokenSecurity.TOKEN_HEADER_NAME) String token)
+	{
 		return AccessTokenSecurity.buildResponse(
 				conducteurDAO.getAndFillOnlyFieldsNotTaggedBy(id, ColumnTag.FRONT_RESTRICTED), token, HttpStatus.OK);
 	}
 
 	// rend le conducteur actuellement connecté non disponible.
-	@RequestMapping(value = "/unavailable", method = RequestMethod.PUT)
+	@RequestMapping(value = "/driver/unavailable", method = RequestMethod.PUT)
 	@ResponseBody
 	@RestrictedAccess(value = AccessType.TOKEN, authorized = Conducteur.class)
-	public ResponseEntity<Boolean> isNotAvailable(@RequestHeader(AccessTokenSecurity.TOKEN_HEADER_NAME) String token) {
+	public ResponseEntity<Boolean> isNotAvailable(@RequestHeader(AccessTokenSecurity.TOKEN_HEADER_NAME) String token)
+	{
 
 		Conducteur cond = AccessTokenSecurity.getUser(Conducteur.class, token);
 		cond.setAvailable(false);
@@ -143,10 +154,11 @@ public class ConducteurRestController {
 	}
 
 	// rend le conducteur actuellement connecté disponible.
-	@RequestMapping(value = "/available", method = RequestMethod.PUT)
+	@RequestMapping(value = "/driver/available", method = RequestMethod.PUT)
 	@ResponseBody
 	@RestrictedAccess(value = AccessType.TOKEN, authorized = Conducteur.class)
-	public ResponseEntity<Boolean> isAvailable(@RequestHeader(AccessTokenSecurity.TOKEN_HEADER_NAME) String token) {
+	public ResponseEntity<Boolean> isAvailable(@RequestHeader(AccessTokenSecurity.TOKEN_HEADER_NAME) String token)
+	{
 
 		Conducteur cond = AccessTokenSecurity.getUser(Conducteur.class, token);
 		cond.setAvailable(true);
@@ -156,24 +168,27 @@ public class ConducteurRestController {
 
 	// met à jour la position du conducteur dans la base de donnée et récupère
 	// en même temps toutes les courses sans conducteur.
-	@RequestMapping(value = "/refreshPos", method = RequestMethod.PUT)
+	@RequestMapping(value = "/driver/refreshPos", method = RequestMethod.PUT)
 	@ResponseBody
 	@RestrictedAccess(value = AccessType.TOKEN, authorized = Conducteur.class)
 	public ResponseEntity<List<Course>> runsWithoutDriver(
 			@RequestHeader(AccessTokenSecurity.TOKEN_HEADER_NAME) String token, @RequestParam double longitude,
-			@RequestParam double latitude) {
+			@RequestParam double latitude)
+	{
 		Conducteur c = AccessTokenSecurity.getUser(Conducteur.class, token);
 		c.setLongitude(longitude);
 		c.setLatitude(latitude);
 		c = conducteurDAO.save(c);
-		
 
-		if (courseDAO.getActualDriverRide(c.getId()) == null) {
+		if (courseDAO.getActualDriverRide(c.getId()) == null)
+		{
 			List<Course> courses = courseDAO.getRidesWithoutDriver();
 			List<Course> cou2 = new ArrayList<>();
-			
-			for (Course course : courses) {
-				if (CourseRestController.calculDistance(c, course.getAdresseDepart()) <= 10000) {
+
+			for (Course course : courses)
+			{
+				if (CourseRestController.calculDistance(c, course.getAdresseDepart()) <= 10000)
+				{
 					cou2.add(course);
 				}
 			}
@@ -183,38 +198,46 @@ public class ConducteurRestController {
 
 			return AccessTokenSecurity.buildResponse(cou2, token, HttpStatus.OK);
 		}
-		//TODO vérif retour
+		// TODO vérif retour
 		return AccessTokenSecurity.buildResponse(null, token, HttpStatus.OK);
 	}
 
 	// calcul la moyenne des notes du conducteur actuellement connecté et lui
 	// renvoie
-	@RequestMapping(value = "/note", method = RequestMethod.GET)
+	@RequestMapping(value = "/driver/note", method = RequestMethod.GET)
 	@ResponseBody
-	@RestrictedAccess(value = AccessType.TOKEN, authorized = {Conducteur.class, Client.class})
-	public ResponseEntity<Integer> calculAvgNote(@RequestHeader(AccessTokenSecurity.TOKEN_HEADER_NAME) String token) {		
+	@RestrictedAccess(value = AccessType.TOKEN, authorized = { Conducteur.class, Client.class })
+	public ResponseEntity<Integer> calculAvgNote(@RequestHeader(AccessTokenSecurity.TOKEN_HEADER_NAME) String token)
+	{
 		float moy = 0;
 		float somme = 0;
 		int i = 0;
 
-		if(AccessTokenSecurity.typeOfUser(token)==Conducteur.class){
+		if (AccessTokenSecurity.typeOfUser(token) == Conducteur.class)
+		{
 			Conducteur cond = AccessTokenSecurity.getUser(Conducteur.class, token);
 			List<Course> courses = conducteurDAO.find(cond.getId()).getCourses();
-			for (Course course : courses) {
-				if (course.getNoteClient() != -1) {
+			for (Course course : courses)
+			{
+				if (course.getNoteClient() != -1)
+				{
 					somme = somme + course.getNoteClient();
 					i++;
 				}
 			}
 			moy = somme / i;
 			return AccessTokenSecurity.buildResponse(Math.round(moy), token, HttpStatus.OK);
-		} else {
+		}
+		else
+		{
 			Client client = AccessTokenSecurity.getUser(Client.class, token);
 			Course course = courseDAO.getActualCustomerRide(client.getId());
 			Conducteur cond = conducteurDAO.find(course.getConducteur().getId());
 			List<Course> courses = cond.getCourses();
-			for (Course cou : courses) {
-				if (cou.getNoteClient() != -1) {
+			for (Course cou : courses)
+			{
+				if (cou.getNoteClient() != -1)
+				{
 					somme = somme + cou.getNoteClient();
 					i++;
 				}
@@ -225,17 +248,21 @@ public class ConducteurRestController {
 	}
 
 	// calcul la moyenne des notes du conducteur demandé et la renvoie au client
-	@RequestMapping(value = "/{id}/note", method = RequestMethod.GET)
+	@RequestMapping(value = "/driver/{id}/note", method = RequestMethod.GET)
 	@ResponseBody
 	@RestrictedAccess(value = AccessType.TOKEN, authorized = Client.class)
-	public ResponseEntity<Integer> calculAvgNoteDriver(@PathVariable int id, @RequestHeader(AccessTokenSecurity.TOKEN_HEADER_NAME) String token) {
+	public ResponseEntity<Integer> calculAvgNoteDriver(@PathVariable int id,
+			@RequestHeader(AccessTokenSecurity.TOKEN_HEADER_NAME) String token)
+	{
 		Conducteur cond = conducteurDAO.find(id);
 		float moy = 0;
 		float somme = 0;
 		int i = 0;
 		List<Course> courses = cond.getCourses();
-		for (Course course : courses) {
-			if (course.getNoteConducteur() != -1) {
+		for (Course course : courses)
+		{
+			if (course.getNoteConducteur() != -1)
+			{
 				somme = somme + course.getNoteConducteur();
 				i++;
 			}
@@ -245,20 +272,21 @@ public class ConducteurRestController {
 	}
 
 	// récupère tout les conducteurs à +/- 5 km et les renvoie au client
-	@RequestMapping(value = "s", method = RequestMethod.GET)
+	@RequestMapping(value = "/drivers", method = RequestMethod.GET)
 	@ResponseBody
 	@RestrictedAccess(value = AccessType.TOKEN, authorized = Client.class)
 	public ResponseEntity<List<Conducteur>> getAllNearDrivers(
 			@RequestHeader(AccessTokenSecurity.TOKEN_HEADER_NAME) String token, @RequestParam double latitude,
-			@RequestParam double longitude) {
-		//List<Coordonnee> coordonnees = new ArrayList<>();
+			@RequestParam double longitude)
+	{
 		List<Conducteur> returnList = new ArrayList<>();
 		List<Conducteur> conducteurs = conducteurDAO.getAllAndFillOnlyFieldsNotTaggedBy(ColumnTag.FRONT_RESTRICTED);
-		for (Conducteur cond : conducteurs) {
+		for (Conducteur cond : conducteurs)
+		{
 			if (cond.getLatitude() <= latitude + 0.07 && cond.getLatitude() >= latitude - 0.07
-					&& cond.getLongitude() <= longitude + 0.07 && cond.getLongitude() <= longitude + 0.07) {
+					&& cond.getLongitude() <= longitude + 0.07 && cond.getLongitude() >= longitude - 0.07)
+			{
 				returnList.add(cond);
-				//coordonnees.add(new Coordonnee(cond.getLatitude(), cond.getLongitude()));
 			}
 		}
 
