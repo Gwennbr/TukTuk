@@ -372,7 +372,7 @@ public class CourseRestController
 		{
 			jsonEntity = template.getForEntity(
 					"https://maps.googleapis.com/maps/api/distancematrix/json?origins={lng},{lat}&destinations={adresse}&mode=bicycling&units=metric",
-					String.class, cond.getLongitude(), cond.getLatitude(), adresse.replaceAll(" ", "+"));
+					String.class, cond.getLatitude(), cond.getLongitude(), adresse.replaceAll(" ", "+"));
 		}
 		catch (RestClientException e)
 		{
